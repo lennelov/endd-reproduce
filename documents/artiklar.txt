@@ -1,0 +1,87 @@
+Mer resurser angående ENDD
+
+Artikeln: 
+https://arxiv.org/pdf/1905.00076.pdf
+
+Originalpaperet om prior networks:
+https://papers.nips.cc/paper/7936-predictive-uncertainty-estimation-via-prior-networks.pdf
+
+Hur man tränar prior med reverse kl-divergence:
+https://papers.nips.cc/paper/9597-reverse-kl-divergence-training-of-prior-networks-improved-uncertainty-and-adversarial-robustness.pdf
+
+Openreviewsvaren:
+https://openreview.net/forum?id=BygSP6Vtvr
+
+
+En av författarna har en populärvetenskaplig sammanfattning här:
+https://brunokm.github.io/projects.html
+
+Kort video:
+https://iclr.cc/virtual_2020/poster_BygSP6Vtvr.html
+
+Utförligare slides:
+https://bayesgroup.github.io/bmml_sem/2020/Malinin_HSE_Structured_Uncertainty_Lecture-4.pdf
+
+
+-----------------------------------------------
+Svenska paperet
+
+A general framework for ensemble distribution distillation
+https://arxiv.org/pdf/2002.11531.pdf
+
+-----------------------------------------------
+
+
+Uncertainty in Gradient Boosting via Ensembles
+https://arxiv.org/pdf/2006.10562.pdf
+
+Den här borde vara superrelevant för doctrin-datasetet, för att får fram uncertainty. Den refererar till ENDD och säger typ att man kan se samma typ av trender i uncertainty där som med den här. 
+
+-----------------------------------------------
+
+
+HYDRA:
+PRESERVING ENSEMBLE DIVERSITY FOR MODEL DISTILLATION
+
+https://arxiv.org/pdf/2001.04694.pdf
+https://openreview.net/forum?id=ByeaXeBFvH
+
+Försöker göra samma sak med prior networks, typ, men fick reject från ICLR. 
+De kritiserar ENDD för att Dirichlet är ett för stort assumption, men har nackdelen att deras distillation inte får ner modellstorleken lika mycket. 
+
+---------------------------------------------
+
+Regression Prior Networks
+https://arxiv.org/pdf/2006.11590.pdf
+Kod: https://github.com/JanRocketMan/regression-prior-networks
+
+Här försöker Malinin et. al. extenda END^2 till att inte bara funka för klassifikation, utan också regression. Den har kod, som borde gå att ta inspiration av. 
+
+
+----------------------------------------------
+Posterior Network: Uncertainty Estimation without OOD Samples via Density-Based Pseudo-Counts
+https://arxiv.org/pdf/2006.09239.pdf
+
+Kritiserar ENDD för att behöva OOD-samples vid training för att kunna detektera dem vid inference, vilket är orealistiskt och visar att OOD annars inte fungerar. Föreslår istället att göra något med normalizing flows, istället för att begränsa sig till Dirichlet Distribution. 
+
+
+-----------------------------------------------
+
+Learning the Distribution: A Unified Distillation Paradigm for Fast Uncertainty Estimation in Computer Vision
+https://arxiv.org/pdf/2007.15857.pdf
+
+Kritiserar ENDD för att inte ha med aleatoric uncertainty. Gör istället någon distillation från MC-dropout. 
+
+----------------------------------------------
+
+Bayesian Deep Learning and Uncertainty in Computer Vision
+https://uwspace.uwaterloo.ca/bitstream/handle/10012/15056/Phan_Buu.pdf?sequence=3&isAllowed=y
+
+Det här är ett mastersarbete som säger att de utvecklar idén till ENDD självständigt, och när han skulle skicka in den, hittade han att ENDD precis skickats in till arxiv. Kapitel 5 behandlar det här, och är kanske lättare läsning än ENDD-artikeln. 
+
+
+-----------------------------------------------
+Accelerating Monte Carlo Bayesian Prediction via Approximating Predictive Uncertainty over the Simplex
+https://arxiv.org/pdf/1905.12194.pdf
+
+Deras idé är att använda en deep prior network med dirichlet för samma mål (snabb inferens med uncertainty), men istället för att träna den från en ensemble av vanliga klassifikatorer, träna den från ett fullt bayesianskt nätverk med hjälp av MCMC. 
