@@ -1,0 +1,3 @@
+# Ignore when running as a Github action
+*/python*/
+*/bin/
