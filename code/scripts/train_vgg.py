@@ -24,13 +24,14 @@ physical_devices = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 # Load data
-(train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
+(train_images, train_labels), (test_images,
+                               test_labels) = datasets.cifar10.load_data()
 
 # Preprocess
 train_images = preprocess_input(train_images)
 test_images = preprocess_input(test_images)
-train_labels = tf.one_hot(train_labels.reshape((-1,)), 10)
-test_labels = tf.one_hot(test_labels.reshape((-1,)), 10)
+train_labels = tf.one_hot(train_labels.reshape((-1, )), 10)
+test_labels = tf.one_hot(test_labels.reshape((-1, )), 10)
 
 # Get model
 model = vgg.get_model(dataset_name='cifar10', compile=True)
