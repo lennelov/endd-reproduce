@@ -3,13 +3,15 @@ import tensorflow.keras as keras
 import settings
 
 
-def get_model(dataset_name, compile=True):
+def get_model(dataset_name, compile=True, weights=None):
     """Take dataset name and return corresponding untrained VGG16 model.
 
     Args:
         dataset_name (str): Name of the dataset that the model will be used on,
                             must be listed in settings.py.
         compile (bool): If False, an uncompiled model is returned. Default is True.
+        weights (str): Name of saved weights. If provided, returned model will
+                       be loaded with saved weights. Default is None.
 
     Returns:
         keras Model object
@@ -28,6 +30,9 @@ def get_model(dataset_name, compile=True):
         input_shape=settings.DATASET_INPUT_SHAPES[dataset_name],
         classes=settings.DATASET_N_CLASSES[dataset_name]
     )
+
+    if weights:
+        saveload.load_weights(model, weights)
 
     if not compile:
         return model
