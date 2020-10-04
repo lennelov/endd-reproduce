@@ -37,5 +37,3 @@ model = vgg.get_model(dataset_name='cifar10', compile=True)
 
 # Train
 model.fit(train_images, train_labels, epochs=10)
-
-model.summary()
