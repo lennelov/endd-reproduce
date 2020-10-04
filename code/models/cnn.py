@@ -1,6 +1,6 @@
 import tensorflow as tf
 import tensorflow.keras as keras
-import models.model_globals as model_globals
+import settings
 
 
 def get_model(dataset_name, compile=True):
@@ -8,7 +8,7 @@ def get_model(dataset_name, compile=True):
 
     Args:
         dataset_name (str): Name of the dataset that the model will be used on,
-                            must be listed in model_globals.py.
+                            must be listed in settings.py.
         compile (bool): If False, an uncompiled model is returned. Default is True.
 
     Returns:
@@ -17,25 +17,21 @@ def get_model(dataset_name, compile=True):
     If compile=True, model will be compiled with adam optimizer, categorical cross
     entropy loss, and accuracy metric.
     """
-    if dataset_name not in model_globals.DATASET_INPUT_SHAPES:
-        raise ValueError("Dataset {} not recognized".format(dataset_name))
+    if dataset_name not in settings.DATASET_NAMES:
+        raise ValueError("""Dataset {} not recognized, please make sure it has been listed in
+                            settings.py""".format(dataset_name))
 
-    input_shape = model_globals.DATASET_INPUT_SHAPES[dataset_name]
+    input_shape = settings.DATASET_INPUT_SHAPES[dataset_name]
 
     model = keras.models.Sequential()
-    model.add(
-        keras.layers.Conv2D(32, (3, 3),
-                            activation='relu',
-                            input_shape=input_shape))
+    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
     model.add(keras.layers.MaxPooling2D((2, 2)))
     model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
     model.add(keras.layers.MaxPooling2D((2, 2)))
     model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(64, activation='relu'))
-    model.add(
-        keras.layers.Dense(
-            classes=model_globals.DATASET_N_CLASSES[dataset_name]))
+    model.add(keras.layers.Dense(settings.DATASET_N_CLASSES[dataset_name]))
 
     if not compile:
         return model
