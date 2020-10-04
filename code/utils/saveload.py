@@ -14,14 +14,16 @@ def save_weights(model, name, verbose=True):
                     or file ending.
         verbose (str): If True a message is printed upon success.
     """
-    weights_path = os.path.join(SAVED_WEIGHTS_PATH, "weights_" + name)
+    weights_name = "weights_" + name
+    weights_path = os.path.join(SAVED_WEIGHTS_PATH, weights_name, weights_name)
     model.save_weights(weights_path)
     print("Weights succesfully saved as {}".format(weights_path))
 
 
 def load_weights(model, name):
     """Take model and load weights with given name (in place)."""
-    weights_path = os.path.join(SAVED_WEIGHTS_PATH, "weights_" + name)
+    weights_name = "weights_" + name
+    weights_path = os.path.join(SAVED_WEIGHTS_PATH, weights_name, weights_name)
     model.load_weights(weights_path)
 
 
