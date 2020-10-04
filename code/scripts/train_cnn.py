@@ -1,3 +1,8 @@
+"""Script for training a simple CNN model on CIFAR10.
+
+This script will probably be generalized to a unified
+training script."""
+
 # Add parent dir to path to allow for parallel imports
 import sys
 import pathlib
