@@ -20,13 +20,11 @@ def get_model(dataset_name, compile=True):
     if dataset_name not in model_globals.DATASET_INPUT_SHAPES:
         raise ValueError("Dataset {} not recognized".format(dataset_name))
 
-
     model = tf.keras.applications.VGG16(
         include_top=True,
         weights=None,
         input_shape=model_globals.DATASET_INPUT_SHAPES[dataset_name],
-        classes=model_globals.DATASET_N_CLASSES[dataset_name]
-    )
+        classes=model_globals.DATASET_N_CLASSES[dataset_name])
 
     if not compile:
         return model
