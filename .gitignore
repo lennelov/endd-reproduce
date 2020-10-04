@@ -1,3 +1,7 @@
+# Project folders
+code/models/saved_models/*/
+code/models/saved_weights/*/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
