@@ -30,7 +30,7 @@ def get_model(dataset_name, compile=True):
     model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(64, activation='relu'))
-    model.add(keras.layers.Dense(classes=model_globals.DATASET_N_CLASSES[dataset_name]))
+    model.add(keras.layers.Dense(model_globals.DATASET_N_CLASSES[dataset_name]))
 
     if not compile:
         return model
