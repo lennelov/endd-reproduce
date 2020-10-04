@@ -24,13 +24,10 @@ def get_model(dataset_name, compile=True, weights=None):
         raise ValueError("""Dataset {} not recognized, please make sure it has been listed in
                             settings.py""".format(dataset_name))
 
-
-    model = tf.keras.applications.VGG16(
-        include_top=True,
-        weights=None,
-        input_shape=settings.DATASET_INPUT_SHAPES[dataset_name],
-        classes=settings.DATASET_N_CLASSES[dataset_name]
-    )
+    model = tf.keras.applications.VGG16(include_top=True,
+                                        weights=None,
+                                        input_shape=settings.DATASET_INPUT_SHAPES[dataset_name],
+                                        classes=settings.DATASET_N_CLASSES[dataset_name])
 
     if weights:
         saveload.load_weights(model, weights)
