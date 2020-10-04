@@ -36,7 +36,7 @@ test_labels = tf.one_hot(test_labels.reshape((-1,)), 10)
 model = vgg.get_model(dataset_name='cifar10', compile=True)
 
 # Train
-model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
+model.fit(train_images, train_labels, epochs=1, validation_data=(test_images, test_labels))
 
 # Save weights
 saveload.save_weights(model, "vgg")
