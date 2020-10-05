@@ -11,7 +11,6 @@ from tensorflow.math import digamma
           KL-divergences (Batch-Size x 1), Reverse KL divergence of the two dirichlet distributions RKL(true_dirichlet||pred_dirichlet)
 '''
 
-
 class DirichletKL(tf.keras.losses.Loss):
 
     def __init__(self, epsilon=1e-10):
@@ -20,13 +19,11 @@ class DirichletKL(tf.keras.losses.Loss):
 
     def call(self, alpha_true, alpha_pred):
         epsilon = self.epsilon
-        #print(alpha_pred.numpy())
-        #print(alpha_true.numpy())
-        KL = lgamma(tf.math.reduce_sum(alpha_pred)) - tf.math.reduce_sum(
-            lgamma(alpha_pred + epsilon)) - lgamma(
-                tf.math.reduce_sum(alpha_true)) + tf.math.reduce_sum(
-                    lgamma(alpha_true + epsilon)) + tf.math.reduce_sum(
-                        (alpha_pred - alpha_true) *
-                        (digamma(alpha_pred + epsilon) - digamma(tf.math.reduce_sum(alpha_pred))))
-        #print(KL)
+        KL = lgamma(tf.math.reduce_sum(alpha_pred)) - 
+            tf.math.reduce_sum(lgamma(alpha_pred + epsilon)) - 
+            lgamma(tf.math.reduce_sum(alpha_true)) + 
+            tf.math.reduce_sum(lgamma(alpha_true + epsilon)) + 
+            tf.math.reduce_sum((alpha_pred - alpha_true) *
+            (digamma(alpha_pred + epsilon) - 
+             digamma(tf.math.reduce_sum(alpha_pred))))
         return KL
