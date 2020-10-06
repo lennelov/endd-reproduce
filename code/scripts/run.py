@@ -21,13 +21,13 @@ from datetime import datetime
 from packaging import version
 #other functions
 import settings
-import simplex_plot_function
-from preprocess_toy_dataset import preprocess_toy_dataset
-from DirichletKL import DirichletKL
-from create_toy_dataset_model import create_toy_dataset_model
-from train_priornet_toy_dataset import train_priornet_toy_dataset
-from dataset_creation_KaosEngineer import SpiralDataset
-from dataset_creation_KaosEngineer import OODSpiralDataset
+import utils.simplex_plot_function
+from scripts.preprocess_toy_dataset import preprocess_toy_dataset
+from scripts.DirichletKL import DirichletKL
+from models.create_toy_dataset_model import create_toy_dataset_model
+from scripts.train_priornet_toy_dataset import train_priornet_toy_dataset
+from utils.dataset_creation_KaosEngineer import SpiralDataset
+from utils.dataset_creation_KaosEngineer import OODSpiralDataset
 
 Spiral = SpiralDataset(SAMPLES_PER_CLASS,NOISE,N_CLASSES)
 OOD = OODSpiralDataset(SAMPLES_OOD)

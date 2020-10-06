@@ -19,11 +19,5 @@ class DirichletKL(tf.keras.losses.Loss):
 
     def call(self, alpha_true, alpha_pred):
         epsilon = self.epsilon
-        KL = lgamma(tf.math.reduce_sum(alpha_pred)) - 
-            tf.math.reduce_sum(lgamma(alpha_pred + epsilon)) - 
-            lgamma(tf.math.reduce_sum(alpha_true)) + 
-            tf.math.reduce_sum(lgamma(alpha_true + epsilon)) + 
-            tf.math.reduce_sum((alpha_pred - alpha_true) *
-            (digamma(alpha_pred + epsilon) - 
-             digamma(tf.math.reduce_sum(alpha_pred))))
+        KL = lgamma(tf.math.reduce_sum(alpha_pred)) - tf.math.reduce_sum(lgamma(alpha_pred + epsilon)) - lgamma(tf.math.reduce_sum(alpha_true)) + tf.math.reduce_sum(lgamma(alpha_true + epsilon)) + tf.math.reduce_sum((alpha_pred - alpha_true) * (digamma(alpha_pred + epsilon) - digamma(tf.math.reduce_sum(alpha_pred))))
         return KL
