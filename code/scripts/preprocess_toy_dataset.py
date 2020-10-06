@@ -1,4 +1,10 @@
+import sys
+import pathlib
+import os
+parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(parent_dir_path)
 import tensorflow as tf
+from settings_prior import *
 def preprocess_toy_dataset(spiral,OOD,train_ratio = 0.7):
       '''
       ---This function should be updated using some built in functions---
@@ -11,7 +17,7 @@ def preprocess_toy_dataset(spiral,OOD,train_ratio = 0.7):
       '''
       classes = tf.math.reduce_max(spiral.y[:])
       classes = tf.cast(classes,dtype = tf.int32)
-      logits = tf.one_hot(spiral.y,3)*1000 +1
+      logits = tf.one_hot(spiral.y,3)*ID_LOGIT +OOD_LOGIT
       tf.random.set_seed(123) # seed needs to be set for each random in tf.
       X =tf.random.shuffle(spiral.x,seed = 1)
       tf.random.set_seed(123) # seed needs to be set for each random in tf.
@@ -36,7 +42,7 @@ def preprocess_toy_dataset(spiral,OOD,train_ratio = 0.7):
       x_test = x_test/avg_norm # to do: fix the standardization
 
       #add OOD logits (ones)
-      y_train = tf.concat([y_train,tf.ones([OOD.x.shape[0],y_train.shape[1]])],axis = 0)
+      y_train = tf.concat([y_train,OOD_LOGIT*tf.ones([OOD.x.shape[0],y_train.shape[1]])],axis = 0)
 
       #shuffle the OOD data into the training set
       tf.random.set_seed(1234)

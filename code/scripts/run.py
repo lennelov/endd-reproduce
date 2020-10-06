@@ -20,8 +20,8 @@ import keras
 from datetime import datetime
 from packaging import version
 #other functions
-import settings
-import utils.simplex_plot_function
+from settings_prior import *
+from utils.simplex_plot_function import *
 from scripts.preprocess_toy_dataset import preprocess_toy_dataset
 from scripts.DirichletKL import DirichletKL
 from models.create_toy_dataset_model import create_toy_dataset_model
@@ -32,7 +32,7 @@ from utils.dataset_creation_KaosEngineer import OODSpiralDataset
 Spiral = SpiralDataset(SAMPLES_PER_CLASS,NOISE,N_CLASSES)
 OOD = OODSpiralDataset(SAMPLES_OOD)
 x_train,y_train,x_test,y_test = preprocess_toy_dataset(Spiral,OOD)
-model = create_toy_dataset_model(n_classes,N_LAYERS,N_NEURONS,activations = ACTIVATION)
+model = create_toy_dataset_model(N_CLASSES,N_LAYERS,N_NEURONS,activations = ACTIVATION)
 
 KL = DirichletKL()
 model.compile(optimizer='adam',loss = KL)
@@ -40,7 +40,7 @@ model = train_priornet_toy_dataset(x_train,y_train,model,BATCH_SIZE,N_EPOCHS)
 logits = model.predict(x_test)
 predictions = tf.math.argmax(logits,axis = 1)
 real = tf.math.argmax(y_test,axis = 1)
-if PLOT_SIMPLEX:
+if PLOT_SIMPLEX and N_CLASSES == 2:
     import seaborn as sn
     font = {'family': 'serif',
             'color':  'black',
