@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class OneCycleLRPolicy(tf.keras.callbacks.Callback):
     """This callback implements a variant of the 1-cycle learning rate policy
     as introduced by the paper https://arxiv.org/pdf/1708.07120.pdf. 
@@ -22,14 +23,14 @@ class OneCycleLRPolicy(tf.keras.callbacks.Callback):
     """
 
     def __init__(self, init_lr, max_lr, min_lr, cycle_length, epochs):
-        assert(cycle_length % 2 == 0)
-        assert(epochs > cycle_length)
-        self.schedule = np.hstack((
-            np.linspace(init_lr, max_lr, cycle_length//2),
-            np.linspace(max_lr, init_lr, cycle_length//2),
-            np.linspace(init_lr, min_lr, epochs - cycle_length)))
+        assert (cycle_length % 2 == 0)
+        assert (epochs > cycle_length)
+        self.schedule = np.hstack(
+            (np.linspace(init_lr, max_lr,
+                         cycle_length // 2), np.linspace(max_lr, init_lr, cycle_length // 2),
+             np.linspace(init_lr, min_lr, epochs - cycle_length)))
 
-    def on_epoch_begin(self, epoch, logs = None):
+    def on_epoch_begin(self, epoch, logs=None):
         tf.keras.backend.set_value(self.model.optimizer.lr, self.schedule[epoch])
 
     def plot(self):
