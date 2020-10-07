@@ -18,6 +18,7 @@ class ModelWrapper(ABC):
     The primary purpose is to wrap models that can then be used by the Ensemble
     class.
     """
+
     def __init__(self, name=None, type=None):
         self.type = type
         self.name = name
@@ -34,6 +35,7 @@ class ModelWrapper(ABC):
 
 
 class KerasLoadsWhole(ModelWrapper):
+
     def __init__(self, model_load_name, name=None):
         """Wrap a saved Keras model.
 
@@ -86,6 +88,7 @@ class Ensemble:
     memory. This allows evaluation to take place without needing all models
     in memory at the same time.
     """
+
     def __init__(self, models):
         """Constructor.
 
