@@ -108,28 +108,6 @@ def get_vgg_model(input_shape, classes, dropout_rate=0.5, alpha=0.1, batch_norm=
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
     # fc classfier
-
-<<<<<<< HEAD
-        model.add(Dropout(dropout_rate))
-        model.add(Flatten())
-        model.add(Dense(512, kernel_initializer = 'he_normal'))
-        model.add(LeakyReLU(alpha = alpha))
-        if batch_norm:
-            model.add(BatchNormalization())
-
-        model.add(Dropout(dropout_rate))
-
-        model.add(Dense(512, kernel_initializer = 'he_normal'))
-        model.add(LeakyReLU(alpha = alpha))
-        if batch_norm:
-            model.add(BatchNormalization())
-
-        model.add(Dropout(dropout_rate))
-
-        model.add(Dense(classes, kernel_initializer = 'he_normal'))
-        model.add(Activation('softmax'))
-        return model
-=======
     model.add(Dropout(dropout_rate))
     model.add(Flatten())
     model.add(Dense(512, kernel_initializer='he_normal'))
@@ -141,7 +119,6 @@ def get_vgg_model(input_shape, classes, dropout_rate=0.5, alpha=0.1, batch_norm=
     model.add(Dense(classes, kernel_initializer='he_normal'))
     model.add(Activation('softmax'))
     return model
->>>>>>> train-vgg
 
 
 def get_vgg_malinin_model(input_shape, classes, dropout_rate = 0.5, alpha = 0.2, batch_norm = True):
@@ -261,7 +238,7 @@ def get_vgg_malinin_model(input_shape, classes, dropout_rate = 0.5, alpha = 0.2,
         model.add(Dense(2048, kernel_initializer = 'he_normal'))
         model.add(LeakyReLU(alpha = alpha))
         model.add(Dropout(dropout_rate))
-        
+
         model.add(Dense(classes, kernel_initializer = 'he_normal'))
         model.add(Activation('softmax'))
 
