@@ -22,39 +22,27 @@ from packaging import version
 #other functions
 from settings_prior import *
 from utils.simplex_plot_function import *
-from scripts.preprocess_toy_dataset import preprocess_toy_dataset
-from scripts.DirichletKL import DirichletKL
-from models.create_toy_dataset_model import create_toy_dataset_model
-from scripts.train_priornet_toy_dataset import train_priornet_toy_dataset
-from utils.dataset_creation_KaosEngineer import SpiralDataset
-from utils.dataset_creation_KaosEngineer import OODSpiralDataset
+from utils.preprocess_toy_dataset import preprocess
+from utils.DirichletKL import DirichletKL
+from models.dense_priornet import get_model
+from utils.create_toy_data import SpiralDataset, OODSpiralDataset
 
 Spiral = SpiralDataset(SAMPLES_PER_CLASS,NOISE,N_CLASSES)
 OOD = OODSpiralDataset(SAMPLES_OOD)
-x_train,y_train,x_test,y_test = preprocess_toy_dataset(Spiral,OOD)
-model = create_toy_dataset_model(N_CLASSES,N_LAYERS,N_NEURONS,activations = ACTIVATION)
 
-KL = DirichletKL()
-model.compile(optimizer='adam',loss = KL)
-model = train_priornet_toy_dataset(x_train,y_train,model,BATCH_SIZE,N_EPOCHS)
+x_train,logits_train,x_test,y_test = preprocess(Spiral,OOD)
+model = get_model(N_CLASSES,N_LAYERS,N_NEURONS,activations = ACTIVATION)
+
+model.fit(
+            x = x_train,
+            y = logits_train,
+            batch_size = BATCH_SIZE,epochs = N_EPOCHS)
+
 logits = model.predict(x_test)
 predictions = tf.math.argmax(logits,axis = 1)
 real = tf.math.argmax(y_test,axis = 1)
-if PLOT_SIMPLEX and N_CLASSES == 2:
-    import seaborn as sn
-    font = {'family': 'serif',
-            'color':  'black',
-            'weight': 'normal',
-            'size': 16,
-            }
-    plt.style.use('seaborn-white')
-    plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
 
-    for i in range(0,6):
-        plt.subplot(2, 3, i+1)
-        plt.title("logits: " + str(np.around(logits[i,:],decimals =1)) ,
-                fontsize=18, ha='center')
-        plot_logits = logits[i,:]
-        draw_pdf_contours(Dirichlet(plot_logits))
+if PLOT_SIMPLEX and N_CLASSES == 2:
+    plot_simplex(logits)
 
       

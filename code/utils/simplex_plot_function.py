@@ -91,18 +91,30 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
     if border is True:
         plt.triplot(_triangle, linewidth=1)
 
-#if __name__ == '__main__':
-#    f = plt.figure(figsize=(8, 6))
-#    alphas = [[0.999] * 3,
-#              [5] * 3,
-#              [2, 5, 15]]
-#    for (i, alpha) in enumerate(alphas):
-#        plt.subplot(2, len(alphas), i + 1)
-#        dist = Dirichlet(alpha)
-#        draw_pdf_contours(dist)
-#        title = r'$\alpha$ = (%.3f, %.3f, %.3f)' % tuple(alpha)
-#        plt.title(title, fontdict={'fontsize': 8})
-#        plt.subplot(2, len(alphas), i + 1 + len(alphas))
-#        plot_points(dist.sample(5000))
-#    plt.savefig('dirichlet_plots.png')
-#    print('Wrote plots to "dirichlet_plots.png".')
+
+
+def plot_simplex(logits):
+	import seaborn as sn
+	import matplotlib.pyplot as plt
+	import numpy as np
+	from utils.simplex_plot_function import draw_pdf_contours, Dirichlet
+
+	font = {'family': 'serif',
+	            'color':  'black',
+	            'weight': 'normal',
+	            'size': 16,
+	            }
+	plt.style.use('seaborn-white')
+	plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
+	
+	if len(logits[0,:]) == 3:
+		for i in range(0,6):
+			plt.subplot(2, 3, i+1)
+			plt.title("logits: " + str(np.around(logits[i,:],decimals =1)) ,
+			        fontsize=18, ha='center')
+			plot_logits = logits[i,:]
+			draw_pdf_contours(Dirichlet(plot_logits))
+		
+		
+
+	

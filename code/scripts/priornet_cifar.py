@@ -15,24 +15,22 @@ import scipy.integrate as integrate
 import matplotlib.pyplot as plt
 import seaborn as sns
 import keras
+from tensorflow.keras import datasets
 from datetime import datetime
 from packaging import version
 
 from settings_prior import *
 from settings import *
 from utils.simplex_plot_function import *
-from scripts.DirichletKL import DirichletKL
-from models.create_image_model import create_image_model
-from scripts.train_priornet_toy_dataset import train_priornet_toy_dataset
-from utils.data_creation_cifar10 import data_creation_cifar10
-from utils.plot_simplex import plot_simplex
+from utils.DirichletKL import DirichletKL
+from models.cnn_priorNet import get_model
+from utils.preprocess_priornet_cifar import preprocess
 
-print(DATASET_NAMES)
-train_images, train_logits, test_images, test_logits = data_creation_cifar10()
-model = create_image_model('cifar10')
-KL = DirichletKL()
-model.compile(optimizer = 'adam',loss = KL,run_eagerly=False)
-model = train_priornet_toy_dataset(train_images,train_logits,model,batch = 100,n_epochs = 2)
+
+(train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
+train_images, train_logits, test_images, test_logits = preprocess(train_images, train_labels, test_images, test_labels)
+model = get_model('cifar10',3)
+model.fit(train_images,train_logits,batch_size = 100,epochs = 2)
 logits = model.predict(test_images)
 predictions = tf.math.argmax(tf.squeeze(logits),axis = 1)
 real = tf.math.argmax(tf.squeeze(test_logits),axis = 1)
