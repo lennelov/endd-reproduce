@@ -24,15 +24,16 @@ def get_dataset(dataset_name):
         (x_train, y_train), (x_test, y_test) as tuples of numpy arrays.
     """
 
-    if dataset_name not in settings.DATASET_NAMES:
-        raise ValueError("""Dataset {} not recognized, please make sure it has been added
-                            to datasets.py""".format(dataset_name))
-
     DATASET_GETTERS = {
         'cifar10': _get_cifar10,
         'cifar100': _get_cifar100,
         'mnist': _get_mnist
     }
+
+    if dataset_name not in DATASET_GETTERS:
+        raise ValueError("""Dataset {} not recognized, please make sure it has been added
+                            to datasets.py""".format(dataset_name))
+
 
     train_set, test_set = DATASET_GETTERS[dataset_name]()
     return train_set, test_set
