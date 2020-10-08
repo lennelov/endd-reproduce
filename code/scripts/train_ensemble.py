@@ -17,8 +17,6 @@ sys.path.append(parent_dir_path)
 
 # Imports
 import tensorflow as tf
-import tensorflow.keras as keras
-import category_encoders as ce
 import settings
 from models import cnn
 from utils import saveload
