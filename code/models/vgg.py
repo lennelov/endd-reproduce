@@ -116,10 +116,141 @@ def get_vgg_model(input_shape, classes, dropout_rate = 0.5, alpha = 0.1, batch_n
             model.add(BatchNormalization())
 
         model.add(Dropout(dropout_rate))
+
+        model.add(Dense(512, kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+
+        model.add(Dropout(dropout_rate))
+
         model.add(Dense(classes, kernel_initializer = 'he_normal'))
         model.add(Activation('softmax'))
         return model
 
+
+def get_vgg_malinin_model(input_shape, classes, dropout_rate = 0.5, alpha = 0.2, batch_norm = True):
+        # Build the network of vgg for 10 classes with massive dropout and weight decay as described in the paper.
+
+        model = Sequential()
+
+        # Block 1
+
+        model.add(Conv2D(64, (3, 3), padding='same',kernel_initializer = 'he_normal', input_shape=input_shape))
+        model.add(LeakyReLU(alpha=alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+        model.add(Dropout(dropout_rate))
+
+        model.add(Conv2D(64, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+
+        model.add(Dropout(dropout_rate))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides = (2, 2)))
+
+        # Block 2
+
+        model.add(Conv2D(128, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+        model.add(Dropout(dropout_rate))
+
+        model.add(Conv2D(128, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+
+        model.add(Dropout(dropout_rate))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides = (2, 2)))
+
+        # Block 3
+
+        model.add(Conv2D(256, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+        model.add(Dropout(dropout_rate))
+
+        model.add(Conv2D(256, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+        model.add(Dropout(dropout_rate))
+
+        model.add(Conv2D(256, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+
+        model.add(Dropout(dropout_rate))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides = (2, 2)))
+
+        # Block 4
+
+        model.add(Conv2D(512, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+        model.add(Dropout(dropout_rate))
+
+        model.add(Conv2D(512, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+        model.add(Dropout(dropout_rate))
+
+        model.add(Conv2D(512, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+
+        model.add(Dropout(dropout_rate))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides = (2, 2)))
+
+        # Block 5
+
+        model.add(Conv2D(512, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        #model.add(Activation('relu'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+        model.add(Dropout(dropout_rate))
+
+        model.add(Conv2D(512, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+        model.add(Dropout(dropout_rate))
+
+        model.add(Conv2D(512, (3, 3), padding='same', kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        if batch_norm:
+            model.add(BatchNormalization())
+
+        model.add(Dropout(dropout_rate))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides = (2, 2)))
+
+
+        # fc classfier
+        model.add(tf.keras.layers.experimental.preprocessing.Resizing(7,7))
+
+        model.add(Flatten())
+
+        model.add(Dense(2048, kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        model.add(Dropout(dropout_rate))
+
+        model.add(Dense(2048, kernel_initializer = 'he_normal'))
+        model.add(LeakyReLU(alpha = alpha))
+        model.add(Dropout(dropout_rate))
+        
+        model.add(Dense(classes, kernel_initializer = 'he_normal'))
+        model.add(Activation('softmax'))
+
+        return model
 
 def get_model(dataset_name, compile=True, weights=None):
     """Take dataset name and return corresponding untrained VGG16 model.
