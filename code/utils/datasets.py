@@ -6,6 +6,7 @@ where the data is formated as numpy arrays.
 Once a function as been added it should also be added to the DATASET_GETTERS list in
 the get_dataset function.
 """
+import numpy as np
 from tensorflow.keras import datasets
 
 
@@ -48,4 +49,7 @@ def _get_cifar100():
 
 
 def _get_mnist():
-    return datasets.mnist.load_data()
+    (x_train, y_train), (x_test, y_test) = datasets.mnist.load_data()
+    x_train = np.expand_dims(x_train, -1)
+    x_test = np.expand_dims(x_test, -1)
+    return (x_train, y_train), (x_test, y_test)
