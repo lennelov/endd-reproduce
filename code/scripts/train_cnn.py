@@ -36,4 +36,4 @@ model = cnn.get_model(dataset_name='cifar10', compile=True)
 model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
 
 # Save weights
-saveload.save_weights(model, "cnn")
+saveload.save_tf_model(model, "cnn")
