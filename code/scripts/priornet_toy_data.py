@@ -10,8 +10,6 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.math import lgamma,digamma
 import numpy as np
-import torch # only used for KaosEngineers dataset
-from torch.utils.data import Dataset, DataLoader # only used for KaosEngineers dataset
 import scipy.stats as stats
 import scipy.integrate as integrate
 import matplotlib.pyplot as plt
@@ -25,12 +23,11 @@ from utils.simplex_plot_function import *
 from utils.preprocess_toy_dataset import preprocess
 from utils.DirichletKL import DirichletKL
 from models.dense_priornet import get_model
-from utils.create_toy_data import SpiralDataset, OODSpiralDataset
+from utils.create_toy_data import create_mixed_data,create_spirals,create_circle
 
-Spiral = SpiralDataset(SAMPLES_PER_CLASS,NOISE,N_CLASSES)
-OOD = OODSpiralDataset(SAMPLES_OOD)
+X,Y = create_mixed_data(1000,1000,3)
 
-x_train,logits_train,x_test,y_test = preprocess(Spiral,OOD)
+x_train,logits_train,x_test,logits_test = preprocess(X,Y,0.8)
 model = get_model(N_CLASSES,N_LAYERS,N_NEURONS,activations = ACTIVATION)
 
 model.fit(
@@ -40,8 +37,7 @@ model.fit(
 
 logits = model.predict(x_test)
 predictions = tf.math.argmax(logits,axis = 1)
-real = tf.math.argmax(y_test,axis = 1)
-
+real = tf.math.argmax(logits_test,axis = 1)
 if PLOT_SIMPLEX and N_CLASSES == 2:
     plot_simplex(logits)
 
