@@ -8,8 +8,9 @@ sys.path.append(parent_dir_path)
 import settings
 from utils.DirichletKL import DirichletKL
 
+
 def get_model(dataset_name, compile=True, weights=None):
-        """Take dataset name and return corresponding untrained CNN model.
+    """Take dataset name and return corresponding untrained CNN model.
 
 	    Args:
 		dataset_name (str): Name of the dataset that the model will be used on,
@@ -23,28 +24,28 @@ def get_model(dataset_name, compile=True, weights=None):
 	    entropy loss, and accuracy metric.
 	"""
 
-        if dataset_name not in settings.DATASET_NAMES:
-            raise ValueError("""Dataset {} not recognized, please make sure it has been listed in
+    if dataset_name not in settings.DATASET_NAMES:
+        raise ValueError("""Dataset {} not recognized, please make sure it has been listed in
                             settings.py""".format(dataset_name))
 
-        input_shape = settings.DATASET_INPUT_SHAPES[dataset_name]
-        model = models.Sequential()
-        model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
-        model.add(layers.MaxPooling2D((2, 2)))
-        model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-        model.add(layers.MaxPooling2D((2, 2)))
-        model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-        model.add(layers.Flatten())
-        model.add(layers.Dense(64, activation='relu'))
-        model.add(layers.Dense(settings.DATASET_N_CLASSES[dataset_name],activation = 'exponential'))
-	
-        if weights:
-            saveload.load_weights(model, weights)
+    input_shape = settings.DATASET_INPUT_SHAPES[dataset_name]
+    model = models.Sequential()
+    model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dense(settings.DATASET_N_CLASSES[dataset_name], activation='exponential'))
 
-        if not compile:
-            return model
+    if weights:
+        saveload.load_weights(model, weights)
 
-        KL = DirichletKL()
-        model.compile(optimizer='adam', loss=KL)
-
+    if not compile:
         return model
+
+    KL = DirichletKL()
+    model.compile(optimizer='adam', loss=KL)
+
+    return model

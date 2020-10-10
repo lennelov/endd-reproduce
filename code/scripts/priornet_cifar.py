@@ -10,14 +10,12 @@ import tensorflow as tf
 
 from tensorflow.keras import datasets
 
-
 import settings
 from utils.simplex_plot_function import plot_simplex
 from utils.DirichletKL import DirichletKL
 from models.cnn_priorNet import get_model
 from utils.preprocess_priornet_cifar import preprocess
 from utils import saveload
-
 
 DATASET = 'cifar10_PN'
 PLOT_SIMPLEX = False
@@ -26,11 +24,12 @@ BATCH_SIZE = 100
 EPOCHS = 2
 
 (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
-train_images, train_logits, test_images, test_logits = preprocess(train_images, train_labels, test_images, test_labels)
+train_images, train_logits, test_images, test_logits = preprocess(train_images, train_labels,
+                                                                  test_images, test_labels)
 model = get_model(DATASET)
-model.fit(train_images,train_logits,batch_size = BATCH_SIZE,epochs = EPOCHS)
+model.fit(train_images, train_logits, batch_size=BATCH_SIZE, epochs=EPOCHS)
 if SAVE_WEIGHTS:
-	saveload.save_tf_model(model, "cnn_priorNet")
+    saveload.save_tf_model(model, "cnn_priorNet")
 
 logits = model.predict(test_images)
 predictions = tf.math.argmax(tf.squeeze(logits), axis=1)
@@ -38,4 +37,4 @@ real = tf.math.argmax(tf.squeeze(test_logits), axis=1)
 score = tf.math.reduce_sum(tf.cast(predictions == real, tf.float32)) / len(real)
 print('score: ' + str(score))
 if PLOT_SIMPLEX:
-	plot_simplex(logits)
+    plot_simplex(logits)
