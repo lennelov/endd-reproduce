@@ -5,12 +5,11 @@ import pathlib
 import os
 parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parent_dir_path)
-from settings_prior import *
-from settings import *
+import settings
 from utils.DirichletKL import DirichletKL
 
 
-def get_model(dataset_name,n_classes, compile=True, weights=None):
+def get_model(dataset_name, compile=True, weights=None):
         """Take dataset name and return corresponding untrained CNN model.
 	    Args:
 		dataset_name (str): Name of the dataset that the model will be used on,
@@ -23,11 +22,11 @@ def get_model(dataset_name,n_classes, compile=True, weights=None):
 	    If compile=True, model will be compiled with adam optimizer, categorical cross
 	    entropy loss, and accuracy metric.
 	"""
-        if dataset_name not in DATASET_NAMES:
+        if dataset_name not in settings.DATASET_NAMES:
             raise ValueError("""Dataset {} not recognized, please make sure it has been listed in
                             settings.py""".format(dataset_name))
 
-        input_shape = DATASET_INPUT_SHAPES[dataset_name]
+        input_shape = settings.DATASET_INPUT_SHAPES[dataset_name]
         model = models.Sequential()
         model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
         model.add(layers.MaxPooling2D((2, 2)))
@@ -36,7 +35,7 @@ def get_model(dataset_name,n_classes, compile=True, weights=None):
         model.add(layers.Conv2D(64, (3, 3), activation='relu'))
         model.add(layers.Flatten())
         model.add(layers.Dense(64, activation='relu'))
-        model.add(layers.Dense(n_classes,activation = 'exponential'))
+        model.add(layers.Dense(settings.DATASET_N_CLASSES[dataset_name],activation = 'exponential'))
 	
         if weights:
             saveload.load_weights(model, weights)

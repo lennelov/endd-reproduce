@@ -1,5 +1,5 @@
 import tensorflow as tf
-from settings_prior import *
+import settings
 def preprocess(train_images, train_labels, test_images, test_labels,ID_classes = 3):
         '''
         preprocesses train and test data from cifar10 for a prior net by taking the first ID_classes classes as ID and remaining as OOD.
@@ -15,7 +15,6 @@ def preprocess(train_images, train_labels, test_images, test_labels,ID_classes =
 		test_images (ndarray), 
 		test_logits (ndarray),
         '''
-        ID_classes = 3
         ID_test_index = tf.squeeze(tf.where(test_labels <=ID_classes-1))
         ID_test_index = ID_test_index[:,0]
 
