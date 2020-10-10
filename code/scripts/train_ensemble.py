@@ -59,13 +59,16 @@ model_module = settings.MODEL_MODULES[MODEL_TYPE]
 # update correctly even if script fails before all models have been trained and saved.
 try:
     saved_model_names = []
-    for i in range(NAME_START_NUMBER, N_MODELS+NAME_START_NUMBER):
+    for i in range(NAME_START_NUMBER, N_MODELS + NAME_START_NUMBER):
         print("Training model {}...".format(i))
         # Get model
         model = model_module.get_model(dataset_name=DATASET_NAME, compile=True)
 
         # Train model
-        model.fit(train_images, train_labels, epochs=N_EPOCHS, validation_data=(test_images, test_labels))
+        model.fit(train_images,
+                  train_labels,
+                  epochs=N_EPOCHS,
+                  validation_data=(test_images, test_labels))
         print("Model {} finished training.".format(i))
 
         # Save model

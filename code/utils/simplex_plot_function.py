@@ -3,7 +3,6 @@ Note, this is not our original work. The code below
 belongs to Thomas Boggs and is taken from Github
 https://gist.github.com/tboggs/8778945
 '''
-
 '''Functions for drawing contours of Dirichlet distributions.'''
 
 # Author: Thomas Boggs
@@ -23,6 +22,7 @@ _pairs = [_corners[np.roll(range(3), -i)[1:]] for i in range(3)]
 # The area of the triangle formed by point xy and another pair or points
 tri_area = lambda xy, pair: 0.5 * np.linalg.norm(np.cross(*(pair - xy)))
 
+
 def xy2bc(xy, tol=1.e-4):
     '''Converts 2D Cartesian coordinates to barycentric.
     Arguments:
@@ -31,7 +31,9 @@ def xy2bc(xy, tol=1.e-4):
     coords = np.array([tri_area(xy, p) for p in _pairs]) / _AREA
     return np.clip(coords, tol, 1.0 - tol)
 
+
 class Dirichlet(object):
+
     def __init__(self, alpha):
         '''Creates Dirichlet distribution with parameter `alpha`.'''
         from math import gamma
@@ -39,14 +41,16 @@ class Dirichlet(object):
         self._alpha = np.array(alpha)
         self._coef = gamma(np.sum(self._alpha)) / \
                      np.multiply.reduce([gamma(a) for a in self._alpha])
+
     def pdf(self, x):
         '''Returns pdf value for `x`.'''
         from operator import mul
-        return self._coef * np.multiply.reduce([xx ** (aa - 1)
-                                                for (xx, aa)in zip(x, self._alpha)])
+        return self._coef * np.multiply.reduce([xx**(aa - 1) for (xx, aa) in zip(x, self._alpha)])
+
     def sample(self, N):
         '''Generates a random sample of size `N`.'''
         return np.random.dirichlet(self._alpha, N)
+
 
 def draw_pdf_contours(dist, border=False, nlevels=200, subdiv=8, **kwargs):
     '''Draws pdf contours over an equilateral triangle (2-simplex).
@@ -72,6 +76,7 @@ def draw_pdf_contours(dist, border=False, nlevels=200, subdiv=8, **kwargs):
     if border is True:
         plt.triplot(_triangle, linewidth=1)
 
+
 def plot_points(X, barycentric=True, border=True, **kwargs):
     '''Plots a set of points in the simplex.
     Arguments:
@@ -92,29 +97,26 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
         plt.triplot(_triangle, linewidth=1)
 
 
-
 def plot_simplex(logits):
-	import seaborn as sn
-	import matplotlib.pyplot as plt
-	import numpy as np
-	from utils.simplex_plot_function import draw_pdf_contours, Dirichlet
+    import seaborn as sn
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from utils.simplex_plot_function import draw_pdf_contours, Dirichlet
 
-	font = {'family': 'serif',
-	            'color':  'black',
-	            'weight': 'normal',
-	            'size': 16,
-	            }
-	plt.style.use('seaborn-white')
-	plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
-	
-	if len(logits[0,:]) == 3:
-		for i in range(0,6):
-			plt.subplot(2, 3, i+1)
-			plt.title("logits: " + str(np.around(logits[i,:],decimals =1)) ,
-			        fontsize=18, ha='center')
-			plot_logits = logits[i,:]
-			draw_pdf_contours(Dirichlet(plot_logits))
-		
-		
+    font = {
+        'family': 'serif',
+        'color': 'black',
+        'weight': 'normal',
+        'size': 16,
+    }
+    plt.style.use('seaborn-white')
+    plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
 
-	
+    if len(logits[0, :]) == 3:
+        for i in range(0, 6):
+            plt.subplot(2, 3, i + 1)
+            plt.title("logits: " + str(np.around(logits[i, :], decimals=1)),
+                      fontsize=18,
+                      ha='center')
+            plot_logits = logits[i, :]
+            draw_pdf_contours(Dirichlet(plot_logits))
