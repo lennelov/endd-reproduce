@@ -8,9 +8,9 @@ sys.path.append(parent_dir_path)
 import settings
 from utils.DirichletKL import DirichletKL
 
-
 def get_model(dataset_name, compile=True, weights=None):
         """Take dataset name and return corresponding untrained CNN model.
+
 	    Args:
 		dataset_name (str): Name of the dataset that the model will be used on,
 		                    must be listed in settings.py.
@@ -22,6 +22,7 @@ def get_model(dataset_name, compile=True, weights=None):
 	    If compile=True, model will be compiled with adam optimizer, categorical cross
 	    entropy loss, and accuracy metric.
 	"""
+
         if dataset_name not in settings.DATASET_NAMES:
             raise ValueError("""Dataset {} not recognized, please make sure it has been listed in
                             settings.py""".format(dataset_name))
@@ -42,9 +43,8 @@ def get_model(dataset_name, compile=True, weights=None):
 
         if not compile:
             return model
-		
-        KL = DirichletKL()
-        model.compile(optimizer='adam',loss = KL)
 
-		
+        KL = DirichletKL()
+        model.compile(optimizer='adam', loss=KL)
+
         return model

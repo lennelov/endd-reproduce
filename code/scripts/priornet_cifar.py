@@ -1,5 +1,5 @@
 '''
-Creates and trains a conv model on the 
+Creates and trains a conv model on the cifar10 dataset
 '''
 import sys
 import pathlib
@@ -18,6 +18,7 @@ from models.cnn_priorNet import get_model
 from utils.preprocess_priornet_cifar import preprocess
 from utils import saveload
 
+
 DATASET = 'cifar10_PN'
 PLOT_SIMPLEX = False
 SAVE_WEIGHTS = False
@@ -32,9 +33,9 @@ if SAVE_WEIGHTS:
 	saveload.save_tf_model(model, "cnn_priorNet")
 
 logits = model.predict(test_images)
-predictions = tf.math.argmax(tf.squeeze(logits),axis = 1)
-real = tf.math.argmax(tf.squeeze(test_logits),axis = 1)
-score = tf.math.reduce_sum(tf.cast(predictions == real,tf.float32))/len(real)
+predictions = tf.math.argmax(tf.squeeze(logits), axis=1)
+real = tf.math.argmax(tf.squeeze(test_logits), axis=1)
+score = tf.math.reduce_sum(tf.cast(predictions == real, tf.float32)) / len(real)
 print('score: ' + str(score))
 if PLOT_SIMPLEX:
 	plot_simplex(logits)

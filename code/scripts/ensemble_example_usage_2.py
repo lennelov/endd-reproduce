@@ -17,7 +17,6 @@ import models.ensemble
 from utils import datasets
 from utils import saveload
 
-
 # Need these settings for GPU to work on my computer /Einar
 import tensorflow as tf
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
