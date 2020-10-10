@@ -23,24 +23,22 @@ N_EPOCHS = 20
 PLOT_SIMPLEX = False
 SAVE_WEIGHTS = False
 
-X,Y = create_mixed_data(settings.SAMPLES_PER_CLASS,settings.SAMPLES_OOD,
-	settings.DATASET_N_CLASSES[dataset],radius=settings.RADIUS,
-	ID_noise=settings.ID_NOISE,OOD_noise=settings.OOD_NOISE)
+X, Y = create_mixed_data(settings.SAMPLES_PER_CLASS,
+                         settings.SAMPLES_OOD,
+                         settings.DATASET_N_CLASSES[dataset],
+                         radius=settings.RADIUS,
+                         ID_noise=settings.ID_NOISE,
+                         OOD_noise=settings.OOD_NOISE)
 
-x_train,logits_train,x_test,logits_test = preprocess(X,Y,0.8)
-model = get_model(dataset,compile = True)
+x_train, logits_train, x_test, logits_test = preprocess(X, Y, 0.8)
+model = get_model(dataset, compile=True)
 
-model.fit(
-            x = x_train,
-            y = logits_train,
-            batch_size = BATCH_SIZE,epochs = N_EPOCHS)
+model.fit(x=x_train, y=logits_train, batch_size=BATCH_SIZE, epochs=N_EPOCHS)
 if SAVE_WEIGHTS:
-	saveload.save_tf_model(model, "dense_priornet")
+    saveload.save_tf_model(model, "dense_priornet")
 
 logits = model.predict(x_test)
-predictions = tf.math.argmax(logits,axis = 1)
-real = tf.math.argmax(logits_test,axis = 1)
+predictions = tf.math.argmax(logits, axis=1)
+real = tf.math.argmax(logits_test, axis=1)
 if PLOT_SIMPLEX and settings.DATASET_N_CLASSES[dataset] == 3:
     plot_simplex(logits)
-
-      
