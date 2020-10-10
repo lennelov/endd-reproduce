@@ -70,24 +70,12 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram
 # Train
 
 epochs = 45
-<<<<<<< HEAD
 init_lr = 0.001
 olp_callback = OneCycleLRPolicy(init_lr = init_lr, max_lr = 10*init_lr, min_lr = init_lr/1000, cycle_length = 30, epochs = epochs)
 model.fit(x = data_generator.flow(train_images, train_labels, batch_size = 128), 
 	epochs = epochs, 
 	validation_data = (test_images, test_labels),
 	callbacks = [tensorboard_callback, olp_callback])
-=======
-olp_callback = OneCycleLRPolicy(init_lr=0.001,
-                                max_lr=0.01,
-                                min_lr=0.000001,
-                                cycle_length=30,
-                                epochs=epochs)
-model.fit(x=data_generator.flow(train_images, train_labels, batch_size=128),
-          epochs=epochs,
-          validation_data=(test_images, test_labels),
-          callbacks=[tensorboard_callback, olp_callback])
->>>>>>> train-vgg
 
 # Save weights
 saveload.save_weights(model, "vgg")
