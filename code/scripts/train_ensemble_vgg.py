@@ -71,14 +71,12 @@ model_module = settings.MODEL_MODULES[MODEL_TYPE]
 # Callbacks
 init_lr = 0.001
 olp_callback = OneCycleLRPolicy(init_lr=init_lr,
-                                max_lr=init_lr*10,
-                                min_lr=init_lr/1000,
+                                max_lr=init_lr * 10,
+                                min_lr=init_lr / 1000,
                                 cycle_length=30,
                                 epochs=N_EPOCHS)
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
-
-
 
 # Train and save ensemble
 # Try-finally construct ensures that the list of trained models in the ensemble is
@@ -91,10 +89,10 @@ try:
         model = model_module.get_model(dataset_name=DATASET_NAME, compile=True)
 
         # Train model
-        model.fit(x=data_generator.flow(train_images, train_labels, batch_size=128), 
-          epochs=N_EPOCHS, 
-          validation_data=(test_images, test_labels),
-          callbacks=[tensorboard_callback, olp_callback])
+        model.fit(x=data_generator.flow(train_images, train_labels, batch_size=128),
+                  epochs=N_EPOCHS,
+                  validation_data=(test_images, test_labels),
+                  callbacks=[tensorboard_callback, olp_callback])
         print("Model {} finished training.".format(i))
 
         # Save model
