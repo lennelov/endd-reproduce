@@ -2,6 +2,7 @@ import tensorflow as tf
 
 import settings
 
+
 def preprocess(train_images, train_labels, test_images, test_labels, ID_classes=3):
     '''
         preprocesses train and test data from cifar10 for a prior net by taking the first ID_classes classes as ID and remaining as OOD.
