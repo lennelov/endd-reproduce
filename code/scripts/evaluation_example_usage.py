@@ -32,10 +32,14 @@ _, (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
 test_labels = test_labels.reshape(-1)
 
 # Calculate measures
-ensm_measures = evaluation.calc_classification_measures(ensm, test_images, test_labels,
+ensm_measures = evaluation.calc_classification_measures(ensm,
+                                                        test_images,
+                                                        test_labels,
                                                         wrapper_type=ensm_wrapper_type)
 
-ind_measures = evaluation.calc_classification_measures(ind, test_images, test_labels,
+ind_measures = evaluation.calc_classification_measures(ind,
+                                                       test_images,
+                                                       test_labels,
                                                        wrapper_type=ind_wrapper_type)
 
 # Format and print results

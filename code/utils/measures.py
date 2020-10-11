@@ -5,6 +5,7 @@ import numpy as np
 import sklearn.metrics
 from uncertainty_metrics.numpy.general_calibration_error import ece
 
+
 def _probs_to_classes(probs):
     """Return chosen class as an integer."""
     return np.argmax(probs, axis=-1)
@@ -57,6 +58,7 @@ def _calc_uns_curve(probs, labels, n_threshold_steps=10):
         rejection_rates.append(_calc_rejection_rate(max_probs, threshold))
         errs.append(_calc_not_rejected_err(max_probs, preds, labels, threshold))
     return rejection_rates, errs
+
 
 def _calc_rejection_rate(max_probs, threshold):
     """Return rejection rate."""

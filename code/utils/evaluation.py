@@ -19,6 +19,7 @@ from utils import measures
 
 class EnsembleClassifier:
     """Wraps an ensemble model predicting a list of logits."""
+
     def __init__(self, model):
         self.model = model
 
@@ -36,6 +37,7 @@ class EnsembleClassifier:
 
 class IndividualClassifier:
     """Wraps a model predicting logits."""
+
     def __init__(self, model):
         self.model = model
 
@@ -48,10 +50,7 @@ class IndividualClassifier:
         return self.model.predict(x)
 
 
-CLASSIFIER_WRAPPERS = {
-    'ensemble': EnsembleClassifier,
-    'individual': IndividualClassifier
-}
+CLASSIFIER_WRAPPERS = {'ensemble': EnsembleClassifier, 'individual': IndividualClassifier}
 
 
 def calc_classification_measures(model, images, labels, wrapper_type=None):
@@ -92,12 +91,7 @@ def calc_classification_measures(model, images, labels, wrapper_type=None):
     ece = measures.calc_ece(probs, labels)
     nll = measures.calc_nll(probs, labels)
 
-    output = {
-        'err': err,
-        'prr': prr,
-        'ece': ece,
-        'nll': nll
-    }
+    output = {'err': err, 'prr': prr, 'ece': ece, 'nll': nll}
 
     return output
 
