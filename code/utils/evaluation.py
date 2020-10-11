@@ -1,3 +1,8 @@
+"""This module features basic evaluation functionality.
+
+See scripts/evaluation_example_usage.py for an example of how the module can be used.
+"""
+
 import sys
 import os
 sys.path.append("/home/lennelov/Repositories/endd-reproduce/code")
@@ -7,14 +12,13 @@ import numpy as np
 
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
-import settings
 
-from code.utils import measures
-from code.utils import saveload
-from code.utils import datasets
-from code.models import ensemble as ensembles
+import settings
+from utils import measures
+
 
 class EnsembleClassifier:
+    """Wraps an ensemble model predicting a list of logits."""
     def __init__(self, model):
         self.model = model
 
@@ -30,8 +34,8 @@ class EnsembleClassifier:
         return self.model.predict(x)
 
 
-
 class IndividualClassifier:
+    """Wraps a model predicting logits."""
     def __init__(self, model):
         self.model = model
 
@@ -44,41 +48,74 @@ class IndividualClassifier:
         return self.model.predict(x)
 
 
+CLASSIFIER_WRAPPERS = {
+    'ensemble': EnsembleClassifier,
+    'individual': IndividualClassifier
+}
 
-MODEL_NAME = 'basic_cnn'
-DATASET_NAME = 'cifar10'
+
+def calc_classification_measures(model, images, labels, wrapper_type=None):
+    """Return dict containing classification measures.
+
+    If model.predict() returns a normalized probability distribution, wrapper_type can
+    be omitted. If it returns a single array of logits, 'individual' should be used.
+    If the model is an ensemble and returns a list of logits, 'ensemble' should be used.
+
+    Args:
+        model: Trained classification model to be evaluated.
+        images (np.Array): Test images.
+        labels (np.Array): Test labels with onehot encoding.
+        wrapper_type (str): Type of wrapper needed by the classifier, must be listed in
+                            CLASSIFIER_WRAPPERS in evaluation.py if provided (default None).
+
+    Returns:
+        (dict) with format
+            results = {
+                'err': float,
+                'prr': float,
+                'ece': float,
+                'nll': float
+            }
+    """
+
+    if wrapper_type is not None and wrapper_type not in CLASSIFIER_WRAPPERS:
+        raise ValueError("""wrapper_type {} not recognized, make sure it has been added to
+                            CLASSIFIER_WRAPPERS in evaluation.py and that a corresponding
+                            wrapper exists.""")
+
+    if wrapper_type:
+        clf = CLASSIFIER_WRAPPERS[wrapper_type](model)
+
+    probs = clf.predict(images)
+    err = measures.calc_err(probs, labels)
+    prr = measures.calc_prr(probs, labels)
+    ece = measures.calc_ece(probs, labels)
+    nll = measures.calc_nll(probs, labels)
+
+    output = {
+        'err': err,
+        'prr': prr,
+        'ece': ece,
+        'nll': nll
+    }
+
+    return output
 
 
-# Prepare classifiers
-ensemble_model_names = saveload.get_ensemble_model_names()
-model_names = ensemble_model_names[MODEL_NAME][DATASET_NAME][:3]
-models = [ensembles.KerasLoadsWhole(name) for name in model_names]
-ensemble = ensembles.Ensemble(models)
-ensm = EnsembleClassifier(ensemble)
-ind = IndividualClassifier(ensemble.get_model(model_names[0]).get_model())
+def format_results(model_names, model_measures):
+    """Format results into readable string."""
+    s = "== EVALUATION RESULTS ==\n"
+    s += "ERR (classification error)\n"
+    for name, measures in zip(model_names, model_measures):
+        s += "    {}: {}\n".format(name, measures['err'])
+    s += "PRR (prediction rejection rate)\n"
+    for name, measures in zip(model_names, model_measures):
+        s += "    {}: {}\n".format(name, measures['prr'])
+    s += "ECE (expected calibration error)\n"
+    for name, measures in zip(model_names, model_measures):
+        s += "    {}: {}\n".format(name, measures['ece'])
+    s += "NLL (negative log-likelihood)\n"
+    for name, measures in zip(model_names, model_measures):
+        s += "    {}: {}\n".format(name, measures['nll'])
 
-# Load data
-_, (images, labels) = datasets.get_dataset(DATASET_NAME)
-
-# Preprocess data
-labels = labels.reshape(-1)
-
-# Make predictions
-probs_ind = ind.predict(images)
-probs_ensm = ensm.predict(images)
-
-# Compute ERR
-err_ind = measures.calc_err(probs_ind, labels)
-err_ensm = measures.calc_err(probs_ensm, labels)
-
-# Compute PRR
-prr_ind = measures.calc_prr(probs_ind, labels)
-prr_ensm = measures.calc_prr(probs_ensm, labels)
-
-# Compute ECE
-ece_ind = measures.calc_ece(probs_ind, labels)
-ece_ensm = measures.calc_ece(probs_ensm, labels)
-
-# Compute NLL
-nll_ind = measures.calc_nll(probs_ind, labels)
-nll_ensm = measures.calc_nll(probs_ensm, labels)
+    return s
