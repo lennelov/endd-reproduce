@@ -3,16 +3,8 @@
 See scripts/evaluation_example_usage.py for an example of how the module can be used.
 """
 
-import sys
-import os
-sys.path.append("/home/lennelov/Repositories/endd-reproduce/code")
-
 import tensorflow as tf
 import numpy as np
-
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
-
 import settings
 from utils import measures
 
