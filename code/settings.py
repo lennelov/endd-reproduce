@@ -20,7 +20,7 @@ MODEL_MODULES = {
     'cnn': cnn,
     'vgg': vgg,
     'cnn_priorNet': cnn_priorNet,
-    'dense_priorNet': dense_priorNet
+    'dense_priornet': dense_priorNet
 }
 
 # synthetic data hyperparams
