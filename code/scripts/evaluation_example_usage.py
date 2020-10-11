@@ -38,8 +38,6 @@ ensm_measures = evaluation.calc_classification_measures(ensm, test_images, test_
 ind_measures = evaluation.calc_classification_measures(ind, test_images, test_labels,
                                                        wrapper_type=ind_wrapper_type)
 
-
-summary = evaluation.format_results(['ENSM', 'IND'],
-                                    [ensm_measures, ind_measures])
-
+# Format and print results
+summary = evaluation.format_results(['ENSM', 'IND'], [ensm_measures, ind_measures])
 print(summary)
