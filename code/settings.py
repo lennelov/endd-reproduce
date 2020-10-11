@@ -15,8 +15,8 @@ DATASET_INPUT_SHAPES = {
 DATASET_N_CLASSES = {"cifar10": 10, "cifar100": 100, "mnist": 10, "synthetic": 3, "cifar10_PN": 3}
 
 # Model metadata
-from models import cnn, vgg, cnn_priorNet
-MODEL_MODULES = {'cnn': cnn, 'vgg': vgg, 'cnn_priorNet': cnn_priorNet}
+from models import cnn, vgg, cnn_priorNet, dense_priorNet
+MODEL_MODULES = {'cnn': cnn, 'vgg': vgg, 'cnn_priorNet': cnn_priorNet, 'dense_priorNet': dense_priorNet}
 
 # synthetic data hyperparams
 
