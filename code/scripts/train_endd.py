@@ -46,7 +46,6 @@ train_set, test_set = datasets.get_ensemble_dataset(cnn_ensemble, DATASET_NAME)
 train_images, train_labels, train_ensemble_preds = train_set
 test_images, test_labels, test_ensemble_preds = test_set
 
-
 # Normalize data
 if NORMALIZATION == "-1to1":
     train_images, min, max = preprocessing.normalize_minus_one_to_one(train_images)
@@ -78,9 +77,7 @@ print('mean of 5 ensembles for picture 1: ' + str(tf.math.reduce_mean(tf.nn.soft
 print('score: ' + str(score))
 
 # Evaluate
-measures = evaluation.calc_classification_measures(endd_model,
-                                                   test_images,
-                                                   test_labels,
+measures = evaluation.calc_classification_measures(endd_model, test_images, test_labels,
                                                    wrapper_type='individual')
 
 results = evaluation.format_results(['endd'], [measures])
