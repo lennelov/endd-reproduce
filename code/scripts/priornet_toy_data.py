@@ -11,8 +11,8 @@ import numpy as np
 import keras
 #other functions
 import settings
-from utils.simplex_plot_function import plot_simplex
-from utils.preprocess_toy_dataset import preprocess
+from utils.simplex import plot_simplex
+from utils import preprocessing
 from models.dense_priornet import get_model
 from utils.create_toy_data import create_mixed_data
 import utils.saveload as saveload
@@ -30,7 +30,7 @@ X, Y = create_mixed_data(settings.SAMPLES_PER_CLASS,
                          ID_noise=settings.ID_NOISE,
                          OOD_noise=settings.OOD_NOISE)
 
-x_train, logits_train, x_test, logits_test = preprocess(X, Y, 0.8)
+x_train, logits_train, x_test, logits_test = preprocessing.preprocess_toy_dataset(X, Y, 0.8)
 model = get_model(dataset, compile=True)
 
 model.fit(x=x_train, y=logits_train, batch_size=BATCH_SIZE, epochs=N_EPOCHS)
