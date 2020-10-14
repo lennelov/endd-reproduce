@@ -47,13 +47,13 @@ def normalize_minus_one_to_one(images, min=None, max=None):
     if min is not None or max is not None:
         if min < 0:
             images = images + (-min)
-        return images / (max/2) - 1
+        return images / (max / 2) - 1
 
     min = images.min()
     if min < 0:
         images = images + (-min)
     max = images.max()
-    img = images / (max/2) - 1
+    img = images / (max / 2) - 1
     return images, min, max
 
 
@@ -73,12 +73,16 @@ def normalize_minus_one_to_one_individually(images):
         if min < 0:
             img = img + (-min)
         max = img.max()
-        img = img / (max/2) - 1
+        img = img / (max / 2) - 1
         new_images.append(img)
     return np.stack(new_images, axis=0)
 
 
-def preprocess_cifar_for_priornet(train_images, train_labels, test_images, test_labels, ID_classes=3):
+def preprocess_cifar_for_priornet(train_images,
+                                  train_labels,
+                                  test_images,
+                                  test_labels,
+                                  ID_classes=3):
     '''
         preprocesses train and test data from cifar10 for a prior net by taking the first ID_classes classes as ID and remaining as OOD.
 	Args:

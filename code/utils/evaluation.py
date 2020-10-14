@@ -9,9 +9,10 @@ import settings
 from utils import measures
 from utils import classifiers
 
-
-CLASSIFIER_WRAPPERS = {'ensemble': classifiers.EnsembleClassifier,
-                       'individual': classifiers.IndividualClassifier}
+CLASSIFIER_WRAPPERS = {
+    'ensemble': classifiers.EnsembleClassifier,
+    'individual': classifiers.IndividualClassifier
+}
 
 
 def calc_classification_measures(model, images, labels, wrapper_type=None):

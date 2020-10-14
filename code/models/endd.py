@@ -1,5 +1,6 @@
 from utils import losses
 
+
 def get_model(base_model):
     """Take an uncompiled model and return model compiled for ENDD.
 
