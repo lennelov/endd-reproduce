@@ -21,16 +21,15 @@ from models import cnn, endd, ensemble
 from utils import evaluation, preprocessing, saveload, simplex, datasets
 
 # Set names for loading and saving
-ENSEMBLE_LOAD_NAME = 'basic_cnn'
-DATASET_NAME = 'cifar10'
-MODEL_SAVE_NAME = 'endd'
+ENSEMBLE_LOAD_NAME = 'basic_cnn'  # Name of ensemble to use for training
+DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
+MODEL_SAVE_NAME = 'endd'  # Name to use when saving model
 
 # Set training parameters
-N_MODELS = 20
-N_EPOCHS = 40
-BATCH_SIZE = 500
-NORMALIZATION = "-1to1"
-RUN_EAGERLY = False
+N_MODELS = 20  # Number of models to include in ensemble
+N_EPOCHS = 40  # Number of epochs to train for
+BATCH_SIZE = 500  # Batch size
+NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian'}
 
 # Load ensemble models
 ensemble_model_names = saveload.get_ensemble_model_names()
