@@ -46,6 +46,7 @@ def calc_classification_measures(model, images, labels, wrapper_type=None):
     if wrapper_type:
         clf = CLASSIFIER_WRAPPERS[wrapper_type](model)
 
+    labels = labels.reshape((-1,))
     probs = clf.predict(images)
     err = measures.calc_err(probs, labels)
     prr = measures.calc_prr(probs, labels)

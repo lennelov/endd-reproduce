@@ -26,11 +26,10 @@ DATASET_NAME = 'cifar10'
 MODEL_SAVE_NAME = 'endd'
 
 # Set training parameters
-N_MODELS = 5
-EPOCHS = 40
+N_MODELS = 20
+N_EPOCHS = 40
 BATCH_SIZE = 500
 NORMALIZATION = "-1to1"
-PLOT_SIMPLEX = False
 RUN_EAGERLY = False
 
 # Load ensemble models
@@ -53,26 +52,35 @@ if NORMALIZATION == "-1to1":
     test_images = preprocessing.normalize_minus_one_to_one(test_images, min, max)
 elif NORMALIZATION == 'gaussian':
     train_images, mean, std = preprocessing.normalize_gaussian(train_images)
-    test_images = preprocessing.normalize_gaussian(test_images, mean std)
+    test_images = preprocessing.normalize_gaussian(test_images, mean, std)
 
-# Predict with ensemble
+# Build ENDD model
 base_model = cnn.get_model(DATASET_NAME, compile=False)
 endd_model = endd.get_model(base_model)
 
-endd_model.fit(train_images, ensemble_preds, batch_size=BATCH_SIZE, epochs=EPOCHS)
+# Train ENDD model
+endd_model.fit(train_images, train_ensemble_preds, batch_size=BATCH_SIZE, epochs=N_EPOCHS)
 if MODEL_SAVE_NAME:
-    saveload.save_tf_model(model, MODEL_SAVE_NAME)
+    saveload.save_tf_model(endd_model, MODEL_SAVE_NAME)
 
+# Predict and show outputs
 logits = endd_model.predict(test_images)
 alphas = tf.math.exp(logits)
 predictions = tf.cast(tf.math.argmax(tf.squeeze(logits), axis=1),dtype = tf.float32)
-test_labels = tf.cast(tf.squeeze(test_labels),dtype = tf.float32)
+# test_labels = tf.cast(tf.squeeze(test_labels),dtype = tf.float32)
 
 score = tf.math.reduce_sum(tf.cast(tf.math.equal(predictions, test_labels), tf.float32)) / len(test_labels)
 print('alphas for picture 1: ' + str(alphas[0,:]))
 print('alphas for picture 1: ' + str(alphas[1,:]))
 print('alphas for picture 1: ' + str(alphas[2,:]))
-print('mean of 5 ensembles for picture 1: ' + str(tf.math.reduce_mean(tf.nn.softmax(ensemble_preds[0,:,:],axis = 1),axis = 0)))
+print('mean of 5 ensembles for picture 1: ' + str(tf.math.reduce_mean(tf.nn.softmax(train_ensemble_preds[0,:,:],axis = 1),axis = 0)))
 print('score: ' + str(score))
-if PLOT_SIMPLEX:
-    simplex.plot_simplex(logits)
+
+# Evaluate
+measures = evaluation.calc_classification_measures(endd_model,
+                                                   test_images,
+                                                   test_labels.reshape((-1,)),
+                                                   wrapper_type='individual')
+
+s = evaluation.format_results(['endd'], [measures])
+print(s)
