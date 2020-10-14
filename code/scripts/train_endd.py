@@ -17,26 +17,21 @@ import numpy as np
 import tensorflow.keras as keras
 import settings
 
-from models import cnn, endd
-from utils import preprocessing
-from utils import saveload
-from utils import simplex
-from utils import datasets
-from models import ensemble
+from models import cnn, endd, ensemble
+from utils import evaluation, preprocessing, saveload, simplex, datasets
 
-
-from utils.DirichletEnDDLoss import DirichletEnDDLoss
-
+# Set names for loading and saving
 ENSEMBLE_LOAD_NAME = 'basic_cnn'
 DATASET_NAME = 'cifar10'
 MODEL_SAVE_NAME = 'endd'
 
+# Set training parameters
 N_MODELS = 5
-PLOT_SIMPLEX = False
-BATCH_SIZE = 500
 EPOCHS = 40
-RUN_EAGERLY = False
+BATCH_SIZE = 500
 NORMALIZATION = "-1to1"
+PLOT_SIMPLEX = False
+RUN_EAGERLY = False
 
 # Load ensemble models
 ensemble_model_names = saveload.get_ensemble_model_names()
