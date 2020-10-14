@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow.keras as keras
 import settings
-import utils.saveload as saveload
+from utils import saveload
 
 
 def get_model(dataset_name, compile=True, weights=None):
