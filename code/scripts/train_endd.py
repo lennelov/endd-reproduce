@@ -11,78 +11,64 @@ import tensorflow as tf
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
-from models import ensemble
-from tensorflow.keras import datasets
-from utils.NLLensemble import DirichletEnDDLoss
-
-
-from tensorflow.keras import datasets
-
+# Imports
+import tensorflow as tf
+import numpy as np
+import tensorflow.keras as keras
 import settings
-from utils.simplex_plot_function import plot_simplex
 
-#from models.cnn_priorNet import get_model
-from models.cnn import get_model
-
-from utils.NLLensemble import DirichletEnDDLoss
+from models import cnn, endd
+from utils import preprocessing
 from utils import saveload
+from utils import simplex
+from utils import datasets
+from models import ensemble
 
-DATASET = 'cifar10'
+
+from utils.DirichletEnDDLoss import DirichletEnDDLoss
+
+ENSEMBLE_LOAD_NAME = 'basic_cnn'
+DATASET_NAME = 'cifar10'
+MODEL_SAVE_NAME = 'endd'
+
+N_MODELS = 5
 PLOT_SIMPLEX = False
-SAVE_WEIGHTS = False
 BATCH_SIZE = 500
 EPOCHS = 40
-RUN_EAGERLY = False #debugging
-#load ensemble
-if __name__ == "__main__":
-    # Note: in below example, it is assumed that there is a trained Keras model
-    # saved with saveload.save_model, saved using the name 'cnn'
+RUN_EAGERLY = False
+NORMALIZATION = "-1to1"
 
-    # Wrap models
-    model1 = ensemble.KerasLoadsWhole(model_load_name="vgg_cifar10_cifar10_71", name="cnn_1")
-    model2 = ensemble.KerasLoadsWhole(model_load_name="vgg_cifar10_cifar10_87", name="cnn_2")
-    model3 = ensemble.KerasLoadsWhole(model_load_name="vgg_cifar10_cifar10_18", name="cnn_3")
-    model4 = ensemble.KerasLoadsWhole(model_load_name="vgg_cifar10_cifar10_50", name="cnn_4")
-    model5 = ensemble.KerasLoadsWhole(model_load_name="vgg_cifar10_cifar10_86", name="cnn_5")
+# Load ensemble models
+ensemble_model_names = saveload.get_ensemble_model_names()
+model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
+model_names = model_names[:N_MODELS]
+wrapped_models = [ensemble.KerasLoadsWhole(name) for name in model_names]
 
+# Build ensemble
+cnn_ensemble = ensemble.Ensemble(wrapped_models)
 
-    # Build ensemble
-    cnn_models = [model1, model2,model3,model4,model5]
-    cnn_ensemble = ensemble.Ensemble(cnn_models)
+# Load ensemble dataset
+train_set, test_set = datasets.get_ensemble_dataset(cnn_ensemble, DATASET_NAME)
+train_images, train_labels, train_ensemble_preds = train_set
+test_images, test_labels, test_ensemble_preds = test_set
 
-    # Load data
-    (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
+# Normalize data
+if NORMALIZATION == "-1to1":
+    train_images, min, max = preprocessing.normalize_minus_one_to_one(train_images)
+    test_images = preprocessing.normalize_minus_one_to_one(test_images, min, max)
+elif NORMALIZATION == 'gaussian':
+    train_images, mean, std = preprocessing.normalize_gaussian(train_images)
+    test_images = preprocessing.normalize_gaussian(test_images, mean std)
 
-    #normalize data
-    normalization = "-1to1"
-    if normalization == "-1to1":
-	    train_images = train_images / 127.5
-	    train_images = train_images - 1.0
-	    test_images = test_images / 127.5
-	    test_images = test_images - 1.0
+# Predict with ensemble
+base_model = cnn.get_model(DATASET_NAME, compile=False)
+endd_model = endd.get_model(base_model)
 
-    # Predict with ensemble
-    ensemble_preds = cnn_ensemble.predict(train_images)
-    print("Ensemble preds shape: {}".format(ensemble_preds.shape))
+endd_model.fit(train_images, ensemble_preds, batch_size=BATCH_SIZE, epochs=EPOCHS)
+if MODEL_SAVE_NAME:
+    saveload.save_tf_model(model, MODEL_SAVE_NAME)
 
-ensemble_preds = tf.transpose(ensemble_preds,[1,0,2])
-if RUN_EAGERLY:
-	print(ensemble_preds.shape)
-	print("pred 1")
-	print(tf.nn.softmax(ensemble_preds[0,0,:],axis = 0))
-	print("pred 2")
-	print(tf.nn.softmax(ensemble_preds[0,1,:],axis = 0))
-
-
-model = get_model(DATASET,compile = False) #change this to a vgg model for better accuracy I can not run this on my computer
-model.compile(optimizer='adam',
-                  loss= DirichletEnDDLoss(),run_eagerly = RUN_EAGERLY)
-
-model.fit(train_images, ensemble_preds, batch_size=BATCH_SIZE, epochs=EPOCHS)
-if SAVE_WEIGHTS:
-    saveload.save_tf_model(model, "EnDD")
-
-logits = model.predict(test_images)
+logits = endd_model.predict(test_images)
 alphas = tf.math.exp(logits)
 predictions = tf.cast(tf.math.argmax(tf.squeeze(logits), axis=1),dtype = tf.float32)
 test_labels = tf.cast(tf.squeeze(test_labels),dtype = tf.float32)
@@ -94,4 +80,4 @@ print('alphas for picture 1: ' + str(alphas[2,:]))
 print('mean of 5 ensembles for picture 1: ' + str(tf.math.reduce_mean(tf.nn.softmax(ensemble_preds[0,:,:],axis = 1),axis = 0)))
 print('score: ' + str(score))
 if PLOT_SIMPLEX:
-    plot_simplex(logits)
+    simplex.plot_simplex(logits)
