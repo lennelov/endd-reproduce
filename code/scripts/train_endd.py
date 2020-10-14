@@ -2,11 +2,14 @@
 Creates and trains a priornet on the EnDD data.
 '''
 import sys
-import pathlib
 import os
-parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.append(parent_dir_path)
+# parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+# sys.path.append(parent_dir_path)
+sys.path.append('/home/lennelov/Repositories/endd-reproduce/code')
 import tensorflow as tf
+
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 from models import ensemble
 from tensorflow.keras import datasets
@@ -24,7 +27,7 @@ from models.cnn import get_model
 from utils.NLLensemble import DirichletEnDDLoss
 from utils import saveload
 
-DATASET = 'cifar10' 
+DATASET = 'cifar10'
 PLOT_SIMPLEX = False
 SAVE_WEIGHTS = False
 BATCH_SIZE = 500
@@ -45,7 +48,7 @@ if __name__ == "__main__":
 
     # Build ensemble
     cnn_models = [model1, model2,model3,model4,model5]
-    cnn_ensemble = ensemble.Ensemble(cnn_models) 
+    cnn_ensemble = ensemble.Ensemble(cnn_models)
 
     # Load data
     (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
