@@ -13,3 +13,7 @@ go in this folder.
 
 ## utils
 Should contain general utility code handling things such as I/O or preprocessing.
+
+
+## examples
+Should contain example code showcasing the functionality of other parts of the codebase.
