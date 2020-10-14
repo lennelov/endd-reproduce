@@ -101,7 +101,7 @@ def plot_simplex(logits):
     import seaborn as sn
     import matplotlib.pyplot as plt
     import numpy as np
-    from utils.simplex_plot_function import draw_pdf_contours, Dirichlet
+    from utils.simplex import draw_pdf_contours, Dirichlet
 
     font = {
         'family': 'serif',
