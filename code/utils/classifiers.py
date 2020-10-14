@@ -3,6 +3,7 @@
 import numpy as np
 import tensorflow as tf
 
+
 class EnsembleClassifier:
     """Wraps an ensemble model predicting a list of logits."""
 

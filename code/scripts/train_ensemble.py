@@ -50,8 +50,8 @@ from utils import datasets
 # Preprocess
 train_labels = tf.one_hot(train_labels.reshape((-1,)), settings.DATASET_N_CLASSES[DATASET_NAME])
 test_labels = tf.one_hot(test_labels.reshape((-1,)), settings.DATASET_N_CLASSES[DATASET_NAME])
-train_images = tf.image.per_image_standardization(tf.cast(train_images,dtype=tf.float32))
-test_images = tf.image.per_image_standardization(tf.cast(test_images,dtype=tf.float32))
+train_images = tf.image.per_image_standardization(tf.cast(train_images, dtype=tf.float32))
+test_images = tf.image.per_image_standardization(tf.cast(test_images, dtype=tf.float32))
 # Get model module (python file with get_model function)
 model_module = settings.MODEL_MODULES[MODEL_TYPE]
 

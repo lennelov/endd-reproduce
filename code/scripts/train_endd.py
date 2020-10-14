@@ -65,14 +65,16 @@ if MODEL_SAVE_NAME:
 # Predict and show outputs
 logits = endd_model.predict(test_images)
 alphas = tf.math.exp(logits)
-predictions = tf.cast(tf.math.argmax(tf.squeeze(logits), axis=1),dtype = tf.float32)
-test_labels_tf = tf.cast(tf.squeeze(test_labels.copy()),dtype = tf.float32)
+predictions = tf.cast(tf.math.argmax(tf.squeeze(logits), axis=1), dtype=tf.float32)
+test_labels_tf = tf.cast(tf.squeeze(test_labels.copy()), dtype=tf.float32)
 
-score = tf.math.reduce_sum(tf.cast(tf.math.equal(predictions, test_labels_tf), tf.float32)) / len(test_labels_tf)
-print('alphas for picture 1: ' + str(alphas[0,:]))
-print('alphas for picture 1: ' + str(alphas[1,:]))
-print('alphas for picture 1: ' + str(alphas[2,:]))
-print('mean of 5 ensembles for picture 1: ' + str(tf.math.reduce_mean(tf.nn.softmax(train_ensemble_preds[0,:,:],axis = 1),axis = 0)))
+score = tf.math.reduce_sum(tf.cast(tf.math.equal(predictions, test_labels_tf),
+                                   tf.float32)) / len(test_labels_tf)
+print('alphas for picture 1: ' + str(alphas[0, :]))
+print('alphas for picture 1: ' + str(alphas[1, :]))
+print('alphas for picture 1: ' + str(alphas[2, :]))
+print('mean of 5 ensembles for picture 1: ' +
+      str(tf.math.reduce_mean(tf.nn.softmax(train_ensemble_preds[0, :, :], axis=1), axis=0)))
 print('score: ' + str(score))
 
 # Evaluate
