@@ -78,7 +78,9 @@ print('mean of 5 ensembles for picture 1: ' +
 print('score: ' + str(score))
 
 # Evaluate
-measures = evaluation.calc_classification_measures(endd_model, test_images, test_labels,
+measures = evaluation.calc_classification_measures(endd_model,
+                                                   test_images,
+                                                   test_labels,
                                                    wrapper_type='individual')
 
 results = evaluation.format_results(['endd'], [measures])
