@@ -59,20 +59,28 @@ def calc_classification_measures(model, images, labels, wrapper_type=None):
     return output
 
 
-def format_results(model_names, model_measures):
-    """Format results into readable string."""
+def format_results(model_names, model_measures, dataset_name=None):
+    """Format results into readable string.
+
+    Args:
+        model_names (List[str]): List of names.
+        model_measures List[Dict]: List of measures dicts.
+        dataset_name (str): Name of dataset (optional).
+    """
     s = "== EVALUATION RESULTS ==\n"
+    if dataset_name:
+        s += "Dataset: {}\n".format(dataset_name)
     s += "ERR (classification error)\n"
     for name, measures in zip(model_names, model_measures):
-        s += "    {}: {}\n".format(name, measures['err'])
+        s += "    {}: {:.1f}%\n".format(name, 100*measures['err'])
     s += "PRR (prediction rejection rate)\n"
     for name, measures in zip(model_names, model_measures):
-        s += "    {}: {}\n".format(name, measures['prr'])
+        s += "    {}: {:.1f}%\n".format(name, 100*measures['prr'])
     s += "ECE (expected calibration error)\n"
     for name, measures in zip(model_names, model_measures):
-        s += "    {}: {}\n".format(name, measures['ece'])
+        s += "    {}: {:.3f}\n".format(name, measures['ece'])
     s += "NLL (negative log-likelihood)\n"
     for name, measures in zip(model_names, model_measures):
-        s += "    {}: {}\n".format(name, measures['nll'])
+        s += "    {}: {:.3f}\n".format(name, measures['nll'])
 
     return s
