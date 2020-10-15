@@ -6,7 +6,7 @@ import os
 parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parent_dir_path)
 import settings
-from utils.DirichletKL import DirichletKL
+from utils import losses
 
 
 def get_model(dataset_name, compile=True, weights=None):
@@ -45,7 +45,7 @@ def get_model(dataset_name, compile=True, weights=None):
     if not compile:
         return model
 
-    KL = DirichletKL()
+    KL = losses.DirichletKL()
     model.compile(optimizer='adam', loss=KL)
 
     return model

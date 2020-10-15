@@ -24,8 +24,8 @@ MODEL_TYPE = 'cnn'  # Name of model module {cnn, vgg}  Note: probably won't work
 ENSEMBLE_SAVE_NAME = 'basic_cnn'  # Name that the ensemble models will be saved with
 NAME_START_NUMBER = 0  # Start number for model naming (set to 0 unless continuing previous training)
 DATASET_NAME = 'cifar10'  # Name of dataset {cifar10, cifar100, mnist}
-N_MODELS = 20  # Number of models to train
-N_EPOCHS = 15  # Number of epochs to train for
+N_MODELS = 10  # Number of models to train
+N_EPOCHS = 10  # Number of epochs to train for
 
 # Add parent dir to path to allow for parallel imports
 import sys
@@ -41,8 +41,8 @@ from utils import saveload
 from utils import datasets
 
 # Need these settings for GPU to work on my computer /Einar
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
+#physical_devices = tf.config.experimental.list_physical_devices('GPU')
+#tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 # Load data
 (train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
@@ -50,7 +50,8 @@ tf.config.experimental.set_memory_growth(physical_devices[0], True)
 # Preprocess
 train_labels = tf.one_hot(train_labels.reshape((-1,)), settings.DATASET_N_CLASSES[DATASET_NAME])
 test_labels = tf.one_hot(test_labels.reshape((-1,)), settings.DATASET_N_CLASSES[DATASET_NAME])
-
+train_images = tf.image.per_image_standardization(tf.cast(train_images, dtype=tf.float32))
+test_images = tf.image.per_image_standardization(tf.cast(test_images, dtype=tf.float32))
 # Get model module (python file with get_model function)
 model_module = settings.MODEL_MODULES[MODEL_TYPE]
 

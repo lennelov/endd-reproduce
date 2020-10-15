@@ -1,8 +1,7 @@
 import tensorflow as tf
-from tensorflow.keras import layers, models
-from utils.DirichletKL import DirichletKL
 import settings
-import utils.saveload as saveload
+from tensorflow.keras import layers, models
+from utils import losses, saveload
 
 
 def get_model(dataset_name, compile=True, weights=None):
@@ -35,6 +34,6 @@ def get_model(dataset_name, compile=True, weights=None):
     if not compile:
         return model
 
-    KL = DirichletKL()
+    KL = losses.DirichletKL()
     model.compile(optimizer='adam', loss=KL)
     return model
