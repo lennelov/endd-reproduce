@@ -83,7 +83,6 @@ print('mean of 5 ensembles for picture 1: ' +
       str(tf.math.reduce_mean(tf.nn.softmax(train_ensemble_preds[0, :, :], axis=1), axis=0)))
 print('score: ' + str(score))
 
-
 # Evaluate
 measures = evaluation.calc_classification_measures(endd_model,
                                                    test_images,
