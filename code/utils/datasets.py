@@ -52,7 +52,9 @@ def get_dataset(dataset_name):
 
 
 def get_ensemble_dataset(ensemble, dataset_name):
-    """Take ensemble model and dataset name and return ensemble dataset for use with ENDD.
+    """WARNING: NO PREPROCESSING IS APPLIED, THIS FUNCITON IS USELESS AT THE MOMENT
+
+    Take ensemble model and dataset name and return ensemble dataset for use with ENDD.
 
     Args:
         ensemble (models.ensemble.Ensemble): Ensemble model that will provide predictions.
