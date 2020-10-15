@@ -21,15 +21,17 @@ from models import cnn, endd, ensemble
 from utils import evaluation, preprocessing, saveload, simplex, datasets
 
 # Set names for loading and saving
-ENSEMBLE_LOAD_NAME = 'basic_cnn'  # Name of ensemble to use for training
+ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
-MODEL_SAVE_NAME = 'endd'  # Name to use when saving model
+MODEL_SAVE_NAME = 'endd_vgg'  # Name to use when saving model
 
 # Set training parameters
-N_MODELS = 20  # Number of models to include in ensemble
+N_MODELS = 5  # Number of models to include in ensemble
 N_EPOCHS = 40  # Number of epochs to train for
 BATCH_SIZE = 500  # Batch size
-NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian'}
+NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian', None}
+# WARNING: It is important that normalization matches the normalization used when training
+#          the ensemble models.
 
 # Load ensemble models
 ensemble_model_names = saveload.get_ensemble_model_names()
@@ -38,12 +40,12 @@ model_names = model_names[:N_MODELS]
 wrapped_models = [ensemble.KerasLoadsWhole(name) for name in model_names]
 
 # Build ensemble
-cnn_ensemble = ensemble.Ensemble(wrapped_models)
+ensemble_model = ensemble.Ensemble(wrapped_models)
 
 # Load ensemble dataset
-train_set, test_set = datasets.get_ensemble_dataset(cnn_ensemble, DATASET_NAME)
-train_images, train_labels, train_ensemble_preds = train_set
-test_images, test_labels, test_ensemble_preds = test_set
+train_set, test_set = datasets.get_dataset(DATASET_NAME)
+train_images, train_labels = train_set
+test_images, test_labels = test_set
 
 # Normalize data
 if NORMALIZATION == "-1to1":
@@ -52,6 +54,10 @@ if NORMALIZATION == "-1to1":
 elif NORMALIZATION == 'gaussian':
     train_images, mean, std = preprocessing.normalize_gaussian(train_images)
     test_images = preprocessing.normalize_gaussian(test_images, mean, std)
+
+# Get ensemble preds
+train_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, train_images)
+test_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, test_images)
 
 # Build ENDD model
 base_model = cnn.get_model(DATASET_NAME, compile=False)
