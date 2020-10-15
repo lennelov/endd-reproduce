@@ -1,6 +1,7 @@
 from utils import losses, saveload
 from models import cnn, vgg
 
+
 def get_model(base_model, dataset_name=False, compile=True, weights=None):
     """Take an uncompiled model and return model compiled for ENDD.
 

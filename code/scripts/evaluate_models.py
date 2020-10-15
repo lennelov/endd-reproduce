@@ -36,7 +36,9 @@ ensm_wrapper_type = 'ensemble'
 # TODO: Add END model
 
 # Prepare ENDD model
-endd = endd.get_model(ENDD_BASE_MODEL, dataset_name=DATASET_NAME, compile=True,
+endd = endd.get_model(ENDD_BASE_MODEL,
+                      dataset_name=DATASET_NAME,
+                      compile=True,
                       weights=ENDD_MODEL_NAME)
 endd_wrapper_type = 'individual'
 
@@ -48,13 +50,19 @@ test_images = preprocessing.normalize_minus_one_to_one(test_images, min=0, max=2
 
 # Calculate measures
 print("Evaluating IND...")
-ind_measures = evaluation.calc_classification_measures(ind, test_images, test_labels,
+ind_measures = evaluation.calc_classification_measures(ind,
+                                                       test_images,
+                                                       test_labels,
                                                        wrapper_type=ind_wrapper_type)
 print("Evaluating ENSM...")
-ensm_measures = evaluation.calc_classification_measures(ensm, test_images, test_labels,
+ensm_measures = evaluation.calc_classification_measures(ensm,
+                                                        test_images,
+                                                        test_labels,
                                                         wrapper_type=ensm_wrapper_type)
 print("Evaluating ENDD...")
-endd_measures = evaluation.calc_classification_measures(endd, test_images, test_labels,
+endd_measures = evaluation.calc_classification_measures(endd,
+                                                        test_images,
+                                                        test_labels,
                                                         wrapper_type=endd_wrapper_type)
 print("Evaluations complete.")
 

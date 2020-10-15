@@ -72,10 +72,10 @@ def format_results(model_names, model_measures, dataset_name=None):
         s += "Dataset: {}\n".format(dataset_name)
     s += "ERR (classification error)\n"
     for name, measures in zip(model_names, model_measures):
-        s += "    {}: {:.1f}%\n".format(name, 100*measures['err'])
+        s += "    {}: {:.1f}%\n".format(name, 100 * measures['err'])
     s += "PRR (prediction rejection rate)\n"
     for name, measures in zip(model_names, model_measures):
-        s += "    {}: {:.1f}%\n".format(name, 100*measures['prr'])
+        s += "    {}: {:.1f}%\n".format(name, 100 * measures['prr'])
     s += "ECE (expected calibration error)\n"
     for name, measures in zip(model_names, model_measures):
         s += "    {}: {:.3f}\n".format(name, measures['ece'])
