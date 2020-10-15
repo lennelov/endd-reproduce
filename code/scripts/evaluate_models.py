@@ -5,7 +5,6 @@ import sys
 import os
 parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parent_dir_path)
-# sys.path.append('/home/lennelov/Repositories/endd-reproduce/code')
 
 import tensorflow as tf
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
