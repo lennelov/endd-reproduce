@@ -17,7 +17,7 @@ import numpy as np
 import tensorflow.keras as keras
 import settings
 
-from models import cnn, endd, ensemble
+from models import vgg, cnn, endd, ensemble
 from utils import evaluation, preprocessing, saveload, simplex, datasets
 
 # Set names for loading and saving
@@ -26,7 +26,7 @@ DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on 
 MODEL_SAVE_NAME = 'endd_vgg'  # Name to use when saving model
 
 # Set training parameters
-N_MODELS = 5  # Number of models to include in ensemble
+N_MODELS = 30  # Number of models to include in ensemble
 N_EPOCHS = 40  # Number of epochs to train for
 BATCH_SIZE = 500  # Batch size
 NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian', None}
@@ -60,7 +60,7 @@ train_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, train_images)
 test_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, test_images)
 
 # Build ENDD model
-base_model = cnn.get_model(DATASET_NAME, compile=False)
+base_model = vgg.get_model(DATASET_NAME, compile=False)
 endd_model = endd.get_model(base_model)
 
 # Train ENDD model
@@ -82,6 +82,7 @@ print('alphas for picture 1: ' + str(alphas[2, :]))
 print('mean of 5 ensembles for picture 1: ' +
       str(tf.math.reduce_mean(tf.nn.softmax(train_ensemble_preds[0, :, :], axis=1), axis=0)))
 print('score: ' + str(score))
+
 
 # Evaluate
 measures = evaluation.calc_classification_measures(endd_model,
