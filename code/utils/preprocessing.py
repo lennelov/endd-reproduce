@@ -53,7 +53,7 @@ def normalize_minus_one_to_one(images, min=None, max=None):
     if min < 0:
         images = images + (-min)
     max = images.max()
-    img = images / (max / 2) - 1
+    images = images / (max / 2) - 1
     return images, min, max
 
 
