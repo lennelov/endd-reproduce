@@ -245,7 +245,7 @@ def get_vgg_malinin_model(input_shape, classes, dropout_rate=0.5, alpha=0.2, bat
     return model
 
 
-def get_model(dataset_name, compile=True, weights=None):
+def get_model(dataset_name, compile=True, weights=None, dropout_rate=0.5):
     """Take dataset name and return corresponding untrained VGG16 model.
 
     Args:
@@ -267,7 +267,8 @@ def get_model(dataset_name, compile=True, weights=None):
 
     model = get_vgg_model(input_shape=settings.DATASET_INPUT_SHAPES[dataset_name],
                           classes=settings.DATASET_N_CLASSES[dataset_name],
-                          batch_norm=True)
+                          batch_norm=True,
+                          dropout_rate=dropout_rate)
 
     if weights:
         saveload.load_weights(model, weights)

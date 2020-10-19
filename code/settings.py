@@ -1,9 +1,9 @@
 # Paths
 SAVED_WEIGHTS_PATH = "code/models/saved_weights"
 SAVED_MODELS_PATH = "code/models/saved_models"
+DATA_PATH = "data"
 
 # Dataset metadata
-
 DATASET_NAMES = ["cifar10", "cifar100", "mnist", "synthetic", "cifar10_PN"]
 DATASET_INPUT_SHAPES = {
     "cifar10": (32, 32, 3),
@@ -23,8 +23,7 @@ MODEL_MODULES = {
     'dense_priornet': dense_priornet
 }
 
-# synthetic data hyperparams
-
+# Synthetic data hyperparams
 SAMPLES_PER_CLASS = 10000
 SAMPLES_OOD = 10000
 NOISE_ID = 0.3
@@ -33,8 +32,7 @@ RADIUS = 410
 ID_NOISE = 0.1
 OOD_NOISE = 0.1
 
-# preprocess data for PN
-
+# Preprocess data for PN
 ID_LOGIT = 100
 OOD_LOGIT = 1
 TRAIN_RATIO = 0.7
