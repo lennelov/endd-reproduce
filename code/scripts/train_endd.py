@@ -37,7 +37,7 @@ TEMP_ANNEALING = True
 ONE_CYCLE_LR_POLICY = True
 CYCLE_LENGTH = 60  # (90)
 INIT_LR = 0.001  # (0.001)
-DROPOUT_RATE = 0.7  # (0.7)
+DROPOUT_RATE = 0.3  # (0.3)
 INIT_TEMP = 10  # (10)
 
 # Load ensemble models
@@ -64,12 +64,13 @@ elif NORMALIZATION == 'gaussian':
 train_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, train_images)
 test_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, test_images)
 
+# Save / Load pickled data. Generating ensemble preds takes a long time, so saving and
+# loading can make testing much more efficient.
+
 with open('train.pkl', 'wb') as file:
     pickle.dump((train_images, train_labels, train_ensemble_preds), file)
 with open('test.pkl', 'wb') as file:
     pickle.dump((test_images, test_labels, test_ensemble_preds), file)
-
-
 # with open('train.pkl', 'rb') as file:
 #     train_images, train_labels, train_ensemble_preds = pickle.load(file)
 # with open('test.pkl', 'rb') as file:
@@ -98,7 +99,7 @@ if not endd_callbacks:
 
 # Build ENDD model
 base_model = vgg.get_model(DATASET_NAME, compile=False, dropout_rate=DROPOUT_RATE)
-endd_model = endd.get_model(base_model, init_temp=INIT_TEMP)
+endd_model = endd.get_model(base_model, init_temp=INIT_TEMP, teacher_epsilon=1e-4)
 
 # Train ENDD model
 endd_model.fit(data_generator,
