@@ -2,7 +2,7 @@ from utils import losses, saveload
 from models import cnn, vgg
 
 
-def get_model(base_model, dataset_name=False, compile=True, weights=None):
+def get_model(base_model, dataset_name=False, compile=True, weights=None, init_temp=2.5):
     """Take an uncompiled model and return model compiled for ENDD.
 
     Warning: This function works in place. Model is returned only for
@@ -23,5 +23,5 @@ def get_model(base_model, dataset_name=False, compile=True, weights=None):
         saveload.load_weights(base_model, weights)
 
     if compile:
-        base_model.compile(optimizer='adam', loss=losses.DirichletEnDDLoss())
+        base_model.compile(optimizer='adam', loss=losses.DirichletEnDDLoss(init_temp=init_temp))
     return base_model
