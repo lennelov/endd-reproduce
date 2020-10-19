@@ -23,7 +23,8 @@ from utils import evaluation, preprocessing, saveload, simplex, datasets, callba
 # Set names for loading and saving
 ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
-MODEL_SAVE_NAME = 'endd_vgg_cifar10_extended'  # Name to use when saving model
+AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
+MODEL_SAVE_NAME = 'endd_vgg_cifar10_aux'  # Name to use when saving model (None if no saving)
 
 # Set training parameters
 N_MODELS = 30  # Number of models to include in ensemble
@@ -52,6 +53,10 @@ ensemble_model = ensemble.Ensemble(wrapped_models)
 # Load dataset
 (train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
 
+if AUX_DATASET_NAME:
+    (aux_images, _), _ = datasets.get_dataset(AUX_DATASET_NAME)
+    train_images = np.concatenate((train_images, aux_images), axis=0)
+
 # Normalize data
 if NORMALIZATION == "-1to1":
     train_images, min, max = preprocessing.normalize_minus_one_to_one(train_images)
@@ -66,16 +71,15 @@ test_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, test_images)
 
 # Save / Load pickled data. Generating ensemble preds takes a long time, so saving and
 # loading can make testing much more efficient.
-
 with open('train.pkl', 'wb') as file:
     pickle.dump((train_images, train_labels, train_ensemble_preds), file)
 with open('test.pkl', 'wb') as file:
     pickle.dump((test_images, test_labels, test_ensemble_preds), file)
+
 # with open('train.pkl', 'rb') as file:
 #     train_images, train_labels, train_ensemble_preds = pickle.load(file)
 # with open('test.pkl', 'rb') as file:
 #     test_images, test_labels, test_ensemble_preds = pickle.load(file)
-
 
 # Image augmentation
 data_generator = preprocessing.make_augmented_generator(
