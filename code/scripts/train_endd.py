@@ -64,7 +64,9 @@ endd_model = training.train_vgg_endd(
     temp_annealing=TEMP_ANNEALING,
     init_temp=INIT_TEMP,
     dropout_rate=DROPOUT_RATE,
-    evaluate=True
+    evaluate=True,
+    save_endd_dataset=True,
+    load_previous_endd_dataset=False
     )
 
 if MODEL_SAVE_NAME:
