@@ -14,7 +14,7 @@ sns.set_style("darkgrid")
 import settings
 from utils.simplex import plot_simplex
 from utils import preprocessing, datasets
-from models.dense_priornet import get_model
+from models.small_net import get_model
 from utils.create_toy_data import create_mixed_data
 import utils.saveload as saveload
 
@@ -70,11 +70,62 @@ def generate_figure_2():
 	plot_dataset(x_train, y_train, aux = True)
 	plot_dataset(x_train, y_train, aux = False)
 
+def train_models():
+	'''Trains an ensemble of models on the spiral dataset.'''
+
+	MODEL_TYPE = "small_net"
+	ENSEMBLE_SAVE_NAME = "small_net"
+	DATASET_NAME = "spiral"
+	NAME_START_NUMBER = 0
+	N_MODELS = 100
+	N_EPOCHS = 85
+
+	# Import data
+	(x_train, y_train), (x_test, y_test) = datasets.get_dataset(DATASET_NAME)
+	y_train_one_hot = tf.one_hot(y_train.reshape((-1,)), settings.DATASET_N_CLASSES[DATASET_NAME])
+	y_test_one_hot = tf.one_hot(y_test.reshape((-1,)), settings.DATASET_N_CLASSES[DATASET_NAME])
+	
+	# Train models
+	model_module = settings.MODEL_MODULES[MODEL_TYPE]
+	saved_model_names = []
+	try:
+		for i in range(N_MODELS):
+			# Get model
+			model = model_module.get_model(dataset_name = DATASET_NAME, compile = True)
+
+			# Train model
+			model.fit(x_train, y_train_one_hot, 
+		          validation_data = (x_test, y_test_one_hot), 
+		          epochs = N_EPOCHS,
+		          verbose = 0)
+			print("Model {} finished training.".format(i))
+
+			# Save model
+			model_name = "{}_{}_{}".format(ENSEMBLE_SAVE_NAME, DATASET_NAME, i)
+			saveload.save_tf_model(model, model_name)
+			saved_model_names.append(model_name)
+
+	finally:
+		    append_model_names = NAME_START_NUMBER > 0
+		    saveload.update_ensemble_names(ENSEMBLE_SAVE_NAME,
+		                                   DATASET_NAME,
+		                                   saved_model_names,
+		                                   append=append_model_names)
+
+
+	
+
+
+
+
 
 #####################################################
 ####             Main 							####
 ####################################################
 
-generate_figure_2()
+
+if __name__ == '__main__':
+	#generate_figure_2()
+	train_models()
 
 

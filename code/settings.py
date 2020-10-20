@@ -4,23 +4,24 @@ SAVED_MODELS_PATH = "code/models/saved_models"
 DATA_PATH = "data"
 
 # Dataset metadata
-DATASET_NAMES = ["cifar10", "cifar100", "mnist", "synthetic", "cifar10_PN"]
+DATASET_NAMES = ["cifar10", "cifar100", "mnist", "spiral", "cifar10_PN"]
 DATASET_INPUT_SHAPES = {
     "cifar10": (32, 32, 3),
     "cifar100": (32, 32, 3),
     "mnist": (28, 28, 1),
-    "synthetic": (2),
+    "spiral": (2),
     "cifar10_PN": (32, 32, 3)
 }
 DATASET_N_CLASSES = {"cifar10": 10, "cifar100": 100, "mnist": 10, "spiral": 3, "cifar10_PN": 3}
 
 # Model metadata
-from models import cnn, vgg, cnn_priorNet, dense_priornet
+from models import cnn, vgg, cnn_priorNet, dense_priornet, small_net
 MODEL_MODULES = {
     'cnn': cnn,
     'vgg': vgg,
     'cnn_priorNet': cnn_priorNet,
-    'dense_priornet': dense_priornet
+    'dense_priornet': dense_priornet,
+    'small_net': small_net
 }
 
 # Synthetic data hyperparams

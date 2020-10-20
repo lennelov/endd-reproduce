@@ -29,7 +29,7 @@ def _get_mnist():
 def _get_spiral():
 
     x_train, y_train = create_mixed_data(ID_points = settings.SAMPLES_PER_CLASS_ENDD,
-                         OOD_points = settings.SAMPLES_OOD_ENDD,
+                         OOD_points = 0,
                          n_spirals = settings.DATASET_N_CLASSES["spiral"],
                          radius = settings.RADIUS_ENDD,
                          ID_noise = settings.NOISE_ID_ENDD,
@@ -46,9 +46,33 @@ def _get_spiral():
 
     return (x_train, y_train), (x_test, y_test)
 
+def _get_spiral_aux():
+
+    x_train, y_train = create_mixed_data(ID_points = 0,
+                         OOD_points = settings.SAMPLES_OOD_ENDD,
+                         n_spirals = settings.DATASET_N_CLASSES["spiral"],
+                         radius = settings.RADIUS_ENDD,
+                         ID_noise = settings.NOISE_ID_ENDD,
+                         OOD_noise = settings.NOISE_OOD_ENDD,
+                         seed = settings.SEED_TRAIN)
+
+    x_test, y_test = create_mixed_data(ID_points = 0,
+                         OOD_points = settings.SAMPLES_OOD_ENDD,
+                         n_spirals = settings.DATASET_N_CLASSES["spiral"],
+                         radius = settings.RADIUS_ENDD,
+                         ID_noise = settings.NOISE_ID_ENDD,
+                         OOD_noise = settings.NOISE_OOD_ENDD,
+                         seed = settings.SEED_TEST)   
+
+    return (x_train, y_train), (x_test, y_test)
 
 
-DATASET_GETTERS = {'cifar10': _get_cifar10, 'cifar100': _get_cifar100, 'mnist': _get_mnist, "spiral" : _get_spiral}
+
+DATASET_GETTERS = {'cifar10': _get_cifar10, 
+'cifar100': _get_cifar100, 
+'mnist': _get_mnist, 
+"spiral" : _get_spiral, 
+"spiral_aux" : _get_spiral_aux}
 
 
 def get_dataset(dataset_name):
