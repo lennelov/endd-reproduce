@@ -63,19 +63,11 @@ endd_model = training.train_vgg_endd(
     cycle_length=CYCLE_LENGTH,
     temp_annealing=TEMP_ANNEALING,
     init_temp=INIT_TEMP,
-    dropout_rate=DROPOUT_RATE
+    dropout_rate=DROPOUT_RATE,
+    evaluate=True
     )
 
 if MODEL_SAVE_NAME:
     # Note: There seems to be some difficulties when trying to load whole model with custom loss
     saveload.save_tf_model(endd_model, MODEL_SAVE_NAME)
     saveload.save_weights(endd_model, MODEL_SAVE_NAME)
-
-# Evaluate
-measures = evaluation.calc_classification_measures(endd_model,
-                                                   test_images,
-                                                   test_labels,
-                                                   wrapper_type='individual')
-
-results = evaluation.format_results(['endd'], [measures])
-print(results)

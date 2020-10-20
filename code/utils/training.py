@@ -18,7 +18,8 @@ def train_vgg_endd(
         cycle_length=60,
         temp_annealing=True,
         init_temp=10,
-        dropout_rate=0.3
+        dropout_rate=0.3,
+        evaluate=True
         ):
 
     # Load dataset
@@ -78,4 +79,14 @@ def train_vgg_endd(
     # Build ENDD model
     base_model = vgg.get_model(dataset_name, compile=False, dropout_rate=dropout_rate)
     endd_model = endd.get_model(base_model, init_temp=init_temp, teacher_epsilon=1e-4)
+
+    # Evaluate
+    if evaluate:
+        measures = evaluation.calc_classification_measures(endd_model,
+                                                           test_images,
+                                                           test_labels,
+                                                           wrapper_type='individual')
+
+        results = evaluation.format_results(['endd'], [measures])
+    print(results)
     return endd_model
