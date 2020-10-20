@@ -82,20 +82,23 @@ with open('test.pkl', 'wb') as file:
 #     test_images, test_labels, test_ensemble_preds = pickle.load(file)
 
 # Image augmentation
-data_generator = preprocessing.make_augmented_generator(
-    train_images, train_ensemble_preds, BATCH_SIZE)
+data_generator = preprocessing.make_augmented_generator(train_images, train_ensemble_preds,
+                                                        BATCH_SIZE)
 
 # Callbacks
 endd_callbacks = []
 if ONE_CYCLE_LR_POLICY:
-    olp_callback = callbacks.OneCycleLRPolicy(
-        init_lr=INIT_LR, max_lr=INIT_LR * 10, min_lr=INIT_LR / 1000,
-        cycle_length=CYCLE_LENGTH, epochs=N_EPOCHS)
+    olp_callback = callbacks.OneCycleLRPolicy(init_lr=INIT_LR,
+                                              max_lr=INIT_LR * 10,
+                                              min_lr=INIT_LR / 1000,
+                                              cycle_length=CYCLE_LENGTH,
+                                              epochs=N_EPOCHS)
     endd_callbacks.append(olp_callback)
 
 if TEMP_ANNEALING:
-    temp_callback = callbacks.TemperatureAnnealing(
-        init_temp=INIT_TEMP, cycle_length=CYCLE_LENGTH, epochs=N_EPOCHS)
+    temp_callback = callbacks.TemperatureAnnealing(init_temp=INIT_TEMP,
+                                                   cycle_length=CYCLE_LENGTH,
+                                                   epochs=N_EPOCHS)
     endd_callbacks.append(temp_callback)
 
 if not endd_callbacks:
@@ -106,9 +109,7 @@ base_model = vgg.get_model(DATASET_NAME, compile=False, dropout_rate=DROPOUT_RAT
 endd_model = endd.get_model(base_model, init_temp=INIT_TEMP, teacher_epsilon=1e-4)
 
 # Train ENDD model
-endd_model.fit(data_generator,
-               epochs=N_EPOCHS,
-               callbacks=endd_callbacks)
+endd_model.fit(data_generator, epochs=N_EPOCHS, callbacks=endd_callbacks)
 
 if MODEL_SAVE_NAME:
     # Note: There seems to be some difficulties when trying to load whole model with custom loss

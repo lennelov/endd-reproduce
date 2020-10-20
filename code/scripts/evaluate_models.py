@@ -43,7 +43,6 @@ endd_model = endd.get_model(ENDD_BASE_MODEL,
                             weights=ENDD_MODEL_NAME)
 endd_wrapper_type = 'individual'
 
-
 # Prepare ENDD+AUX model
 endd_aux_model = endd.get_model(ENDD_AUX_BASE_MODEL,
                                 dataset_name=DATASET_NAME,

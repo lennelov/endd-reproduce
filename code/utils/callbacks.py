@@ -4,31 +4,30 @@ import matplotlib.pyplot as plt
 
 
 class TemperatureAnnealing(tf.keras.callbacks.Callback):
+
     def __init__(self, init_temp, cycle_length, epochs):
         assert (cycle_length % 2 == 0)
         assert (epochs > cycle_length)
 
-        first_length = cycle_length//2
+        first_length = cycle_length // 2
         second_length = cycle_length - first_length
         third_length = epochs - second_length - first_length
 
-        first_schedule = [init_temp]*first_length
+        first_schedule = [init_temp] * first_length
 
         slope = (init_temp - 1) / second_length
-        second_schedule = [init_temp - slope*i for i in range(second_length)]
+        second_schedule = [init_temp - slope * i for i in range(second_length)]
 
-        third_schedule = [1]*third_length
+        third_schedule = [1] * third_length
 
         schedule = first_schedule + second_schedule + third_schedule
         assert len(schedule) == epochs
         self.schedule = schedule
 
-
     def on_epoch_begin(self, epoch, logs=None):
         print(self.model.loss.temp)
         self.model.loss.temp = self.schedule[epoch]
         # tf.keras.backend.set_value(self.model.loss.temp, self.schedule[epoch])
-
 
     def plot(self):
         plt.plot(self.schedule, '.-')
@@ -78,11 +77,13 @@ class OneCycleLRPolicy(tf.keras.callbacks.Callback):
 
 if __name__ == '__main__':
     plt.figure()
-    temp_callback = TemperatureAnnealing(
-        init_temp=10, cycle_length=60, epochs=90)
+    temp_callback = TemperatureAnnealing(init_temp=10, cycle_length=60, epochs=90)
     temp_callback.plot()
 
     plt.figure()
-    olp_callback = OneCycleLRPolicy(
-        init_lr=0.001, max_lr=0.01, min_lr=0.000001, cycle_length=30, epochs=45)
+    olp_callback = OneCycleLRPolicy(init_lr=0.001,
+                                    max_lr=0.01,
+                                    min_lr=0.000001,
+                                    cycle_length=30,
+                                    epochs=45)
     olp_callback.plot()
