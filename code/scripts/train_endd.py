@@ -27,8 +27,8 @@ AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AU
 MODEL_SAVE_NAME = 'endd_vgg_cifar10_test'  # Name to use when saving model (None if no saving)
 
 # Set training parameters
-N_MODELS = 3  # Number of models to include in ensemble
-N_EPOCHS = 9  # Number of epochs to train for (90)
+N_MODELS = 30  # Number of models to include in ensemble
+N_EPOCHS = 90  # Number of epochs to train for (90)
 BATCH_SIZE = 128  # Batch size
 NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian', None}
 # WARNING: It is important that normalization matches the normalization used when training
@@ -36,7 +36,7 @@ NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian', Non
 
 TEMP_ANNEALING = True
 ONE_CYCLE_LR_POLICY = True
-CYCLE_LENGTH = 6  # (90)
+CYCLE_LENGTH = 60  # (90)
 INIT_LR = 0.001  # (0.001)
 DROPOUT_RATE = 0.3  # (0.3)
 INIT_TEMP = 10  # (10)
@@ -49,7 +49,6 @@ wrapped_models = [ensemble.KerasLoadsWhole(name) for name in model_names]
 
 # Build ensemble
 ensemble_model = ensemble.Ensemble(wrapped_models)
-
 
 endd_model = training.train_vgg_endd(
     ensemble_model=ensemble_model,
