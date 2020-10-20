@@ -50,6 +50,7 @@ def train_vgg_endd(
 
     Returns:
         (keras.Model): Trained VGG ENDD model.
+        If evalute=True a dict containing evaluation measures are also returned.
     """
     if load_previous_endd_dataset:
         with open('train_endd_dataset.pkl', 'rb') as file:
@@ -118,6 +119,6 @@ def train_vgg_endd(
     if evaluate:
         measures = evaluation.calc_classification_measures(
             endd_model, test_images, test_labels, wrapper_type='individual')
-        results = evaluation.format_results(['endd'], [measures])
-    print(results)
-    return endd_model
+        return endd_model, measures
+    else:
+        return endd_model

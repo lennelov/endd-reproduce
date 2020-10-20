@@ -51,7 +51,7 @@ wrapped_models = [ensemble.KerasLoadsWhole(name) for name in model_names]
 # Build ensemble
 ensemble_model = ensemble.Ensemble(wrapped_models)
 
-endd_model = training.train_vgg_endd(
+endd_model, evaluation_measures = training.train_vgg_endd(
     ensemble_model=ensemble_model,
     dataset_name=DATASET_NAME,
     aux_dataset_name=AUX_DATASET_NAME,
@@ -73,3 +73,6 @@ if MODEL_SAVE_NAME:
     # Note: There seems to be some difficulties when trying to load whole model with custom loss
     saveload.save_tf_model(endd_model, MODEL_SAVE_NAME)
     saveload.save_weights(endd_model, MODEL_SAVE_NAME)
+
+results = evaluation.format_results(['endd'], [measures])
+print(results)
