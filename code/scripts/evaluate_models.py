@@ -38,17 +38,17 @@ ensm_wrapper_type = 'ensemble'
 
 # Prepare ENDD model
 endd_model = endd.get_model(ENDD_BASE_MODEL,
-                      dataset_name=DATASET_NAME,
-                      compile=True,
-                      weights=ENDD_MODEL_NAME)
+                            dataset_name=DATASET_NAME,
+                            compile=True,
+                            weights=ENDD_MODEL_NAME)
 endd_wrapper_type = 'individual'
 
 
 # Prepare ENDD+AUX model
 endd_aux_model = endd.get_model(ENDD_AUX_BASE_MODEL,
-                      dataset_name=DATASET_NAME,
-                      compile=True,
-                      weights=ENDD_AUX_MODEL_NAME)
+                                dataset_name=DATASET_NAME,
+                                compile=True,
+                                weights=ENDD_AUX_MODEL_NAME)
 endd_aux_wrapper_type = 'individual'
 
 # Load data
