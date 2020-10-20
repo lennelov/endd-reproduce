@@ -12,7 +12,7 @@ DATASET_INPUT_SHAPES = {
     "synthetic": (2),
     "cifar10_PN": (32, 32, 3)
 }
-DATASET_N_CLASSES = {"cifar10": 10, "cifar100": 100, "mnist": 10, "synthetic": 3, "cifar10_PN": 3}
+DATASET_N_CLASSES = {"cifar10": 10, "cifar100": 100, "mnist": 10, "spiral": 3, "cifar10_PN": 3}
 
 # Model metadata
 from models import cnn, vgg, cnn_priorNet, dense_priornet
@@ -24,13 +24,21 @@ MODEL_MODULES = {
 }
 
 # Synthetic data hyperparams
-SAMPLES_PER_CLASS = 10000
-SAMPLES_OOD = 10000
-NOISE_ID = 0.3
-NOISE_OOD = 0.5
-RADIUS = 410
-ID_NOISE = 0.1
-OOD_NOISE = 0.1
+SAMPLES_PER_CLASS_PN = 10000
+SAMPLES_OOD_PN = 10000
+NOISE_ID_PN = 0.3
+NOISE_OOD_PN = 0.5
+RADIUS_PN = 410
+ID_NOISE_PN = 0.1
+OOD_NOISE_PN = 0.1
+
+SAMPLES_PER_CLASS_ENDD = 1000
+SAMPLES_OOD_ENDD = 1000
+NOISE_ID_ENDD = 0.3
+NOISE_OOD_ENDD = 100
+RADIUS_ENDD = 800
+SEED_TRAIN = 84329
+SEED_TEST = 749832
 
 # Preprocess data for PN
 ID_LOGIT = 100
