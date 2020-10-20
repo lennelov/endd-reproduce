@@ -41,7 +41,7 @@ def train_vgg_endd(
         temp_annealing (bool): True if temperature annealing should be used. Default True.
         init_temp (float): Initial temperature. Default 10.
         dropout_rate (float): Probability to drop node. Default 0.3.
-        evaluate (bool): True if an evaluation should be printed after training. Default True.
+        evaluate (bool): True if an evaluation measures on test set should be returned. Default True.
         save_endd_dataset (bool): True if ENDD dataset should be saved (useful for speeding up
                                   repeated training with the same ensemble. Default False.
         load_previous_endd_dataset (bool): True if ENDD dataset should be loaded. The dataset loaded
