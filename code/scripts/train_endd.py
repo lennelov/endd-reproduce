@@ -66,24 +66,24 @@ elif NORMALIZATION == 'gaussian':
     train_images, mean, std = preprocessing.normalize_gaussian(train_images)
     test_images = preprocessing.normalize_gaussian(test_images, mean, std)
 
-endd_model = training.train_vgg_endd(
-    train_images=train_images,
-    ensemble_model=ensemble_model,
-    dataset_name=DATASET_NAME,
-    batch_size=BATCH_SIZE,
-    n_epochs=N_EPOCHS,
-    one_cycle_lr_policy=ONE_CYCLE_LR_POLICY,
-    init_lr=INIT_LR,
-    cycle_length=CYCLE_LENGTH,
-    temp_annealing=TEMP_ANNEALING,
-    init_temp=INIT_TEMP,
-    dropout_rate=DROPOUT_RATE,
-    save_endd_dataset=True,
-    load_previous_endd_dataset=False
-    )
+endd_model = training.train_vgg_endd(train_images=train_images,
+                                     ensemble_model=ensemble_model,
+                                     dataset_name=DATASET_NAME,
+                                     batch_size=BATCH_SIZE,
+                                     n_epochs=N_EPOCHS,
+                                     one_cycle_lr_policy=ONE_CYCLE_LR_POLICY,
+                                     init_lr=INIT_LR,
+                                     cycle_length=CYCLE_LENGTH,
+                                     temp_annealing=TEMP_ANNEALING,
+                                     init_temp=INIT_TEMP,
+                                     dropout_rate=DROPOUT_RATE,
+                                     save_endd_dataset=True,
+                                     load_previous_endd_dataset=False)
 
-measures = evaluation.calc_classification_measures(
-    endd_model, test_images, test_labels, wrapper_type='individual')
+measures = evaluation.calc_classification_measures(endd_model,
+                                                   test_images,
+                                                   test_labels,
+                                                   wrapper_type='individual')
 
 if MODEL_SAVE_NAME:
     # Note: There seems to be some difficulties when trying to load whole model with custom loss

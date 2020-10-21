@@ -6,21 +6,20 @@ import settings
 from models import vgg, cnn, endd, ensemble
 from utils import evaluation, preprocessing, saveload, simplex, datasets, callbacks
 
-def train_vgg_endd(
-        train_images,
-        ensemble_model,
-        dataset_name,
-        batch_size=128,
-        n_epochs=90,
-        one_cycle_lr_policy=True,
-        init_lr=0.001,
-        cycle_length=60,
-        temp_annealing=True,
-        init_temp=10,
-        dropout_rate=0.3,
-        save_endd_dataset=False,
-        load_previous_endd_dataset=False
-        ):
+
+def train_vgg_endd(train_images,
+                   ensemble_model,
+                   dataset_name,
+                   batch_size=128,
+                   n_epochs=90,
+                   one_cycle_lr_policy=True,
+                   init_lr=0.001,
+                   cycle_length=60,
+                   temp_annealing=True,
+                   init_temp=10,
+                   dropout_rate=0.3,
+                   save_endd_dataset=False,
+                   load_previous_endd_dataset=False):
     """Return a trained VGG ENDD model.
 
     The save_endd_dataset and load_previous_endd_dataset arguments are useful to avoid having to

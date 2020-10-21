@@ -60,8 +60,7 @@ elif NORMALIZATION == 'gaussian':
 ensemble_model_names = saveload.get_ensemble_model_names()
 model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
 
-measures = {'endd': defaultdict(list),
-            'ensm': defaultdict(list)}
+measures = {'endd': defaultdict(list), 'ensm': defaultdict(list)}
 for n_models in N_MODELS_LIST:
     # Get model names
     model_name_subset = model_names[:n_models]
@@ -69,29 +68,31 @@ for n_models in N_MODELS_LIST:
 
     # Build ensemble
     ensm_model = ensemble.Ensemble(wrapped_models)
-    ensm_measures = evaluation.calc_classification_measures(
-        ensm_model, test_images, test_labels, wrapper_type='ensemble')
+    ensm_measures = evaluation.calc_classification_measures(ensm_model,
+                                                            test_images,
+                                                            test_labels,
+                                                            wrapper_type='ensemble')
     for measure, value in ensm_measures.items():
         measures['ensm'][measure].append(value)
 
     # Train ENDD
-    endd_model = training.train_vgg_endd(
-        train_images=train_images,
-        ensemble_model=ensm_model,
-        dataset_name=DATASET_NAME,
-        batch_size=BATCH_SIZE,
-        n_epochs=N_EPOCHS,
-        one_cycle_lr_policy=ONE_CYCLE_LR_POLICY,
-        init_lr=INIT_LR,
-        cycle_length=CYCLE_LENGTH,
-        temp_annealing=TEMP_ANNEALING,
-        init_temp=INIT_TEMP,
-        dropout_rate=DROPOUT_RATE,
-        save_endd_dataset=False,
-        load_previous_endd_dataset=False
-        )
-    endd_measures = evaluation.calc_classification_measures(
-        endd_model, test_images, test_labels, wrapper_type='individual')
+    endd_model = training.train_vgg_endd(train_images=train_images,
+                                         ensemble_model=ensm_model,
+                                         dataset_name=DATASET_NAME,
+                                         batch_size=BATCH_SIZE,
+                                         n_epochs=N_EPOCHS,
+                                         one_cycle_lr_policy=ONE_CYCLE_LR_POLICY,
+                                         init_lr=INIT_LR,
+                                         cycle_length=CYCLE_LENGTH,
+                                         temp_annealing=TEMP_ANNEALING,
+                                         init_temp=INIT_TEMP,
+                                         dropout_rate=DROPOUT_RATE,
+                                         save_endd_dataset=False,
+                                         load_previous_endd_dataset=False)
+    endd_measures = evaluation.calc_classification_measures(endd_model,
+                                                            test_images,
+                                                            test_labels,
+                                                            wrapper_type='individual')
     for measure, value in endd_measures.items():
         measures['endd'][measure].append(value)
 
