@@ -18,7 +18,7 @@ import tensorflow.keras as keras
 import settings
 
 from models import endd, ensemble
-from utils import saveload, training, evaluation
+from utils import saveload, training, evaluation, datasets, preprocessing
 
 # Set names for loading and saving
 ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
@@ -51,11 +51,25 @@ wrapped_models = [ensemble.KerasLoadsWhole(name) for name in model_names]
 # Build ensemble
 ensemble_model = ensemble.Ensemble(wrapped_models)
 
-endd_model, evaluation_measures = training.train_vgg_endd(
+# Load dataset
+(train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
+
+if AUX_DATASET_NAME:
+    (aux_images, _), _ = datasets.get_dataset(AUX_DATASET_NAME)
+    train_images = np.concatenate((train_images, aux_images), axis=0)
+
+# Normalize data
+if NORMALIZATION == "-1to1":
+    train_images, min, max = preprocessing.normalize_minus_one_to_one(train_images)
+    test_images = preprocessing.normalize_minus_one_to_one(test_images, min, max)
+elif NORMALIZATION == 'gaussian':
+    train_images, mean, std = preprocessing.normalize_gaussian(train_images)
+    test_images = preprocessing.normalize_gaussian(test_images, mean, std)
+
+endd_model = training.train_vgg_endd(
+    train_images=train_images,
     ensemble_model=ensemble_model,
     dataset_name=DATASET_NAME,
-    aux_dataset_name=AUX_DATASET_NAME,
-    normalization=NORMALIZATION,
     batch_size=BATCH_SIZE,
     n_epochs=N_EPOCHS,
     one_cycle_lr_policy=ONE_CYCLE_LR_POLICY,
@@ -64,10 +78,12 @@ endd_model, evaluation_measures = training.train_vgg_endd(
     temp_annealing=TEMP_ANNEALING,
     init_temp=INIT_TEMP,
     dropout_rate=DROPOUT_RATE,
-    evaluate=True,
     save_endd_dataset=True,
     load_previous_endd_dataset=False
     )
+
+measures = evaluation.calc_classification_measures(
+    endd_model, test_images, test_labels, wrapper_type='individual')
 
 if MODEL_SAVE_NAME:
     # Note: There seems to be some difficulties when trying to load whole model with custom loss

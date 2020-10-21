@@ -7,10 +7,9 @@ from models import vgg, cnn, endd, ensemble
 from utils import evaluation, preprocessing, saveload, simplex, datasets, callbacks
 
 def train_vgg_endd(
+        train_images,
         ensemble_model,
         dataset_name,
-        aux_dataset_name=None,
-        normalization='-1to1',
         batch_size=128,
         n_epochs=90,
         one_cycle_lr_policy=True,
@@ -19,7 +18,6 @@ def train_vgg_endd(
         temp_annealing=True,
         init_temp=10,
         dropout_rate=0.3,
-        evaluate=True,
         save_endd_dataset=False,
         load_previous_endd_dataset=False
         ):
@@ -29,10 +27,9 @@ def train_vgg_endd(
     re-create the ensemble predictions.
 
     Args:
+        train_images (np.array): Normalized train images, potentially including AUX data.
         ensemble_model (models.ensemble.Ensemble): Ensemble to distill.
-        dataset_name (str): Name of dataset.
-        aux_dataset_name (str): Name of auxiliary dataset.
-        normalization (str): Normalization type, either '-1to1' or 'gaussian'. Default '-1to1'.
+        dataset_name (str): Name of dataset (required for loading correct model settings).
         batch_size (int): Batch size to use while training. Default 128,
         n_epochs (int): Number of epochs to train. Default 90.
         one_cycle_lr_policy (bool): True if one cycle LR policy should be used. Default True.
@@ -41,7 +38,6 @@ def train_vgg_endd(
         temp_annealing (bool): True if temperature annealing should be used. Default True.
         init_temp (float): Initial temperature. Default 10.
         dropout_rate (float): Probability to drop node. Default 0.3.
-        evaluate (bool): True if an evaluation measures on test set should be returned. Default True.
         save_endd_dataset (bool): True if ENDD dataset should be saved (useful for speeding up
                                   repeated training with the same ensemble. Default False.
         load_previous_endd_dataset (bool): True if ENDD dataset should be loaded. The dataset loaded
@@ -50,40 +46,19 @@ def train_vgg_endd(
 
     Returns:
         (keras.Model): Trained VGG ENDD model.
-        If evalute=True a dict containing evaluation measures are also returned.
     """
     if load_previous_endd_dataset:
         with open('train_endd_dataset.pkl', 'rb') as file:
-            train_images, train_labels, train_ensemble_preds = pickle.load(file)
-        with open('test_endd_dataset.pkl', 'rb') as file:
-            test_images, test_labels, test_ensemble_preds = pickle.load(file)
+            train_images, train_ensemble_preds = pickle.load(file)
     else:
-        # Load dataset
-        (train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(dataset_name)
-
-        if aux_dataset_name:
-            (aux_images, _), _ = datasets.get_dataset(aux_dataset_name)
-            train_images = np.concatenate((train_images, aux_images), axis=0)
-
-        # Normalize data
-        if normalization == "-1to1":
-            train_images, min, max = preprocessing.normalize_minus_one_to_one(train_images)
-            test_images = preprocessing.normalize_minus_one_to_one(test_images, min, max)
-        elif normalization == 'gaussian':
-            train_images, mean, std = preprocessing.normalize_gaussian(train_images)
-            test_images = preprocessing.normalize_gaussian(test_images, mean, std)
-
         # Get ensemble preds
         train_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, train_images)
-        test_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, test_images)
 
     # Save / Load pickled data. Generating ensemble preds takes a long time, so saving and
     # loading can make testing much more efficient.
     if save_endd_dataset:
         with open('train_endd_dataset.pkl', 'wb') as file:
-            pickle.dump((train_images, train_labels, train_ensemble_preds), file)
-        with open('test_endd_dataset.pkl', 'wb') as file:
-            pickle.dump((test_images, test_labels, test_ensemble_preds), file)
+            pickle.dump((train_images, train_ensemble_preds), file)
 
     # Image augmentation
     data_generator = preprocessing.make_augmented_generator(train_images, train_ensemble_preds,
@@ -115,10 +90,4 @@ def train_vgg_endd(
     # Train model
     endd_model.fit(data_generator, epochs=n_epochs, callbacks=endd_callbacks)
 
-    # Evaluate
-    if evaluate:
-        measures = evaluation.calc_classification_measures(
-            endd_model, test_images, test_labels, wrapper_type='individual')
-        return endd_model, measures
-    else:
-        return endd_model
+    return endd_model
