@@ -1,10 +1,40 @@
 """Module with functions to compute some measures."""
 import tensorflow as tf
-import tensorflow_probability as tfp
 import numpy as np
 import sklearn.metrics
 from uncertainty_metrics.numpy.general_calibration_error import ece
 
+
+def entropy_of_expected(probabilities):
+    '''Calcs entropy of expected <-> total uncertainty
+    
+    args:
+    probabilities - A (N_models, N_data_points, N_classes) vector or (N_data_points, N_classes)
+    
+    return:
+    A N_data_points vector'''
+    
+    if len(probabilities.shape) == 3:
+        means = np.mean(probabilities, axis = 0)
+        
+    elif len(probabilities.shape) == 2:
+        means = probabilities
+    else:
+        raise ValueError('Probabilities must be (N_models, N_data_points, N_classes) or (N_data_points, N_classes)')
+    
+    return np.sum(-means * np.log(means), axis = 1)
+
+def expected_entropy(probabilities):
+    '''Calcs expected entropy <-> data uncertainty
+    
+    args:
+    probabilities - A (N_models, N_data_points, N_classes) vector
+    
+    return:
+    A N_data_points vector'''
+    
+    return np.mean(np.sum(-probabilities * np.log(probabilities + 1e-12), axis = 2), axis = 0)
+    
 
 def _probs_to_classes(probs):
     """Return chosen class as an integer."""

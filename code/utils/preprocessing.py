@@ -8,8 +8,8 @@ def make_batch_generator(images, targets, batch_size):
     n_samples = len(images)
     i = 0
     while i < n_samples - batch_size:
-        image_batch = images[i:i+batch_size]
-        target_batch = targets[i:i+batch_size]
+        image_batch = images[i:i + batch_size]
+        target_batch = targets[i:i + batch_size]
         i += batch_size
         yield (image_batch, target_batch)
     yield (images[i:], targets[i:])
@@ -24,9 +24,11 @@ def make_augmented_endd_generator(images, ensemble_preds, batch_size):
     """Wraps the ImageDataGenerator to allow for using preds as targets."""
     n_samples = len(images)
     ids = list(range(n_samples))
-    augmentator = tf.keras.preprocessing.image.ImageDataGenerator(
-        rotation_range=15, horizontal_flip=True, width_shift_range=4,  height_shift_range=4,
-        fill_mode='nearest')
+    augmentator = tf.keras.preprocessing.image.ImageDataGenerator(rotation_range=15,
+                                                                  horizontal_flip=True,
+                                                                  width_shift_range=4,
+                                                                  height_shift_range=4,
+                                                                  fill_mode='nearest')
     id_generator = augmentator.flow(images, ids, batch_size=batch_size)
     id_to_preds = {id: preds for id, preds in enumerate(ensemble_preds)}
 
@@ -39,9 +41,11 @@ def make_augmented_endd_generator(images, ensemble_preds, batch_size):
 
 def make_augmented_generator(images, targets, batch_size):
     """Wraps the ImageDataGenerator to allow for using preds as targets."""
-    augmentator = tf.keras.preprocessing.image.ImageDataGenerator(
-        rotation_range=15, horizontal_flip=True, width_shift_range=4,  height_shift_range=4,
-        fill_mode='nearest')
+    augmentator = tf.keras.preprocessing.image.ImageDataGenerator(rotation_range=15,
+                                                                  horizontal_flip=True,
+                                                                  width_shift_range=4,
+                                                                  height_shift_range=4,
+                                                                  fill_mode='nearest')
     generator = augmentator.flow(images, targets, batch_size=batch_size)
     return generator
 
