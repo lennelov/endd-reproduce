@@ -159,15 +159,15 @@ def predict_ensemble():
     grid = np.array((xx.ravel(), yy.ravel())).T
 
     # Predict with ensemble
-    ensemble_probs_train = ensemble.predict(x_train)
-    ensemble_probs_test = ensemble.predict(x_test)
+    #ensemble_probs_train = ensemble.predict(x_train)
+    #ensemble_probs_test = ensemble.predict(x_test)
     ensemble_probs_grid = ensemble.predict(grid)
 
     # Save to file
-    with open('train_small_net_spiral.pkl', 'wb') as file:
-        pickle.dump((x_train, y_train, ensemble_probs_train), file)
-    with open('test_small_net_spiral.pkl', 'wb') as file:
-        pickle.dump((x_test, y_test, ensemble_probs_test), file)
+    #with open('train_small_net_spiral.pkl', 'wb') as file:
+    #    pickle.dump((x_train, y_train, ensemble_probs_train), file)
+    #with open('test_small_net_spiral.pkl', 'wb') as file:
+    #    pickle.dump((x_test, y_test, ensemble_probs_test), file)
     with open('grid_small_net_spiral_2000.pkl', 'wb') as file:
         pickle.dump((grid, 0, ensemble_probs_grid), file, protocol=4)
 
@@ -228,19 +228,17 @@ def plot_decision_boundary():
     # Load data
     with open('grid_small_net_spiral_1000.pkl', 'rb') as file:
         x_grid, _, ensemble_probs_grid = pickle.load(file)
-    grid_size = np.sqrt(x_grid.shape[0])
-    print(grid_size)
-    '''
+    grid_size = int(np.sqrt(x_grid.shape[0]))
 
     (x_train, y_train), _ = datasets.get_dataset("spiral")
 
-    val = np.reshape(np.argmax(np.mean(ensemble_probs_grid, axis = 0), axis = 1), (1000, 1000))
+    prediction_grid = np.reshape(np.argmax(np.mean(ensemble_probs_grid, axis = 0), axis = 1), (grid_size, grid_size))
 
     # Plot decision boundary
 
     fig, ax = plt.subplots(figsize = (10, 10))
 
-    im = ax.imshow(val, extent = (-2000, 2000, -2000, 2000), origin = 'lower')
+    im = ax.imshow(prediction_grid, extent = (-2000, 2000, -2000, 2000), origin = 'lower')
     fig.colorbar(im)
 
     colors = {0: (245/255, 113/255, 137/255),
@@ -260,10 +258,20 @@ def plot_decision_boundary():
     ax.set_xlim((-500, 500))
     ax.set_ylim((-500, 500))
     plt.show()
-    '''
+    
+def plot_grids():
 
+    with open('grid_small_net_spiral_1000.pkl', 'rb') as file:
+        x_grid, _, ensemble_probs_grid = pickle.load(file)
+    grid_size = int(np.sqrt(x_grid.shape[0]))
 
+    unct_tot = np.reshape(measures.entropy_of_expected(ensemble_probs_grid), (grid_size, grid_size))
+    unct_data = np.reshape(measures.expected_entropy(ensemble_probs_grid), (grid_size, grid_size))
+    unct_know = unct_tot - unct_data
 
+    grid_plot_helper(unct_tot)
+    grid_plot_helper(unct_data)
+    grid_plot_helper(unct_know)
 
 
 
@@ -281,7 +289,8 @@ if __name__ == '__main__':
     #train_models()
     #predict_ensemble()
     #get_ensemble_metrics()
-    plot_decision_boundary()
+    #plot_decision_boundary()
+    plot_grids()
 
 
     end = time.time()
