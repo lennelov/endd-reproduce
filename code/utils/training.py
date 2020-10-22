@@ -83,7 +83,10 @@ def train_vgg_endd(train_images,
         endd_callbacks = None
 
     # Build ENDD model
-    base_model = vgg.get_model(dataset_name, compile=False, dropout_rate=dropout_rate, softmax=False)
+    base_model = vgg.get_model(dataset_name,
+                               compile=False,
+                               dropout_rate=dropout_rate,
+                               softmax=False)
     endd_model = endd.get_model(base_model, init_temp=init_temp, teacher_epsilon=1e-4)
 
     # Train model
