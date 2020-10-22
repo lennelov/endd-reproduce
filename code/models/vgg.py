@@ -273,11 +273,11 @@ def get_model(dataset_name, compile=True, weights=None, dropout_rate=0.5, softma
     if weights:
         saveload.load_weights(model, weights)
 
-    if not compile:
-        return model
-
     if not softmax:
         model.pop()
+
+    if not compile:
+        return model
 
     from_logits = not softmax
 
