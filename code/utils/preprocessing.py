@@ -129,7 +129,8 @@ def preprocess_cifar_for_priornet(train_images,
                                   train_labels,
                                   test_images,
                                   test_labels,
-                                  ID_classes=3):
+                                  OOD_images = None,
+                                  ID_classes=10):
     '''
         preprocesses train and test data from cifar10 for a prior net by taking the first ID_classes classes as ID and remaining as OOD.
 	Args:
@@ -153,7 +154,13 @@ def preprocess_cifar_for_priornet(train_images,
     test_labels = test_labels[ID_test_index]
     train_logits = tf.one_hot(train_labels, ID_classes) * 100 + 1
     test_logits = tf.one_hot(test_labels, ID_classes) * 100 + 1
-
+    if OOD_images is not None:
+        train_images = tf.concat([train_images,OOD_images],axis = 0)
+        train_logits = tf.concat([tf.squeeze(train_logits),tf.ones([OOD_images.shape[0],train_logits.shape[2]])],axis = 0)
+         tf.random.set_seed(1234)
+          x_train =tf.random.shuffle(train_images,seed = 2) 
+          tf.random.set_seed(1234)
+          y_train =tf.random.shuffle(train_logits,seed = 2)
     train_images = tf.image.per_image_standardization(tf.cast(train_images, dtype=tf.float32))
     test_images = tf.image.per_image_standardization(tf.cast(test_images, dtype=tf.float32))
     train_logits = tf.squeeze(train_logits)
