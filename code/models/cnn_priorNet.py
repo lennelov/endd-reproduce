@@ -25,11 +25,11 @@ def get_model(base_model,
                               to endd.py, or pass a Keras model object as base model instead.""")
 
     if weights:
-        saveload.load_weights(model, weights)
+        saveload.load_weights(base_model, weights)
 
     if not compile:
-        return model
+        return base_model
 
-    model.compile(optimizer='adam', loss=losses.DirichletKL(epsilon=epsilon))
+    base_model.compile(optimizer='adam', loss=losses.DirichletKL(epsilon=epsilon))
 
-    return model
+    return base_model
