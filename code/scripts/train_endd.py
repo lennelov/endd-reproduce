@@ -105,7 +105,7 @@ if not endd_callbacks:
     endd_callbacks = None
 
 # Build ENDD model
-base_model = vgg.get_model(DATASET_NAME, compile=False, dropout_rate=DROPOUT_RATE)
+base_model = vgg.get_model(DATASET_NAME, compile=False, dropout_rate=DROPOUT_RATE, softmax=False)
 endd_model = endd.get_model(base_model, init_temp=INIT_TEMP, teacher_epsilon=1e-4)
 
 # Train ENDD model
