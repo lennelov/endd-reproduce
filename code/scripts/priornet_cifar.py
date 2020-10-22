@@ -13,7 +13,7 @@ from tensorflow.keras import datasets
 import settings
 from utils import preprocessing, saveload, simplex, losses
 from models import cnn_priorNet
-
+MODEL = 'vgg'
 DATASET = 'cifar10_PN'
 PLOT_SIMPLEX = False
 SAVE_WEIGHTS = False
@@ -23,7 +23,7 @@ EPOCHS = 2
 (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
 train_images, train_logits, test_images, test_logits = preprocessing.preprocess_cifar_for_priornet(
     train_images, train_labels, test_images, test_labels)
-model = cnn_priorNet.get_model(DATASET)
+model = cnn_priorNet.get_model(MODEL,DATASET)
 model.fit(train_images, train_logits, batch_size=BATCH_SIZE, epochs=EPOCHS)
 if SAVE_WEIGHTS:
     saveload.save_tf_model(model, "cnn_priorNet")
