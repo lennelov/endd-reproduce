@@ -35,7 +35,7 @@ class ModelWrapper(ABC):
 
 class KerasLoadsWhole(ModelWrapper):
 
-    def __init__(self, model_load_name, name=None, pop_last=True):
+    def __init__(self, model_load_name, name=None, pop_last=False):
         """Wrap a saved Keras model.
 
         This subclass of ModelWrapper should be used with Keras models
