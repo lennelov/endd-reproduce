@@ -28,8 +28,8 @@ def get_model(dataset_name, compile=True, weights=None):
     model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dense(64, activation='relu'))
-    model.add(layers.Dense(settings.DATASET_N_CLASSES[dataset_name], 
-        activation='softmax'))
+    model.add(layers.Dense(settings.DATASET_N_CLASSES[dataset_name]))
+    #model.add(layers.Activation('softmax'))
     if weights:
         saveload.load_weights(model, weights)
 
@@ -37,6 +37,6 @@ def get_model(dataset_name, compile=True, weights=None):
         return model
 
     model.compile(optimizer = 'adam', 
-              loss = 'categorical_crossentropy',
+              loss = tf.keras.losses.CategoricalCrossentropy(from_logits = True),
               metrics = ['accuracy'])
     return model
