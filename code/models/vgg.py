@@ -4,7 +4,6 @@ import settings
 import utils.saveload as saveload
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Input, LeakyReLU
 from tensorflow.keras.models import Sequential
-from keras import regularizers
 
 
 def get_vgg_model(input_shape, classes, dropout_rate=0.5, alpha=0.1, batch_norm=True):
