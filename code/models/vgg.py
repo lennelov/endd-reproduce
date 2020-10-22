@@ -245,7 +245,7 @@ def get_vgg_malinin_model(input_shape, classes, dropout_rate=0.5, alpha=0.2, bat
     return model
 
 
-def get_model(dataset_name, compile=True, weights=None, dropout_rate=0.5):
+def get_model(dataset_name, compile=True, weights=None, dropout_rate=0.5, softmax=True):
     """Take dataset name and return corresponding untrained VGG16 model.
 
     Args:
@@ -273,11 +273,16 @@ def get_model(dataset_name, compile=True, weights=None, dropout_rate=0.5):
     if weights:
         saveload.load_weights(model, weights)
 
+    if not softmax:
+        model.pop()
+
     if not compile:
         return model
 
+    from_logits = not softmax
+
     model.compile(optimizer='adam',
-                  loss=keras.losses.CategoricalCrossentropy(from_logits=False),
+                  loss=keras.losses.CategoricalCrossentropy(from_logits=from_logits),
                   metrics=['accuracy'])
 
     return model

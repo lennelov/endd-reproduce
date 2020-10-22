@@ -1,7 +1,6 @@
 """Module containing classes used for building ensembles.
 
 The functionality provided by this module is demonstrated in scripts.ensemble_example_usage.py."""
-
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
@@ -36,7 +35,7 @@ class ModelWrapper(ABC):
 
 class KerasLoadsWhole(ModelWrapper):
 
-    def __init__(self, model_load_name, name=None):
+    def __init__(self, model_load_name, name=None, pop_last=False):
         """Wrap a saved Keras model.
 
         This subclass of ModelWrapper should be used with Keras models
@@ -50,15 +49,21 @@ class KerasLoadsWhole(ModelWrapper):
             name (str): Reference name of the model wrapper (used when retrieving
                         models from an Ensemble). If no name is given, model_load_name
                         is used by default.
+            pop_last (bool): True if the final layer of the model should be poopped. This is
+                             useful if the model outputs probabilities but logits are needed.
+                             Default True.
         """
         if not name:
             name = model_load_name
         super().__init__(name=name, type="keras")
         self.model_load_name = model_load_name
+        self.pop_last = pop_last
 
     def get_model(self):
         """Return the loaded Keras model."""
         model = saveload.load_tf_model(self.model_load_name)
+        if self.pop_last:
+            model.pop()
         return model
 
     def predict(self, x):

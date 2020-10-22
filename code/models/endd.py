@@ -18,9 +18,9 @@ def get_model(base_model,
         if not dataset_name:
             raise ValueError('dataset_name must be provided if base_model is given by name.')
         if base_model == 'cnn':
-            base_model = cnn.get_model(dataset_name, compile=False)
+            base_model = cnn.get_model(dataset_name, compile=False, softmax=False)
         elif base_model == 'vgg':
-            base_model = vgg.get_model(dataset_name, compile=False)
+            base_model = vgg.get_model(dataset_name, compile=False, softmax=False)
         else:
             raise ValueError("""Base model {} not recognized, make sure it has been added
                               to endd.py, or pass a Keras model object as base model instead.""")
