@@ -45,7 +45,7 @@ INIT_TEMP = 10  # (10)
 ensemble_model_names = saveload.get_ensemble_model_names()
 model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
 model_names = model_names[:N_MODELS]
-wrapped_models = [ensemble.KerasLoadsWhole(name) for name in model_names]
+wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_names]
 
 # Build ensemble
 ensemble_model = ensemble.Ensemble(wrapped_models)

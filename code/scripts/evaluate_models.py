@@ -15,7 +15,7 @@ from models import ensemble, endd
 
 # Choose models
 IND_MODEL_NAME = 'vgg_cifar10_cifar10_0'
-ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg', 5
+ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg', 30
 ENDD_MODEL_NAME, ENDD_BASE_MODEL = 'endd_vgg_cifar10_extended', 'vgg'
 ENDD_AUX_MODEL_NAME, ENDD_AUX_BASE_MODEL = 'endd_vgg_cifar10_aux', 'vgg'
 
@@ -29,7 +29,7 @@ ind_wrapper_type = 'individual'
 # Prepare ENSM model
 ensemble_model_names = saveload.get_ensemble_model_names()
 model_names = ensemble_model_names[ENSM_MODEL_NAME][DATASET_NAME][:ENSM_N_MODELS]
-models = [ensemble.KerasLoadsWhole(name) for name in model_names]
+models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_names]
 ensm_model = ensemble.Ensemble(models)
 ensm_wrapper_type = 'ensemble'
 
