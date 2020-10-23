@@ -194,8 +194,6 @@ def predict_ensemble():
     y_train_aux = np.concatenate((y_train, y_aux), axis=0)
     grid = get_grid(size=2000, steps=1000)
 
-    
-
     # Predict with ensemble
     ensemble_logits_train_aux = ensemble.predict(x_train_aux)
     ensemble_logits_train = ensemble.predict(x_train)
@@ -224,15 +222,15 @@ def plot_decision_boundary():
     (x_train, y_train), _ = datasets.get_dataset("spiral")
 
     # For ensemble
-    prediction_grid = np.reshape(np.argmax(np.mean(ensemble_logits_grid, axis = 0), axis = 1), (grid_size, grid_size))
-
+    prediction_grid = np.reshape(np.argmax(np.mean(ensemble_logits_grid, axis=0), axis=1),
+                                 (grid_size, grid_size))
 
     # Without ensemble
     #prediction_grid = np.reshape(np.argmax(ensemble_logits_grid, axis = 1), (grid_size, grid_size))
 
     # Plot decision boundary
 
-    fig, ax = plt.subplots(figsize = (5, 5))
+    fig, ax = plt.subplots(figsize=(5, 5))
 
     im = ax.imshow(prediction_grid, extent=(-2000, 2000, -2000, 2000), origin='lower')
     fig.colorbar(im)
@@ -349,10 +347,10 @@ def plot_grids():
                            (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v = v, filename = "plots/3a.png")
-    grid_plot_helper(unct_data, v = v, filename = "plots/3b.png")
-    grid_plot_helper(unct_know, v = v, filename = "plots/3c.png")
-    
+    grid_plot_helper(unct_tot, v=v, filename="plots/3a.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/3b.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/3c.png")
+
     # Then plot ENDD
 
     with open('grid_small_net_spiral_endd.pkl', 'rb') as file:
@@ -365,9 +363,9 @@ def plot_grids():
     unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v = v, filename = "plots/3d.png")
-    grid_plot_helper(unct_data, v = v, filename = "plots/3e.png")
-    grid_plot_helper(unct_know, v = v, filename = "plots/3f.png")
+    grid_plot_helper(unct_tot, v=v, filename="plots/3d.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/3e.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/3f.png")
 
     # Then plot ENDD_AUX
 
@@ -381,9 +379,9 @@ def plot_grids():
     unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v = v, filename = "plots/3g.png")
-    grid_plot_helper(unct_data, v = v, filename = "plots/3h.png")
-    grid_plot_helper(unct_know, v = v, filename = "plots/3i.png")
+    grid_plot_helper(unct_tot, v=v, filename="plots/3g.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/3h.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/3i.png")
 
 
 def get_metrics():
