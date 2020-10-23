@@ -15,7 +15,7 @@ import settings
 from utils import preprocessing, datasets, measures, pn_utils
 from models.small_net import get_model
 import models.ensemble
-from models import endd
+from models import end, endd
 from utils.create_toy_data import create_mixed_data
 import utils.saveload as saveload
 import pickle
@@ -258,6 +258,45 @@ def plot_decision_boundary():
     ax.set_ylim((-500, 500))
     plt.show()
 
+def train_end():
+    """Trains an END and and END_AUX model on the ensemble predictions"""
+
+    # Name
+    ENSEMBLE_SAVE_NAME = 'small_net'  # Name that the ensemble models will be saved with
+    DATASET_NAME = 'spiral'  # Name of dataset models were trained with
+    MODEL_SAVE_NAME = "end_small_net_spiral"
+    MODEL_SAVE_NAME_AUX = "end_AUX_small_net_spiral"
+
+    # Load data
+    with open('train_small_net_spiral.pkl', 'rb') as file:
+        x_train, y_train, ensemble_logits_train = pickle.load(file)
+    with open('train_aux_small_net_spiral.pkl', 'rb') as file:
+        x_train_aux, y_train_aux, ensemble_logits_train_aux = pickle.load(file)
+
+    # Build ENDD model
+    base_model = get_model(DATASET_NAME, compile=False)
+    end_model = end.get_model(base_model, init_temp=1)
+
+    base_model_AUX = get_model(DATASET_NAME, compile=False)
+    end_model_AUX = end.get_model(base_model_AUX, init_temp=1)
+
+    # Train model
+    end_model.fit(x_train, np.transpose(ensemble_logits_train, (1, 0, 2)), epochs=150)
+    end_model_AUX.fit(x_train_aux, np.transpose(ensemble_logits_train_aux, (1, 0, 2)), epochs=500)
+
+    # Save model
+    saveload.save_tf_model(end_model, MODEL_SAVE_NAME)
+    saveload.save_tf_model(end_model_AUX, MODEL_SAVE_NAME_AUX)
+
+    # Evaluate model
+    _, (x_test, y_test) = datasets.get_dataset("spiral")
+    logits = end_model.predict(x_test)
+    logits_aux = end_model_AUX.predict(x_test)
+    print(np.argmax(logits, axis=1))
+    print(np.argmax(logits_aux, axis=1))
+    print(y_test)
+    print(sklearn.metrics.accuracy_score(y_test, np.argmax(logits, axis=1)))
+    print(sklearn.metrics.accuracy_score(y_test, np.argmax(logits_aux, axis=1)))
 
 def train_endd():
     """Trains an ENDD and and ENDD_AUX model on the ensemble predictions"""
@@ -296,7 +335,6 @@ def train_endd():
     print(y_test)
     print(sklearn.metrics.accuracy_score(y_test, np.argmax(logits, axis=1)))
 
-
 def predict_endd():
     """Predicts and saves the predictions of the ENDD-models to file"""
 
@@ -330,6 +368,38 @@ def predict_endd():
         with open('grid_small_net_spiral_{}.pkl'.format(PREDICT_SAVE_NAME), 'wb') as file:
             pickle.dump((grid, 0, endd_logits_grid), file)
 
+def predict_end():
+    """Predicts and saves the predictions of the END-models to file"""
+
+    # Load model
+    MODEL_SAVE_NAMES = ["end_small_net_spiral", "end_AUX_small_net_spiral"]
+    PREDICT_SAVE_NAMES = ["end", "end_AUX"]
+
+    # Loop for aux or no aux
+    for i in range(2):
+        print(i)
+
+        MODEL_SAVE_NAME = MODEL_SAVE_NAMES[i]
+        PREDICT_SAVE_NAME = PREDICT_SAVE_NAMES[i]
+
+        endd_model = saveload.load_tf_model(MODEL_SAVE_NAME, compile=False)
+        endd_model = endd.get_model(endd_model, init_temp=1, teacher_epsilon=1e-4)
+
+        # Load data
+        (x_train, y_train), (x_test, y_test) = datasets.get_dataset("spiral")
+        grid = get_grid(size=2000, steps=1000)
+
+        # Predict
+        endd_logits_train = endd_model.predict(x_train)
+        endd_logits_test = endd_model.predict(x_test)
+        endd_logits_grid = endd_model.predict(grid)
+
+        with open('train_small_net_spiral_{}.pkl'.format(PREDICT_SAVE_NAME), 'wb') as file:
+            pickle.dump((x_train, y_train, endd_logits_train), file)
+        with open('test_small_net_spiral_{}.pkl'.format(PREDICT_SAVE_NAME), 'wb') as file:
+            pickle.dump((x_test, y_test, endd_logits_test), file)
+        with open('grid_small_net_spiral_{}.pkl'.format(PREDICT_SAVE_NAME), 'wb') as file:
+            pickle.dump((grid, 0, endd_logits_grid), file)
 
 def plot_grids():
     """Function for recreating Figure 3 in Malinin 2020"""
@@ -421,16 +491,14 @@ def get_metrics():
     '''
 
     # Print ind-metric
-    print("Ind metrics")
+    print("# Ind metrics")
     names = ["Train", "Test"]
     for i, err in enumerate((err_train, err_test)):
         print(names[i])
-        print("Mean: {}".format(100 * round(np.mean(err), 4)))
-        print("Plus-minus: {}".format(100 * round(1.96 * np.std(err) / np.sqrt(nr_models), 4)))
-        print("Min-range: {}".format(
-            100 * round(np.mean(err) + 1.96 * np.std(err) / np.sqrt(nr_models), 4)))
-        print("Max-range: {}".format(
-            100 * round(np.mean(err) - 1.96 * np.std(err) / np.sqrt(nr_models), 4)))
+        print("Mean: {}".format(round(100 * np.mean(err), 4)))
+        print("Plus-minus: {}".format(round(100 * 1.96 * np.std(err) / np.sqrt(nr_models), 4)))
+        print("Min-range: {}".format(round(100 * (np.mean(err) + 1.96 * np.std(err) / np.sqrt(nr_models)), 4)))
+        print("Max-range: {}".format(round(100* (np.mean(err) - 1.96 * np.std(err) / np.sqrt(nr_models)), 4)))
         print()
 
     # Print ensemble-metrics
@@ -443,12 +511,56 @@ def get_metrics():
     ensemble_err_test = 1 - sklearn.metrics.accuracy_score(y_test, ensemble_mean_preds_test)
 
     # Ensemble metrics
-    print("Ensemble metrics")
+    print("# Ensemble metrics")
     print("Train: {}".format(round(100 * ensemble_err_train, 4)))
     print("Test: {}".format(round(100 * ensemble_err_test, 4)))
     print()
 
+    # END metrics
+    print("# END metrics")
+
+    with open('train_small_net_spiral_end.pkl', 'rb') as file:
+        x_train, y_train, end_logits_train = pickle.load(file)
+
+    with open('test_small_net_spiral_end.pkl', 'rb') as file:
+        x_test, y_test, end_logits_test = pickle.load(file)
+
+    print("Train: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_train, np.argmax(end_logits_train, axis=1)),
+            4)))
+    print("Test: {}".format(
+        round(
+            100 - 100 * sklearn.metrics.accuracy_score(y_test, np.argmax(end_logits_test, axis=1)),
+            4)))
+
+    print()
+
+    # END_AUX metrics
+    print("# END_AUX metrics")
+
+    with open('train_small_net_spiral_end_AUX.pkl', 'rb') as file:
+        x_train, y_train, end_AUX_logits_train = pickle.load(file)
+
+    with open('test_small_net_spiral_end_AUX.pkl', 'rb') as file:
+        x_test, y_test, end_AUX_logits_test = pickle.load(file)
+
+    print("Train: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_train, np.argmax(end_AUX_logits_train, axis=1)),
+            4)))
+    print("Test: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_test, np.argmax(end_AUX_logits_test, axis=1)),
+            4)))
+
+    print()
+
     # ENDD metrics
+    print("# ENDD metrics")
 
     with open('train_small_net_spiral_endd.pkl', 'rb') as file:
         x_train, y_train, endd_logits_train = pickle.load(file)
@@ -456,7 +568,7 @@ def get_metrics():
     with open('test_small_net_spiral_endd.pkl', 'rb') as file:
         x_test, y_test, endd_logits_test = pickle.load(file)
 
-    print("ENDD metrics")
+
     print("Train: {}".format(
         round(
             100 -
@@ -470,7 +582,7 @@ def get_metrics():
     print()
 
     # ENDD_AUX metrics
-    print("ENDD_AUX metrics")
+    print("# ENDD_AUX metrics")
 
     with open('train_small_net_spiral_endd_AUX.pkl', 'rb') as file:
         x_train, y_train, endd_AUX_logits_train = pickle.load(file)
@@ -478,7 +590,6 @@ def get_metrics():
     with open('test_small_net_spiral_endd_AUX.pkl', 'rb') as file:
         x_test, y_test, endd_AUX_logits_test = pickle.load(file)
 
-    print("ENDD metrics")
     print("Train: {}".format(
         round(
             100 -
@@ -504,10 +615,12 @@ if __name__ == '__main__':
     #train_models()
     #predict_ensemble()
     #plot_decision_boundary()
+    #train_end()
     #train_endd()
     #predict_endd()
-    plot_grids()
-    #get_metrics()
+    #predict_end()
+    #plot_grids()
+    get_metrics()
 
     end = time.time()
     print("Time elapsed: ", end - start)
