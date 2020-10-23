@@ -43,10 +43,10 @@ def save_tf_model(model, name, verbose=True):
     print("Model succesfully saved as {}".format(model_path))
 
 
-def load_tf_model(name, compile = True):
+def load_tf_model(name, compile=True):
     """Take saved model name and return model."""
     model_path = os.path.join(settings.SAVED_MODELS_PATH, "model_" + name)
-    model = keras.models.load_model(model_path, compile = compile)
+    model = keras.models.load_model(model_path, compile=compile)
     return model
 
 

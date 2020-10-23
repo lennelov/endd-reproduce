@@ -36,7 +36,7 @@ def get_model(dataset_name, compile=True, weights=None):
     if not compile:
         return model
 
-    model.compile(optimizer = 'adam', 
-              loss = tf.keras.losses.CategoricalCrossentropy(from_logits = True),
-              metrics = ['accuracy'])
+    model.compile(optimizer='adam',
+                  loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
+                  metrics=['accuracy'])
     return model
