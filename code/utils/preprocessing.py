@@ -168,9 +168,9 @@ def preprocess_cifar_for_priornet(train_images,
         test_images = normalize_gaussian(test_images, mean, std)
     if OOD_images is not None: #shuffle the images
         tf.random.set_seed(1234)
-        x_train =tf.random.shuffle(train_images,seed = 2) 
+        train_images =tf.random.shuffle(train_images,seed = 2) 
         tf.random.set_seed(1234)
-        y_train =tf.random.shuffle(train_logits,seed = 2)
+        train_logits =tf.random.shuffle(train_logits,seed = 2)
     train_logits = tf.squeeze(train_logits)
     test_images = tf.squeeze(test_images)
     return train_images, train_logits, test_images, test_logits

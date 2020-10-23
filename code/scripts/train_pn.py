@@ -11,7 +11,8 @@ import tensorflow as tf
 from tensorflow.keras import datasets
 
 import settings
-from utils import preprocessing, saveload, simplex, losses
+
+from utils import preprocessing, saveload, simplex, losses, training
 from models import cnn_priorNet
 MODEL = 'vgg'
 DATASET = 'cifar10'
@@ -23,21 +24,20 @@ NORMALIZATION = "-1to1"
 (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
 (OOD_images, _), (_,_) = datasets.cifar100.load_data()
 OOD_images = OOD_images[0:5000,:,:,:]
-train_images, train_logits, test_images, test_logits = preprocessing.preprocess_cifar_for_priornet(
+train_images, train_alphas, test_images, test_alphas = preprocessing.preprocess_cifar_for_priornet(
     train_images, train_labels, test_images, test_labels,normalization = NORMALIZATION,OOD_images = OOD_images)
 
 train_images = train_images[0:5000,:,:,:]
-train_logits = train_logits[0:5000,:]
-print(train_images[4900:4920,0,0,0])
-model = cnn_priorNet.get_model(MODEL,DATASET)
-model.fit(train_images, train_logits, batch_size=BATCH_SIZE, epochs=EPOCHS)
+train_alphas = train_alphas[0:5000,:]
+model = training.train_pn(train_images,train_alphas,DATASET)
+
 if SAVE_WEIGHTS:
     saveload.save_tf_model(model, "PN_vgg_cifar10_aux")
 
-logits = model.predict(test_images)
-predictions = tf.math.argmax(tf.squeeze(logits), axis=1)
-real = tf.math.argmax(tf.squeeze(test_logits), axis=1)
+alphas = model.predict(test_images)
+predictions = tf.math.argmax(tf.squeeze(alphas), axis=1)
+real = tf.math.argmax(tf.squeeze(test_alphas), axis=1)
 score = tf.math.reduce_sum(tf.cast(predictions == real, tf.float32)) / len(real)
 print('score: ' + str(score))
 if PLOT_SIMPLEX:
-    simplex.plot_simplex(logits)
+    simplex.plot_simplex(alphas)
