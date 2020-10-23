@@ -182,6 +182,8 @@ def predict_ensemble():
     y_train_aux = np.concatenate((y_train, y_aux), axis=0)
     grid = get_grid(size = 2000, steps = 1000)
 
+    
+
     # Predict with ensemble
     ensemble_logits_train_aux = ensemble.predict(x_train_aux)
     ensemble_logits_train = ensemble.predict(x_train)
@@ -198,6 +200,8 @@ def predict_ensemble():
     with open('grid_small_net_spiral_1000.pkl', 'wb') as file:
         pickle.dump((grid, 0, ensemble_logits_grid), file, protocol=4)
 
+    
+
 def plot_decision_boundary():
     """Plots a decision boundary using the grid."""
 
@@ -208,11 +212,15 @@ def plot_decision_boundary():
 
     (x_train, y_train), _ = datasets.get_dataset("spiral")
 
+    # For ensemble
     prediction_grid = np.reshape(np.argmax(np.mean(ensemble_logits_grid, axis = 0), axis = 1), (grid_size, grid_size))
+
+    # Without ensemble
+    #prediction_grid = np.reshape(np.argmax(ensemble_logits_grid, axis = 1), (grid_size, grid_size))
 
     # Plot decision boundary
 
-    fig, ax = plt.subplots(figsize = (10, 10))
+    fig, ax = plt.subplots(figsize = (5, 5))
 
     im = ax.imshow(prediction_grid, extent = (-2000, 2000, -2000, 2000), origin = 'lower')
     fig.colorbar(im)
@@ -248,9 +256,8 @@ def train_endd():
     # Load data
     with open('train_small_net_spiral.pkl', 'rb') as file:
         x_train, y_train, ensemble_logits_train = pickle.load(file)
-    with open('train_small_net_spiral.pkl', 'rb') as file:
+    with open('train_aux_small_net_spiral.pkl', 'rb') as file:
         x_train_aux, y_train_aux, ensemble_logits_train_aux = pickle.load(file)
-
 
     # Build ENDD model
     base_model = get_model(DATASET_NAME, compile=False)
@@ -328,9 +335,9 @@ def plot_grids():
     unct_data = np.reshape(measures.expected_entropy(ensemble_logits_grid, logits = True), (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v = v, filename = "plots/1.png")
-    grid_plot_helper(unct_data, v = v, filename = "plots/2.png")
-    grid_plot_helper(unct_know, v = v, filename = "plots/3.png")
+    grid_plot_helper(unct_tot, v = v, filename = "plots/3a.png")
+    grid_plot_helper(unct_data, v = v, filename = "plots/3b.png")
+    grid_plot_helper(unct_know, v = v, filename = "plots/3c.png")
     
     # Then plot ENDD
 
@@ -343,9 +350,9 @@ def plot_grids():
     unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v = v, filename = "plots/4.png")
-    grid_plot_helper(unct_data, v = v, filename = "plots/5.png")
-    grid_plot_helper(unct_know, v = v, filename = "plots/6.png")
+    grid_plot_helper(unct_tot, v = v, filename = "plots/3d.png")
+    grid_plot_helper(unct_data, v = v, filename = "plots/3e.png")
+    grid_plot_helper(unct_know, v = v, filename = "plots/3f.png")
 
     # Then plot ENDD_AUX
 
@@ -358,9 +365,9 @@ def plot_grids():
     unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v = v, filename = "plots/7.png")
-    grid_plot_helper(unct_data, v = v, filename = "plots/8.png")
-    grid_plot_helper(unct_know, v = v, filename = "plots/9.png")
+    grid_plot_helper(unct_tot, v = v, filename = "plots/3g.png")
+    grid_plot_helper(unct_data, v = v, filename = "plots/3h.png")
+    grid_plot_helper(unct_know, v = v, filename = "plots/3i.png")
 
 def get_metrics():
     """Calculates some interesting metrics of the ensemble, for recreating table 2 in Malinin 2020."""
@@ -472,8 +479,8 @@ if __name__ == '__main__':
     #plot_decision_boundary()
     #train_endd()
     #predict_endd()
-    #plot_grids()
-    get_metrics()
+    plot_grids()
+    #get_metrics()
 
 
     end = time.time()
