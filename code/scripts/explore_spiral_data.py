@@ -256,6 +256,7 @@ def plot_decision_boundary():
     ax.set_ylim((-500, 500))
     plt.show()
 
+
 def train_end():
     """Trains an END and and END_AUX model on the ensemble predictions"""
 
@@ -296,6 +297,7 @@ def train_end():
     print(sklearn.metrics.accuracy_score(y_test, np.argmax(logits, axis=1)))
     print(sklearn.metrics.accuracy_score(y_test, np.argmax(logits_aux, axis=1)))
 
+
 def train_endd():
     """Trains an ENDD and and ENDD_AUX model on the ensemble predictions"""
 
@@ -333,6 +335,7 @@ def train_endd():
     print(y_test)
     print(sklearn.metrics.accuracy_score(y_test, np.argmax(logits, axis=1)))
 
+
 def predict_endd():
     """Predicts and saves the predictions of the ENDD-models to file"""
 
@@ -366,6 +369,7 @@ def predict_endd():
         with open('grid_small_net_spiral_{}.pkl'.format(PREDICT_SAVE_NAME), 'wb') as file:
             pickle.dump((grid, 0, endd_logits_grid), file)
 
+
 def predict_end():
     """Predicts and saves the predictions of the END-models to file"""
 
@@ -398,6 +402,7 @@ def predict_end():
             pickle.dump((x_test, y_test, endd_logits_test), file)
         with open('grid_small_net_spiral_{}.pkl'.format(PREDICT_SAVE_NAME), 'wb') as file:
             pickle.dump((grid, 0, endd_logits_grid), file)
+
 
 def plot_grids():
     """Function for recreating Figure 3 in Malinin 2020"""
@@ -495,8 +500,10 @@ def get_metrics():
         print(names[i])
         print("Mean: {}".format(round(100 * np.mean(err), 4)))
         print("Plus-minus: {}".format(round(100 * 1.96 * np.std(err) / np.sqrt(nr_models), 4)))
-        print("Min-range: {}".format(round(100 * (np.mean(err) + 1.96 * np.std(err) / np.sqrt(nr_models)), 4)))
-        print("Max-range: {}".format(round(100* (np.mean(err) - 1.96 * np.std(err) / np.sqrt(nr_models)), 4)))
+        print("Min-range: {}".format(
+            round(100 * (np.mean(err) + 1.96 * np.std(err) / np.sqrt(nr_models)), 4)))
+        print("Max-range: {}".format(
+            round(100 * (np.mean(err) - 1.96 * np.std(err) / np.sqrt(nr_models)), 4)))
         print()
 
     # Print ensemble-metrics
@@ -526,8 +533,7 @@ def get_metrics():
     print("Train: {}".format(
         round(
             100 -
-            100 * sklearn.metrics.accuracy_score(y_train, np.argmax(end_logits_train, axis=1)),
-            4)))
+            100 * sklearn.metrics.accuracy_score(y_train, np.argmax(end_logits_train, axis=1)), 4)))
     print("Test: {}".format(
         round(
             100 - 100 * sklearn.metrics.accuracy_score(y_test, np.argmax(end_logits_test, axis=1)),
@@ -565,7 +571,6 @@ def get_metrics():
 
     with open('test_small_net_spiral_endd.pkl', 'rb') as file:
         x_test, y_test, endd_logits_test = pickle.load(file)
-
 
     print("Train: {}".format(
         round(
