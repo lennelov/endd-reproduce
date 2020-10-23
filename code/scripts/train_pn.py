@@ -25,9 +25,10 @@ NORMALIZATION = "-1to1"
 OOD_images = OOD_images[0:5000,:,:,:]
 train_images, train_logits, test_images, test_logits = preprocessing.preprocess_cifar_for_priornet(
     train_images, train_labels, test_images, test_labels,normalization = NORMALIZATION,OOD_images = OOD_images)
-print(train_images[0,0:10,0:10,0])
+
 train_images = train_images[0:5000,:,:,:]
 train_logits = train_logits[0:5000,:]
+print(train_images[4900:4920,0,0,0])
 model = cnn_priorNet.get_model(MODEL,DATASET)
 model.fit(train_images, train_logits, batch_size=BATCH_SIZE, epochs=EPOCHS)
 if SAVE_WEIGHTS:
