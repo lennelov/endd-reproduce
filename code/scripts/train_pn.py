@@ -14,19 +14,24 @@ import settings
 from utils import preprocessing, saveload, simplex, losses
 from models import cnn_priorNet
 MODEL = 'vgg'
-DATASET = 'cifar10_PN'
+DATASET = 'cifar10'
 PLOT_SIMPLEX = False
-SAVE_WEIGHTS = False
+SAVE_WEIGHTS = True
 BATCH_SIZE = 100
-EPOCHS = 2
-
+EPOCHS = 5
+NORMALIZATION = "-1to1"
 (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
+(OOD_images, _), (_,_) = datasets.cifar100.load_data()
+OOD_images = OOD_images[0:5000,:,:,:]
 train_images, train_logits, test_images, test_logits = preprocessing.preprocess_cifar_for_priornet(
-    train_images, train_labels, test_images, test_labels)
+    train_images, train_labels, test_images, test_labels,normalization = NORMALIZATION,OOD_images = OOD_images)
+print(train_images[0,0:10,0:10,0])
+train_images = train_images[0:5000,:,:,:]
+train_logits = train_logits[0:5000,:]
 model = cnn_priorNet.get_model(MODEL,DATASET)
 model.fit(train_images, train_logits, batch_size=BATCH_SIZE, epochs=EPOCHS)
 if SAVE_WEIGHTS:
-    saveload.save_tf_model(model, "cnn_priorNet")
+    saveload.save_tf_model(model, "PN_vgg_cifar10_aux")
 
 logits = model.predict(test_images)
 predictions = tf.math.argmax(tf.squeeze(logits), axis=1)
