@@ -64,7 +64,7 @@ measures = {'endd': defaultdict(list), 'ensm': defaultdict(list)}
 for n_models in N_MODELS_LIST:
     # Get model names
     model_name_subset = model_names[:n_models]
-    wrapped_models = [ensemble.KerasLoadsWhole(name) for name in model_name_subset]
+    wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset]
 
     # Build ensemble
     ensm_model = ensemble.Ensemble(wrapped_models)
