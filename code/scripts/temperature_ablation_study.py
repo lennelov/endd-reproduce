@@ -62,7 +62,7 @@ model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
 model_name_subset = model_names[:N_MODELS]
 wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset]
 
-load_previous_dataset = True
+load_previous_dataset = False
 measures = defaultdict(list)
 for init_temp in INIT_TEMP_LIST:
     # Build ensemble
