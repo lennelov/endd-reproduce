@@ -15,13 +15,14 @@ from utils import evaluation, datasets, saveload, preprocessing
 from models import ensemble, endd
 
 # Model loading parameters
-ENDD_AUX_BASE_MODEL = 'vgg'
 N_MODELS_BASE_NAMES = [
     'cifar10_vgg_endd_aux_mini_1',
     'cifar10_vgg_endd_aux_mini_2'
 ]
+# Should be set to the same configuration as when running ensemble_size_ablation_study.py
+ENDD_AUX_BASE_MODEL = 'vgg'
 ENSEMBLE_LOAD_NAME = 'vgg'
-N_MODELS_LIST = [1, 2]
+N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30]
 
 # Dataset parameters
 DATASET_NAME = 'cifar10'
@@ -80,7 +81,7 @@ def get_endd_measures(n_models_base_names, n_models_list, endd_base_model, datas
 
 
 def plot_with_error_fields(ensm_measures, endd_measures_list, measure, ylabel):
-    stack = np.stack(endd_measures[measure] for endd_measures in endd_measures_list)
+    stack = np.stack([endd_measures[measure] for endd_measures in endd_measures_list])
     means = stack.mean(axis=0)
     stds = stack.std(axis=0)
     plt.plot(N_MODELS_LIST, ensm_measures[measure], label='ENSM', color='xkcd:dull blue', linestyle='dashed')
