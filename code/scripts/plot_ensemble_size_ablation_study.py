@@ -14,11 +14,7 @@ from utils import evaluation, datasets, saveload, preprocessing
 from models import ensemble, endd
 
 # Model loading parameters
-N_MODELS_BASE_NAMES = [
-    'cifar10_vgg_endd_aux_1',
-    'cifar10_vgg_endd_aux_2',
-    'cifar10_vgg_endd_aux_3'
-]
+N_MODELS_BASE_NAMES = ['cifar10_vgg_endd_aux_1', 'cifar10_vgg_endd_aux_2', 'cifar10_vgg_endd_aux_3']
 # Should be set to the same configuration as when running ensemble_size_ablation_study.py
 ENDD_AUX_BASE_MODEL = 'vgg'
 ENSEMBLE_LOAD_NAME = 'vgg'
@@ -27,6 +23,7 @@ N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30]
 # Dataset parameters
 DATASET_NAME = 'cifar10'
 NORMALIZATION = '-1to1'
+
 
 def get_dataset(dataset_name, normalization):
     # Load dataset
@@ -42,12 +39,15 @@ def get_dataset(dataset_name, normalization):
 
     return (train_images, train_labels), (test_images, test_labels)
 
+
 # Get ensemble measures
 def get_ensm_measures(model_names, n_models_list, test_images, test_labels):
     ensm_measures = defaultdict(list)
     for n_models in n_models_list:
         model_name_subset = model_names[:n_models]
-        wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset]
+        wrapped_models = [
+            ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset
+        ]
         ensm_model = ensemble.Ensemble(wrapped_models)
         evaluation_result = evaluation.calc_classification_measures(ensm_model,
                                                                     test_images,
@@ -56,6 +56,7 @@ def get_ensm_measures(model_names, n_models_list, test_images, test_labels):
         for measure, value in evaluation_result.items():
             ensm_measures[measure].append(value)
     return ensm_measures
+
 
 # Get ENDD measures
 def get_endd_measures(n_models_base_names, n_models_list, endd_base_model, dataset_name,
@@ -66,9 +67,7 @@ def get_endd_measures(n_models_base_names, n_models_list, endd_base_model, datas
         for n_models in n_models_list:
             endd_model_name = base_name + '_N_MODELS={}'.format(n_models)
             uncompiled_model = saveload.load_tf_model(endd_model_name, compile=False)
-            endd_model = endd.get_model(uncompiled_model,
-                                        dataset_name=dataset_name,
-                                        compile=True)
+            endd_model = endd.get_model(uncompiled_model, dataset_name=dataset_name, compile=True)
 
             evaluation_result = evaluation.calc_classification_measures(endd_model,
                                                                         test_images,
@@ -84,9 +83,17 @@ def plot_with_error_fields(n_models_list, ensm_measures, endd_measures_list, mea
     stack = np.stack([endd_measures[measure] for endd_measures in endd_measures_list])
     means = stack.mean(axis=0)
     stds = stack.std(axis=0)
-    plt.plot(n_models_list, ensm_measures[measure], label='ENSM', color='xkcd:dull blue', linestyle='dashed')
+    plt.plot(n_models_list,
+             ensm_measures[measure],
+             label='ENSM',
+             color='xkcd:dull blue',
+             linestyle='dashed')
     plt.plot(n_models_list, means, label='ENDD+AUX', color='xkcd:dusty orange')
-    plt.fill_between(n_models_list, means-2*stds, means+2*stds, color='xkcd:dusty orange', alpha=0.4)
+    plt.fill_between(n_models_list,
+                     means - 2 * stds,
+                     means + 2 * stds,
+                     color='xkcd:dusty orange',
+                     alpha=0.4)
     plt.xlabel("Number of models")
     plt.ylabel(ylabel)
     plt.legend()
@@ -113,12 +120,15 @@ plt.subplot(2, 2, 1)
 plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'err', 'Prediction Error')
 
 plt.subplot(2, 2, 2)
-plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'nll', 'Negative Log-Likelihood')
+plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'nll',
+                       'Negative Log-Likelihood')
 
 plt.subplot(2, 2, 3)
-plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'ece', 'Expected Calibration Error')
+plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'ece',
+                       'Expected Calibration Error')
 
 plt.subplot(2, 2, 4)
-plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'prr', 'Prediction Rejection Rate')
+plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'prr',
+                       'Prediction Rejection Rate')
 
 plt.show()

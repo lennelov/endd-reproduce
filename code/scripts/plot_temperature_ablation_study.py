@@ -14,11 +14,7 @@ from utils import evaluation, datasets, saveload, preprocessing
 from models import ensemble, endd
 
 # Model loading parameters
-N_MODELS_BASE_NAMES = [
-    'cifar10_vgg_endd_aux_1',
-    'cifar10_vgg_endd_aux_2',
-    'cifar10_vgg_endd_aux_3'
-]
+N_MODELS_BASE_NAMES = ['cifar10_vgg_endd_aux_1', 'cifar10_vgg_endd_aux_2', 'cifar10_vgg_endd_aux_3']
 # Should be set to the same configuration as when running ensemble_size_ablation_study.py
 ENDD_AUX_BASE_MODEL = 'vgg'
 INIT_TEMP_LIST = [1, 2, 5, 10, 20]
@@ -26,6 +22,7 @@ INIT_TEMP_LIST = [1, 2, 5, 10, 20]
 # Dataset parameters
 DATASET_NAME = 'cifar10'
 NORMALIZATION = '-1to1'
+
 
 def get_dataset(dataset_name, normalization):
     # Load dataset
@@ -41,18 +38,17 @@ def get_dataset(dataset_name, normalization):
 
     return (train_images, train_labels), (test_images, test_labels)
 
+
 # Get ENDD measures
-def get_endd_measures(n_models_base_names, temp_list, endd_base_model, dataset_name,
-                      test_images, test_labels):
+def get_endd_measures(n_models_base_names, temp_list, endd_base_model, dataset_name, test_images,
+                      test_labels):
     endd_measures_list = []
     for base_name in n_models_base_names:
         endd_measures = defaultdict(list)
         for temp in temp_list:
             endd_model_name = base_name + '_TEMP={}'.format(temp)
             uncompiled_model = saveload.load_tf_model(endd_model_name, compile=False)
-            endd_model = endd.get_model(uncompiled_model,
-                                        dataset_name=dataset_name,
-                                        compile=True)
+            endd_model = endd.get_model(uncompiled_model, dataset_name=dataset_name, compile=True)
 
             evaluation_result = evaluation.calc_classification_measures(endd_model,
                                                                         test_images,
@@ -69,7 +65,11 @@ def plot_with_error_fields(init_temp_list, endd_measures_list, measure, ylabel):
     means = stack.mean(axis=0)
     stds = stack.std(axis=0)
     plt.plot(init_temp_list, means, label='ENDD+AUX', color='xkcd:dusty orange')
-    plt.fill_between(init_temp_list, means-2*stds, means+2*stds, color='xkcd:dusty orange', alpha=0.4)
+    plt.fill_between(init_temp_list,
+                     means - 2 * stds,
+                     means + 2 * stds,
+                     color='xkcd:dusty orange',
+                     alpha=0.4)
     plt.xlabel("Initial temperature")
     plt.ylabel(ylabel)
     plt.legend()
