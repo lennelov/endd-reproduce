@@ -25,18 +25,18 @@ plt.style.use('ggplot')
 ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
-MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux_1'  # Name to use when saving model (None if no saving)
-N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30]
+MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux_mini_2'  # Name to use when saving model (None if no saving)
+N_MODELS_LIST = [1, 2]
 
 # Set training parameters
-N_EPOCHS = 90  # Number of epochs to train for (90)
+N_EPOCHS = 6  # Number of epochs to train for (90)
 BATCH_SIZE = 128  # Batch size
 NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian', None}
 # WARNING: It is important that normalization matches the normalization used when training
 #          the ensemble models.
 TEMP_ANNEALING = True
 ONE_CYCLE_LR_POLICY = True
-CYCLE_LENGTH = 60  # (90)
+CYCLE_LENGTH = 4  # (90)
 INIT_LR = 0.001  # (0.001)
 DROPOUT_RATE = 0.3  # (0.3)
 INIT_TEMP = 10  # (10)
@@ -98,6 +98,7 @@ for n_models in N_MODELS_LIST:
 
     if MODEL_BASE_SAVE_NAME:
         # Note: There seems to be some difficulties when trying to load whole model with custom loss
+        saveload.save_tf_model(endd_model, MODEL_BASE_SAVE_NAME + '_N_MODELS={}'.format(n_models))
         saveload.save_weights(endd_model, MODEL_BASE_SAVE_NAME + '_N_MODELS={}'.format(n_models))
 
 print(measures)
