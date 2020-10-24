@@ -1,13 +1,15 @@
 from utils import losses, saveload
 from models import cnn, vgg
-
+import tensorflow.keras as keras
 
 
 def get_model(base_model,
               dataset_name=False,
               compile=True,
               weights=None,
-              epsilon = 1e-8):
+              dropout_rate=0.3,
+              epsilon = 1e-8,
+              softmax = False):
     """Take an uncompiled model and return model compiled for PN.
 
     Warning: This function works in place. Model is returned only for
@@ -19,7 +21,7 @@ def get_model(base_model,
         if base_model == 'cnn':
             base_model = cnn.get_model(dataset_name, compile=False, softmax=False)
         elif base_model == 'vgg':
-            base_model = vgg.get_model(dataset_name, compile=False, softmax=False)
+            base_model = vgg.get_model(dataset_name, compile=False, softmax=False,dropout_rate=dropout_rate)
         else:
             raise ValueError("""Base model {} not recognized, make sure it has been added
                               to endd.py, or pass a Keras model object as base model instead.""")
@@ -30,6 +32,6 @@ def get_model(base_model,
     if not compile:
         return base_model
 
-    base_model.compile(optimizer='adam', loss=losses.DirichletKL(epsilon=epsilon))
+    base_model.compile(optimizer='adam', loss=losses.DirichletKL())
 
     return base_model

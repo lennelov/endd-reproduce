@@ -35,8 +35,7 @@ def get_model(dataset_name, compile=True, weights=None, softmax=True):
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(64, activation='relu'))
     model.add(keras.layers.Dense(settings.DATASET_N_CLASSES[dataset_name]))
-    if softmax:
-        model.add(keras.layers.Activation('softmax'))
+    #model.add(keras.layers.Activation('softmax'))
     if weights:
         saveload.load_weights(model, weights)
 

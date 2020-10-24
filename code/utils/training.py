@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow.keras as keras
 import settings
 
-from models import vgg, cnn, endd, ensemble
+from models import vgg, cnn, endd, ensemble,cnn_priorNet
 from utils import evaluation, preprocessing, saveload, simplex, datasets, callbacks, losses
 
 
@@ -102,6 +102,7 @@ def train_vgg_endd(train_images,
 def train_pn(train_images,
                    train_alphas,
                    dataset_name,
+                   model = 'vgg',
                    batch_size=128,
                    n_epochs=90,
                    one_cycle_lr_policy=True,
@@ -110,9 +111,9 @@ def train_pn(train_images,
                    dropout_rate=0.3,
                    save_pn_dataset=False,
                    load_previous_endd_dataset=False):
-    """Return a trained VGG ENDD model.
+    """Return a trained VGG PN model.
 
-    The save_endd_dataset and load_previous_endd_dataset arguments are useful to avoid having to
+    The save_pn_dataset and load_previous_endd_dataset arguments are useful to avoid having to
     re-create the ensemble predictions.
 
     Args:
@@ -139,13 +140,13 @@ def train_pn(train_images,
 
     # Save / Load pickled data. Generating ensemble preds takes a long time, so saving and
     # loading can make testing much more efficient.
-    if save_pn_dataset:
-        with open('train_pn_dataset.pkl', 'wb') as file:
-            pickle.dump((train_images, train_alphas), file)
+    #if save_pn_dataset:
+    #    with open('train_pn_dataset.pkl', 'wb') as file:
+    #        pickle.dump((train_images, train_alphas), file)
 
     # Image augmentation
-    data_generator = preprocessing.make_augmented_generator(train_images, train_alphas,
-                                                            batch_size)
+    #data_generator = preprocessing.make_augmented_generator(train_images, train_alphas,
+    #                                                        batch_size)
 
     # Callbacks
     pn_callbacks = []
@@ -162,15 +163,13 @@ def train_pn(train_images,
         pn_callbacks = None
 
     # Build PN model
-    pn_model = vgg.get_model(dataset_name,
-                               compile=False,
+    pn_model = cnn_priorNet.get_model(model,
+                               dataset_name,
+                               compile=True,
                                dropout_rate=dropout_rate,
                                softmax=False)
-    pn_model.compile(optimizer='adam',
-                  loss=losses.DirichletKL(),
-                  metrics=['accuracy'])
     
     # Train model
-    pn_model.fit(data_generator, epochs=n_epochs, callbacks=pn_callbacks)
+    pn_model.fit(train_images,train_alphas,batch_size=batch_size, epochs=n_epochs, callbacks=pn_callbacks)
 
     return pn_model

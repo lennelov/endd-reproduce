@@ -146,10 +146,8 @@ def preprocess_cifar_for_priornet(train_images,
 		test_images (ndarray),
 		test_logits (ndarray),
         '''
-
+    test_labels = np.squeeze(test_labels)
     ID_test_index = np.squeeze(np.where(test_labels <= ID_classes - 1))
-    ID_test_index = ID_test_index[:, 0]
-
     test_images = test_images[ID_test_index, :, :, :]
 
     test_labels = test_labels[ID_test_index]
@@ -160,7 +158,6 @@ def preprocess_cifar_for_priornet(train_images,
         train_logits = tf.concat([tf.squeeze(train_logits),tf.ones([OOD_images.shape[0],train_logits.shape[2]])],axis = 0)
 
     if normalization == "-1to1":
-        print("preprocess")
         train_images, min, max = normalize_minus_one_to_one(train_images)
         test_images = normalize_minus_one_to_one(test_images, min, max)
     elif normalization == 'gaussian':
