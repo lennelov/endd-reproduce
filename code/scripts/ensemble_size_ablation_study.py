@@ -1,11 +1,7 @@
-'''
-Creates and trains a priornet on the EnDD data.
-'''
 import sys
 import os
-# parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-# sys.path.append(parent_dir_path)
-sys.path.append("/home/lennelov/Repositories/endd-reproduce/code")
+parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(parent_dir_path)
 
 import tensorflow as tf
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -97,7 +93,7 @@ for n_models in N_MODELS_LIST:
         measures['endd'][measure].append(value)
 
     if MODEL_BASE_SAVE_NAME:
-        # Note: There seems to be some difficulties when trying to load whole model with custom loss
+        saveload.save_tf_model(endd_model, MODEL_BASE_SAVE_NAME + '_N_MODELS={}'.format(n_models))
         saveload.save_weights(endd_model, MODEL_BASE_SAVE_NAME + '_N_MODELS={}'.format(n_models))
 
 print(measures)
