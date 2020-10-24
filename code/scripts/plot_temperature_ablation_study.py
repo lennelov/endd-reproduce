@@ -70,7 +70,7 @@ def plot_with_error_fields(init_temp_list, endd_measures_list, measure, ylabel):
     stds = stack.std(axis=0)
     plt.plot(init_temp_list, means, label='ENDD+AUX', color='xkcd:dusty orange')
     plt.fill_between(init_temp_list, means-2*stds, means+2*stds, color='xkcd:dusty orange', alpha=0.4)
-    plt.xlabel("Initial temperature)
+    plt.xlabel("Initial temperature")
     plt.ylabel(ylabel)
     plt.legend()
 
