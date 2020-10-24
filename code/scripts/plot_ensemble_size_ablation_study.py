@@ -1,8 +1,7 @@
 import sys
 import os
-# parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-# sys.path.append(parent_dir_path)
-sys.path.append("/home/lennelov/Repositories/endd-reproduce/code")
+parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(parent_dir_path)
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,8 +15,9 @@ from models import ensemble, endd
 
 # Model loading parameters
 N_MODELS_BASE_NAMES = [
-    'cifar10_vgg_endd_aux_mini_1',
-    'cifar10_vgg_endd_aux_mini_2'
+    'cifar10_vgg_endd_aux_1',
+    'cifar10_vgg_endd_aux_2',
+    'cifar10_vgg_endd_aux_3'
 ]
 # Should be set to the same configuration as when running ensemble_size_ablation_study.py
 ENDD_AUX_BASE_MODEL = 'vgg'
@@ -63,7 +63,7 @@ def get_endd_measures(n_models_base_names, n_models_list, endd_base_model, datas
     endd_measures_list = []
     for base_name in n_models_base_names:
         endd_measures = defaultdict(list)
-        for n_models in N_MODELS_LIST:
+        for n_models in n_models_list:
             endd_model_name = base_name + '_N_MODELS={}'.format(n_models)
             uncompiled_model = saveload.load_tf_model(endd_model_name, compile=False)
             endd_model = endd.get_model(uncompiled_model,
@@ -80,13 +80,13 @@ def get_endd_measures(n_models_base_names, n_models_list, endd_base_model, datas
     return endd_measures_list
 
 
-def plot_with_error_fields(ensm_measures, endd_measures_list, measure, ylabel):
+def plot_with_error_fields(n_models_list, ensm_measures, endd_measures_list, measure, ylabel):
     stack = np.stack([endd_measures[measure] for endd_measures in endd_measures_list])
     means = stack.mean(axis=0)
     stds = stack.std(axis=0)
-    plt.plot(N_MODELS_LIST, ensm_measures[measure], label='ENSM', color='xkcd:dull blue', linestyle='dashed')
-    plt.plot(N_MODELS_LIST, means, label='ENDD+AUX', color='xkcd:dusty orange')
-    plt.fill_between(N_MODELS_LIST, means-2*stds, means+2*stds, color='xkcd:dusty orange', alpha=0.4)
+    plt.plot(n_models_list, ensm_measures[measure], label='ENSM', color='xkcd:dull blue', linestyle='dashed')
+    plt.plot(n_models_list, means, label='ENDD+AUX', color='xkcd:dusty orange')
+    plt.fill_between(n_models_list, means-2*stds, means+2*stds, color='xkcd:dusty orange', alpha=0.4)
     plt.xlabel("Number of models")
     plt.ylabel(ylabel)
     plt.legend()
@@ -106,22 +106,19 @@ ensm_measures = get_ensm_measures(model_names, N_MODELS_LIST, test_images, test_
 endd_measures_list = get_endd_measures(N_MODELS_BASE_NAMES, N_MODELS_LIST, ENDD_AUX_BASE_MODEL,
                                        DATASET_NAME, test_images, test_labels)
 
-print(ensm_measures)
-print(endd_measures_list)
-
 # Plot results
 plt.style.use('ggplot')
 
 plt.subplot(2, 2, 1)
-plot_with_error_fields(ensm_measures, endd_measures_list, 'err', 'Prediction Error')
+plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'err', 'Prediction Error')
 
 plt.subplot(2, 2, 2)
-plot_with_error_fields(ensm_measures, endd_measures_list, 'nll', 'Negative Log-Likelihood')
+plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'nll', 'Negative Log-Likelihood')
 
 plt.subplot(2, 2, 3)
-plot_with_error_fields(ensm_measures, endd_measures_list, 'ece', 'Expected Calibration Error')
+plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'ece', 'Expected Calibration Error')
 
 plt.subplot(2, 2, 4)
-plot_with_error_fields(ensm_measures, endd_measures_list, 'prr', 'Prediction Rejection Rate')
+plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'prr', 'Prediction Rejection Rate')
 
 plt.show()

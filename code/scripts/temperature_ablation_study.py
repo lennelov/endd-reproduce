@@ -1,11 +1,7 @@
-'''
-Creates and trains a priornet on the EnDD data.
-'''
 import sys
 import os
-# parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-# sys.path.append(parent_dir_path)
-sys.path.append("/home/lennelov/Repositories/endd-reproduce/code")
+parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(parent_dir_path)
 
 import tensorflow as tf
 physical_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -26,18 +22,18 @@ ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
 MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux_1'  # Name to use when saving model (None if no saving)
-N_MODELS = 30
+N_MODELS = 100
 INIT_TEMP_LIST = [1, 2, 5, 10, 20]
 
 # Set training parameters
-N_EPOCHS = 45  # Number of epochs to train for (90)
+N_EPOCHS = 90  # Number of epochs to train for (90)
 BATCH_SIZE = 128  # Batch size
 NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian', None}
 # WARNING: It is important that normalization matches the normalization used when training
 #          the ensemble models.
 TEMP_ANNEALING = True
 ONE_CYCLE_LR_POLICY = True
-CYCLE_LENGTH = 30  # (90)
+CYCLE_LENGTH = 60  # (90)
 INIT_LR = 0.001  # (0.001)
 DROPOUT_RATE = 0.3  # (0.3)
 
@@ -91,7 +87,7 @@ for init_temp in INIT_TEMP_LIST:
         measures[measure].append(value)
 
     if MODEL_BASE_SAVE_NAME:
-        # Note: There seems to be some difficulties when trying to load whole model with custom loss
+        saveload.save_tf_model(endd_model, MODEL_BASE_SAVE_NAME + '_TEMP={}'.format(init_temp))
         saveload.save_weights(endd_model, MODEL_BASE_SAVE_NAME + '_TEMP={}'.format(init_temp))
 
 print(measures)
