@@ -8,7 +8,7 @@ sys.path.append(parent_dir_path)
 #packages
 import tensorflow as tf
 import numpy as np
-import keras
+#import keras
 #other functions
 import settings
 from utils.simplex import plot_simplex
@@ -17,18 +17,18 @@ from models.dense_priornet import get_model
 from utils.create_toy_data import create_mixed_data
 import utils.saveload as saveload
 
-dataset = "synthetic"
+dataset = "spiral"
 BATCH_SIZE = 100
 N_EPOCHS = 20
 PLOT_SIMPLEX = False
 SAVE_WEIGHTS = False
 
-X, Y = create_mixed_data(settings.SAMPLES_PER_CLASS,
-                         settings.SAMPLES_OOD,
+X, Y = create_mixed_data(settings.SAMPLES_PER_CLASS_PN,
+                         settings.SAMPLES_OOD_PN,
                          settings.DATASET_N_CLASSES[dataset],
-                         radius=settings.RADIUS,
-                         ID_noise=settings.ID_NOISE,
-                         OOD_noise=settings.OOD_NOISE)
+                         radius=settings.RADIUS_PN,
+                         ID_noise=settings.ID_NOISE_PN,
+                         OOD_noise=settings.OOD_NOISE_PN)
 
 x_train, logits_train, x_test, logits_test = preprocessing.preprocess_toy_dataset(X, Y, 0.8)
 model = get_model(dataset, compile=True)

@@ -3,6 +3,41 @@ from tensorflow.math import exp, reduce_sum, lgamma, reduce_mean, log, digamma
 from tensorflow.nn import softmax
 
 
+class ENDLoss(tf.keras.losses.Loss):
+    """
+    Negative Log-likelihood of the model on the transfer dataset"""
+
+    def __init__(self, init_temp=2.5):
+        super().__init__()
+        self.init_temp = init_temp
+        self.temp = None
+
+    def call(self, ensemble_logits, logits):
+        '''
+        teacher_logits are the outputs from our ensemble (batch x ensembles x classes)
+        logits are the predicted outputs from our model (batch x classes)
+        '''
+
+        if self.temp is None:
+            self.temp = self.init_temp
+
+        # Convert values to appropiate type
+        logits = tf.cast(logits, dtype=tf.float64)
+        ensemble_logits = tf.cast(ensemble_logits, dtype=tf.float64)
+
+        # Calculate probabilities by softmax over classes, adjusted for temperature
+        ensemble_probs = softmax(ensemble_logits / self.temp, axis=2)
+        student_probs = softmax(logits / self.temp, axis=1)
+
+        # Calculate mean teacher prediction
+        ensemble_probs_mean = reduce_sum(ensemble_probs, axis=1)
+
+        # Calculate cost (entropy)
+        cost = reduce_mean(-ensemble_probs_mean * log(student_probs)**(self.temp**2))
+
+        return cost
+
+
 class DirichletEnDDLoss(tf.keras.losses.Loss):
     """
     Negative Log-likelihood of the model on the transfer dataset"""
