@@ -18,7 +18,7 @@ from models import ensemble, endd
 ENDD_AUX_BASE_MODEL = 'vgg'
 N_MODELS_BASE_NAMES = [
     'cifar10_vgg_endd_aux_mini_1',
-    # 'cifar10_vgg_endd_aux_mini_2'
+    'cifar10_vgg_endd_aux_mini_2'
 ]
 ENSEMBLE_LOAD_NAME = 'vgg'
 N_MODELS_LIST = [1, 2]
@@ -65,10 +65,9 @@ def get_endd_measures(n_models_base_names, n_models_list, endd_base_model, datas
         for n_models in N_MODELS_LIST:
             endd_model_name = base_name + '_N_MODELS={}'.format(n_models)
             uncompiled_model = saveload.load_tf_model(endd_model_name, compile=False)
-            endd_model = endd.get_model(endd_base_model,
+            endd_model = endd.get_model(uncompiled_model,
                                         dataset_name=dataset_name,
-                                        compile=True,
-                                        weights=endd_model_name)
+                                        compile=True)
 
             evaluation_result = evaluation.calc_classification_measures(endd_model,
                                                                         test_images,
@@ -78,6 +77,18 @@ def get_endd_measures(n_models_base_names, n_models_list, endd_base_model, datas
                 endd_measures[measure].append(value)
         endd_measures_list.append(endd_measures)
     return endd_measures_list
+
+
+def plot_with_error_fields(ensm_measures, endd_measures_list, measure, ylabel):
+    stack = np.stack(endd_measures[measure] for endd_measures in endd_measures_list)
+    means = stack.mean(axis=0)
+    stds = stack.std(axis=0)
+    plt.plot(N_MODELS_LIST, ensm_measures[measure], label='ENSM', color='xkcd:dull blue', linestyle='dashed')
+    plt.plot(N_MODELS_LIST, means, label='ENDD+AUX', color='xkcd:dusty orange')
+    plt.fill_between(N_MODELS_LIST, means-2*stds, means+2*stds, color='xkcd:dusty orange', alpha=0.4)
+    plt.xlabel("Number of models")
+    plt.ylabel(ylabel)
+    plt.legend()
 
 
 # Load ensemble model names
@@ -100,44 +111,16 @@ print(endd_measures_list)
 # Plot results
 plt.style.use('ggplot')
 
-endd_errs = np.stack(endd_measures['err'] for endd_measures in endd_measures_list)
-endd_err_means = endd_errs.mean(axis=0)
-endd_err_std = endd_errs.std(axis=0)
 plt.subplot(2, 2, 1)
-plt.errorbar(N_MODELS_LIST, endd_err_means, 2*endd_err_std, label='ENDD+AUX')
-plt.plot(N_MODELS_LIST, ensm_measures['err'], label='ENSM')
-plt.xlabel("Number of models")
-plt.ylabel("Prediction Error")
-plt.legend()
+plot_with_error_fields(ensm_measures, endd_measures_list, 'err', 'Prediction Error')
 
-endd_prrs = np.stack(endd_measures['prr'] for endd_measures in endd_measures_list)
-endd_prr_means = endd_prrs.mean(axis=0)
-endd_prr_std = endd_prrs.std(axis=0)
 plt.subplot(2, 2, 2)
-plt.errorbar(N_MODELS_LIST, endd_prr_means, 2*endd_prr_std, label='ENDD+AUX')
-plt.plot(N_MODELS_LIST, ensm_measures['prr'], label='ENSM')
-plt.xlabel("Number of models")
-plt.ylabel("Prediction Rejection Rate")
-plt.legend()
+plot_with_error_fields(ensm_measures, endd_measures_list, 'nll', 'Negative Log-Likelihood')
 
-endd_eces = np.stack(endd_measures['ece'] for endd_measures in endd_measures_list)
-endd_ece_means = endd_eces.mean(axis=0)
-endd_ece_std = endd_eces.std(axis=0)
 plt.subplot(2, 2, 3)
-plt.errorbar(N_MODELS_LIST, endd_ece_means, 2*endd_ece_std, label='ENDD+AUX')
-plt.plot(N_MODELS_LIST, ensm_measures['ece'], label='ENSM')
-plt.xlabel("Number of models")
-plt.ylabel("Expected Calibration Error")
-plt.legend()
+plot_with_error_fields(ensm_measures, endd_measures_list, 'ece', 'Expected Calibration Error')
 
-endd_nlls = np.stack(endd_measures['nll'] for endd_measures in endd_measures_list)
-endd_nll_means = endd_nlls.mean(axis=0)
-endd_nll_std = endd_nlls.std(axis=0)
 plt.subplot(2, 2, 4)
-plt.errorbar(N_MODELS_LIST, endd_nll_means, 2*endd_nll_std, label='ENDD+AUX')
-plt.plot(N_MODELS_LIST, ensm_measures['nll'], label='ENSM')
-plt.xlabel("Number of models")
-plt.ylabel("Negative Log-Likelihood")
-plt.legend()
+plot_with_error_fields(ensm_measures, endd_measures_list, 'prr', 'Prediction Rejection Rate')
 
 plt.show()

@@ -25,7 +25,7 @@ plt.style.use('ggplot')
 ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
-MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux_mini_2'  # Name to use when saving model (None if no saving)
+MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux_mini_1'  # Name to use when saving model (None if no saving)
 N_MODELS_LIST = [1, 2]
 
 # Set training parameters
