@@ -18,16 +18,16 @@ MODEL = 'vgg'
 DATASET = 'cifar10'
 PLOT_SIMPLEX = False
 SAVE_WEIGHTS = True
-BATCH_SIZE = 100
-EPOCHS = 4
+BATCH_SIZE = 1000
+EPOCHS = 10
 NORMALIZATION = "-1to1"
 (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
 (OOD_images, _), (_,_) = datasets.cifar100.load_data()
 OOD_images = OOD_images[0:5000,:,:,:]
 train_images, train_alphas, test_images, test_alphas = preprocessing.preprocess_cifar_for_priornet(
     train_images, train_labels, test_images, test_labels,normalization = NORMALIZATION)
-train_images = train_images[0:1000,:,:,:]
-train_alphas = train_alphas[0:1000,:]
+train_images = train_images[0:10000,:,:,:]
+train_alphas = train_alphas[0:10000,:]
 model = training.train_pn(train_images,train_alphas,DATASET,MODEL,n_epochs=EPOCHS,cycle_length = 2)
 
 if SAVE_WEIGHTS:

@@ -112,14 +112,14 @@ def compare_simplex(pn_alphas,ensemble_alphas,endd_alphas):
     plt.style.use('seaborn-white')
     plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
 
-    if len(logits[0, :]) == 3:
-        for i in range(0, 3):
-            plt.subplot(1, 3, i + 1)
-            plt.title(models[i]+": " + str(np.around(logits[i, :], decimals=1)),
-                      fontsize=18,
-                      ha='center')
-            plot_alphas = alphas[i, :]
-            draw_pdf_contours(Dirichlet(plot_alphas))
+
+    for i in range(0, 3):
+        plt.subplot(1, 3, i + 1)
+        plt.title(models[i]+": " + str(np.around(alphas[i], decimals=1)),
+                    fontsize=18,
+                    ha='center')
+        plot_alphas = alphas[i]
+        draw_pdf_contours(Dirichlet(plot_alphas))
     plt.show()
     plt.savefig('compare_plot.png')
 def plot_simplex(logits):
