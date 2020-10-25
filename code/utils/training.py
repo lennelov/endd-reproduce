@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow.keras as keras
 import settings
 
-from models import vgg, cnn, endd, ensemble
+from models import vgg, cnn, endd, ensemble,cnn_priorNet
 from utils import evaluation, preprocessing, saveload, simplex, datasets, callbacks
 
 
