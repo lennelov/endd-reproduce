@@ -88,7 +88,7 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
     '''
     if barycentric is True:
         X = X.dot(_corners)
-    plt.plot(X[:, 0], X[:, 1], 'k.', ms=1, **kwargs)
+    plt.plot(X[:, 0], X[:, 1], 'r.', ms=10, **kwargs)
     plt.axis('equal')
     plt.xlim(0, 1)
     plt.ylim(0, 0.75**0.5)
@@ -101,7 +101,7 @@ def compare_simplex(pn_alphas,ensemble_alphas,endd_alphas):
     import matplotlib.pyplot as plt
     import numpy as np
     from utils.simplex import draw_pdf_contours, Dirichlet
-    models = ['PN','Ensemble','EnDD']
+    models = ['Ensemble','Ensemble','Ensemble']
     alphas = [pn_alphas,ensemble_alphas,endd_alphas]
     font = {
         'family': 'serif',
@@ -119,7 +119,11 @@ def compare_simplex(pn_alphas,ensemble_alphas,endd_alphas):
                     fontsize=18,
                     ha='center')
         plot_alphas = alphas[i]
-        draw_pdf_contours(Dirichlet(plot_alphas))
+        if models[i] == 'Ensemble':
+            print(plot_alphas)
+            plot_points(plot_alphas)
+        else:
+            draw_pdf_contours(Dirichlet(plot_alphas))
     plt.show()
     plt.savefig('compare_plot.png')
 def plot_simplex(logits):
