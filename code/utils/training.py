@@ -7,6 +7,7 @@ from models import vgg, cnn, endd, ensemble,cnn_priorNet
 from utils import evaluation, preprocessing, saveload, simplex, datasets, callbacks, losses
 
 
+
 def train_vgg_endd(train_images,
                    ensemble_model,
                    dataset_name,
@@ -97,8 +98,6 @@ def train_vgg_endd(train_images,
 
 
 
-
-
 def train_pn(train_images,
                    train_alphas,
                    dataset_name,
@@ -121,12 +120,11 @@ def train_pn(train_images,
         train_alphas np.array: alphas
         dataset_name (str): Name of dataset (required for loading correct model settings).
         batch_size (int): Batch size to use while training. Default 128,
-        n_epochs (int): Number of epochs to train. Default 90.
+
+        n_epochs (int): Number of epochs to train. Default 45.
         one_cycle_lr_policy (bool): True if one cycle LR policy should be used. Default True.
-        init_lr (float): Initial learning rate for one cycle LR. Default 0.001.
-        cycle_length (int): Epoch length in number of cycles. Default 60.
-        temp_annealing (bool): True if temperature annealing should be used. Default True.
-        init_temp (float): Initial temperature. Default 10.
+        init_lr (float): Initial learning rate for one cycle LR. Default 0.0005.
+        cycle_length (int): Epoch length in number of cycles. Default 30.
         dropout_rate (float): Probability to drop node. Default 0.3.
         save_endd_dataset (bool): True if ENDD dataset should be saved (useful for speeding up
                                   repeated training with the same ensemble. Default False.
@@ -138,15 +136,6 @@ def train_pn(train_images,
         (keras.Model): Trained VGG ENDD model.
     """
 
-    # Save / Load pickled data. Generating ensemble preds takes a long time, so saving and
-    # loading can make testing much more efficient.
-    #if save_pn_dataset:
-    #    with open('train_pn_dataset.pkl', 'wb') as file:
-    #        pickle.dump((train_images, train_alphas), file)
-
-    # Image augmentation
-    #data_generator = preprocessing.make_augmented_generator(train_images, train_alphas,
-    #                                                        batch_size)
 
     # Callbacks
     pn_callbacks = []

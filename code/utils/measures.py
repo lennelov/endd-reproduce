@@ -3,6 +3,71 @@ import tensorflow as tf
 import numpy as np
 import sklearn.metrics
 from uncertainty_metrics.numpy.general_calibration_error import ece
+import scipy.special
+
+
+def entropy_of_expected(raw, logits):
+    '''Calcs entropy of expected <-> total uncertainty
+    
+    args:
+    raw - A (N_models, N_data_points, N_classes) vector or (N_data_points, N_classes)
+    logits - Boolean, if true, we take softmax, otherwise, treat as probabilities.
+
+    return:
+    A N_data_points vector'''
+
+    if logits:
+        probabilities = scipy.special.softmax(raw, axis=-1)
+    else:
+        probabilities = raw
+
+    if len(probabilities.shape) == 3:
+        means = np.mean(probabilities, axis=0)
+
+    elif len(probabilities.shape) == 2:
+        means = probabilities
+    else:
+        raise ValueError(
+            'Logits must be (N_models, N_data_points, N_classes) or (N_data_points, N_classes)')
+
+    return np.sum(-means * np.log(means + 1e-12), axis=1)
+
+
+def expected_entropy(raw, logits):
+    '''Calcs expected entropy <-> data uncertainty
+    
+    args:
+    raw - A (N_models, N_data_points, N_classes) vector
+    logits - Boolean, if true, we take softmax, otherwise, treat as probabilities.
+    
+    return:
+    A N_data_points vector'''
+
+    probabilities = 0
+    if logits:
+        probabilities = scipy.special.softmax(raw, axis=-1)
+    else:
+        probabilities = raw
+
+    return np.mean(np.sum(-probabilities * np.log(probabilities + 1e-12), axis=2), axis=0)
+
+
+def expected_entropy_pn(logits):
+    """ Calculated expected entropy (data uncertainty) for a prior network.
+    Assumes dirichlet distribution. 
+
+    Args:
+        logits - A (N_data_points, N_classes) - vector
+
+    Outputs:
+        A (N_data_points, N_classes) - vector
+    """
+    alpha = np.exp(logits)
+    alpha_0 = np.sum(alpha, axis=1, keepdims=True)
+    probs = alpha / alpha_0
+
+    return np.sum(-probs * (scipy.special.digamma(alpha + 1) - scipy.special.digamma(alpha_0 + 1)),
+                  axis=1)
 
 
 def _probs_to_classes(probs):

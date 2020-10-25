@@ -78,7 +78,7 @@ def format_results(model_names, model_measures, dataset_name=None):
         s += "    {}: {:.1f}%\n".format(name, 100 * measures['prr'])
     s += "ECE (expected calibration error)\n"
     for name, measures in zip(model_names, model_measures):
-        s += "    {}: {:.3f}\n".format(name, measures['ece'])
+        s += "    {}: {:.3f}%\n".format(name, 100 * measures['ece'])
     s += "NLL (negative log-likelihood)\n"
     for name, measures in zip(model_names, model_measures):
         s += "    {}: {:.3f}\n".format(name, measures['nll'])

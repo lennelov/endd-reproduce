@@ -22,7 +22,8 @@ ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
 MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux_1'  # Name to use when saving model (None if no saving)
-N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30]
+N_MODELS = 100
+INIT_TEMP_LIST = [1, 2, 5, 10, 20]
 
 # Set training parameters
 N_EPOCHS = 90  # Number of epochs to train for (90)
@@ -35,7 +36,6 @@ ONE_CYCLE_LR_POLICY = True
 CYCLE_LENGTH = 60  # (90)
 INIT_LR = 0.001  # (0.001)
 DROPOUT_RATE = 0.3  # (0.3)
-INIT_TEMP = 10  # (10)
 
 # Load dataset
 (train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
@@ -55,21 +55,14 @@ elif NORMALIZATION == 'gaussian':
 # Load ensemble models
 ensemble_model_names = saveload.get_ensemble_model_names()
 model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
+model_name_subset = model_names[:N_MODELS]
+wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset]
 
-measures = {'endd': defaultdict(list), 'ensm': defaultdict(list)}
-for n_models in N_MODELS_LIST:
-    # Get model names
-    model_name_subset = model_names[:n_models]
-    wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset]
-
+load_previous_dataset = False
+measures = defaultdict(list)
+for init_temp in INIT_TEMP_LIST:
     # Build ensemble
     ensm_model = ensemble.Ensemble(wrapped_models)
-    ensm_measures = evaluation.calc_classification_measures(ensm_model,
-                                                            test_images,
-                                                            test_labels,
-                                                            wrapper_type='ensemble')
-    for measure, value in ensm_measures.items():
-        measures['ensm'][measure].append(value)
 
     # Train ENDD
     endd_model = training.train_vgg_endd(train_images=train_images,
@@ -81,49 +74,46 @@ for n_models in N_MODELS_LIST:
                                          init_lr=INIT_LR,
                                          cycle_length=CYCLE_LENGTH,
                                          temp_annealing=TEMP_ANNEALING,
-                                         init_temp=INIT_TEMP,
+                                         init_temp=init_temp,
                                          dropout_rate=DROPOUT_RATE,
-                                         save_endd_dataset=False,
-                                         load_previous_endd_dataset=False)
+                                         save_endd_dataset=(not load_previous_dataset),
+                                         load_previous_endd_dataset=load_previous_dataset)
+    load_previous_dataset = True  # Load previous to make training faster
     endd_measures = evaluation.calc_classification_measures(endd_model,
                                                             test_images,
                                                             test_labels,
                                                             wrapper_type='individual')
     for measure, value in endd_measures.items():
-        measures['endd'][measure].append(value)
+        measures[measure].append(value)
 
     if MODEL_BASE_SAVE_NAME:
-        saveload.save_tf_model(endd_model, MODEL_BASE_SAVE_NAME + '_N_MODELS={}'.format(n_models))
-        saveload.save_weights(endd_model, MODEL_BASE_SAVE_NAME + '_N_MODELS={}'.format(n_models))
+        saveload.save_tf_model(endd_model, MODEL_BASE_SAVE_NAME + '_TEMP={}'.format(init_temp))
+        saveload.save_weights(endd_model, MODEL_BASE_SAVE_NAME + '_TEMP={}'.format(init_temp))
 
 print(measures)
 
 # Plot results
 plt.subplot(2, 2, 1)
-plt.plot(N_MODELS_LIST, measures['endd']['err'], label='ENDD+AUX')
-plt.plot(N_MODELS_LIST, measures['ensm']['err'], label='ENSM')
-plt.xlabel("Number of models")
+plt.plot(INIT_TEMP_LIST, measures['err'], label='ENDD+AUX')
+plt.xlabel("Initial temperature")
 plt.ylabel("Prediction Error")
 plt.legend()
 
 plt.subplot(2, 2, 2)
-plt.plot(N_MODELS_LIST, measures['endd']['prr'], label='ENDD+AUX')
-plt.plot(N_MODELS_LIST, measures['ensm']['prr'], label='ENSM')
-plt.xlabel("Number of models")
+plt.plot(INIT_TEMP_LIST, measures['prr'], label='ENDD+AUX')
+plt.xlabel("Initial temperature")
 plt.ylabel("Prediction Rejection Rate")
 plt.legend()
 
 plt.subplot(2, 2, 3)
-plt.plot(N_MODELS_LIST, measures['endd']['ece'], label='ENDD+AUX')
-plt.plot(N_MODELS_LIST, measures['ensm']['ece'], label='ENSM')
-plt.xlabel("Number of models")
+plt.plot(INIT_TEMP_LIST, measures['ece'], label='ENDD+AUX')
+plt.xlabel("Initial temperature")
 plt.ylabel("Expected Calibration Error")
 plt.legend()
 
 plt.subplot(2, 2, 4)
-plt.plot(N_MODELS_LIST, measures['endd']['nll'], label='ENDD+AUX')
-plt.plot(N_MODELS_LIST, measures['ensm']['nll'], label='ENSM')
-plt.xlabel("Number of models")
+plt.plot(INIT_TEMP_LIST, measures['nll'], label='ENDD+AUX')
+plt.xlabel("Initial temperature")
 plt.ylabel("Negative Log-Likelihood")
 plt.legend()
 
