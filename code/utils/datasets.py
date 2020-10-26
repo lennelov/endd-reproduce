@@ -1,6 +1,8 @@
 """Module collecting datasets for loading.
+
 The _get_dataset functions should return (x_train, y_train), (x_test, y_test)
 where the data is formated as numpy arrays.
+
 Once a function as been added it should also be added to the DATASET_GETTERS list in
 the get_dataset function.
 """
@@ -78,12 +80,15 @@ DATASET_GETTERS = {
 
 def get_dataset(dataset_name):
     """Take dataset name and return dataset.
+
     Currently available datasets:
         'cifar10'
         'cifar100'
         'mnist'
+
     Args:
         dataset_name (str): Name of dataset.
+
     Returns:
         (x_train, y_train), (x_test, y_test) as tuples of numpy arrays.
     """
@@ -98,7 +103,9 @@ def get_dataset(dataset_name):
 
 def get_ensemble_dataset(ensemble, dataset_name):
     """WARNING: NO PREPROCESSING IS APPLIED, THIS FUNCITON IS USELESS AT THE MOMENT
+
     Take ensemble model and dataset name and return ensemble dataset for use with ENDD.
+
     Args:
         ensemble (models.ensemble.Ensemble): Ensemble model that will provide predictions.
         dataset_name (str): Name of dataset.
