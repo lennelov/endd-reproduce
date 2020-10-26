@@ -15,6 +15,16 @@ import settings
 def _get_cifar10():
     return datasets.cifar10.load_data()
 
+def _get_cifar10_3_class():
+    (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
+    index = np.where(train_labels<3)
+    train_images = train_images[index[0],:,:,:]
+    train_labels = train_labels[index[0]]
+    index = np.where(test_labels<3) 
+    test_images = test_images[index[0],:,:,:]
+    test_labels = test_labels[index[0]]
+    return (train_images, train_labels), (test_images, test_labels)
+
 
 def _get_cifar100():
     return datasets.cifar10.load_data()
@@ -74,7 +84,8 @@ DATASET_GETTERS = {
     'cifar100': _get_cifar100,
     'mnist': _get_mnist,
     "spiral": _get_spiral,
-    "spiral_aux": _get_spiral_aux
+    "spiral_aux": _get_spiral_aux,
+    'cifar10_3_classes': _get_cifar10_3_class
 }
 
 
@@ -85,6 +96,7 @@ def get_dataset(dataset_name):
         'cifar10'
         'cifar100'
         'mnist'
+        'cifar10_3_classes'
 
     Args:
         dataset_name (str): Name of dataset.
