@@ -4,7 +4,7 @@ import settings
 from utils import saveload
 
 
-def get_model(dataset_name, compile=True, weights=None):
+def get_model(dataset_name, compile=True, weights=None, softmax=True):
     """Take dataset name and return corresponding untrained CNN model.
 
     Args:
@@ -35,7 +35,7 @@ def get_model(dataset_name, compile=True, weights=None):
     model.add(keras.layers.Flatten())
     model.add(keras.layers.Dense(64, activation='relu'))
     model.add(keras.layers.Dense(settings.DATASET_N_CLASSES[dataset_name]))
-
+    #model.add(keras.layers.Activation('softmax'))
     if weights:
         saveload.load_weights(model, weights)
 

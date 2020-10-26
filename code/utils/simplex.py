@@ -88,7 +88,7 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
     '''
     if barycentric is True:
         X = X.dot(_corners)
-    plt.plot(X[:, 0], X[:, 1], 'k.', ms=1, **kwargs)
+    plt.plot(X[:, 0], X[:, 1], 'r.', ms=10, **kwargs)
     plt.axis('equal')
     plt.xlim(0, 1)
     plt.ylim(0, 0.75**0.5)
@@ -96,7 +96,36 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
     if border is True:
         plt.triplot(_triangle, linewidth=1)
 
+def compare_simplex(pn_alphas,ensemble_alphas,endd_alphas):
+    import seaborn as sn
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from utils.simplex import draw_pdf_contours, Dirichlet
+    models = ['Ensemble','Ensemble','Ensemble']
+    alphas = [pn_alphas,ensemble_alphas,endd_alphas]
+    font = {
+        'family': 'serif',
+        'color': 'black',
+        'weight': 'normal',
+        'size': 16,
+    }
+    plt.style.use('seaborn-white')
+    plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
 
+
+    for i in range(0, 3):
+        plt.subplot(1, 3, i + 1)
+        plt.title(models[i]+": " + str(np.around(alphas[i], decimals=1)),
+                    fontsize=18,
+                    ha='center')
+        plot_alphas = alphas[i]
+        if models[i] == 'Ensemble':
+            print(plot_alphas)
+            plot_points(plot_alphas)
+        else:
+            draw_pdf_contours(Dirichlet(plot_alphas))
+    plt.show()
+    plt.savefig('compare_plot.png')
 def plot_simplex(logits):
     import seaborn as sn
     import matplotlib.pyplot as plt

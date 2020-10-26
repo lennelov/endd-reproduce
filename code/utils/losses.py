@@ -88,8 +88,8 @@ class DirichletKL(tf.keras.losses.Loss):
       This function computes the Reverse KL divergence between two dirichlet distributions based on their alphas.
         Inputs:
               alpha_true (Batch_size x n_classes), the alphas corresponding to the true distribution. (1,1,1) for OOD and (100,1,1) / (1,100,1) / (1,1,100) for ID.
-              alpha_pred (Batch_size x n_classes), the predicted alphas from our network given input X.
-              epsilon = 1e-8, smoothing factor
+              logits_pred (Batch_size x n_classes), the predicted logits from our network given input X.
+              epsilon = 1e-10, smoothing factor
         Output:
               KL-divergences (Batch-Size x 1), Reverse KL divergence of the two dirichlet distributions RKL(true_dirichlet||pred_dirichlet)
     '''
@@ -98,8 +98,10 @@ class DirichletKL(tf.keras.losses.Loss):
         super().__init__()
         self.epsilon = epsilon
 
-    def call(self, alpha_true, alpha_pred):
+    def call(self, alpha_true, logits_pred):
         epsilon = self.epsilon
+        alpha_pred = exp(logits_pred)
+
         KL = lgamma(tf.math.reduce_sum(alpha_pred)) - tf.math.reduce_sum(
             lgamma(alpha_pred + epsilon)) - lgamma(
                 tf.math.reduce_sum(alpha_true)) + tf.math.reduce_sum(
