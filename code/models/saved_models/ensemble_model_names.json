@@ -31,5 +31,14 @@
       "vgg_cifar10_cifar10_50",
       "vgg_cifar10_cifar10_71"
     ]
-  }
+  },
+  "vgg_3_class": {
+    "cifar10_3_class": [
+      "vgg_3_class_cifar10_3_classes_0",
+      "vgg_3_class_cifar10_3_classes_1",
+      "vgg_3_class_cifar10_3_classes_2",
+      "vgg_3_class_cifar10_3_classes_3",
+      "vgg_3_class_cifar10_3_classes_4"
+    ]
+  }  
 }

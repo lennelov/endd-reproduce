@@ -23,9 +23,9 @@ Instructions for building ensemble with trained models (see also ensemble_exampl
 MODEL_TYPE = 'vgg'  # Name of model module {cnn, vgg}  Note: probably won't work with vgg
 ENSEMBLE_SAVE_NAME = 'vgg_3_class'  # Name that the ensemble models will be saved with
 NAME_START_NUMBER = 0  # Start number for model naming (set to 0 unless continuing previous training)
-DATASET_NAME = 'cifar10_3_classes'  # Name of dataset {cifar10, cifar100, mnist}
+DATASET_NAME = 'cifar10_3_class'  # Name of dataset {cifar10, cifar100, mnist}
 N_MODELS = 10  # Number of models to train
-N_EPOCHS = 45  # Number of epochs to train for
+N_EPOCHS = 3  # Number of epochs to train for
 
 # Add parent dir to path to allow for parallel imports
 import sys
@@ -74,7 +74,7 @@ init_lr = 0.001
 olp_callback = OneCycleLRPolicy(init_lr=init_lr,
                                 max_lr=init_lr * 10,
                                 min_lr=init_lr / 1000,
-                                cycle_length=30,
+                                cycle_length=2,
                                 epochs=N_EPOCHS)
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
