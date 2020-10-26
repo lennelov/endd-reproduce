@@ -96,12 +96,13 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
     if border is True:
         plt.triplot(_triangle, linewidth=1)
 
-def compare_simplex(pn_alphas,ensemble_alphas,endd_alphas):
+
+def compare_simplex(pn_alphas, ensemble_alphas, endd_alphas):
     import seaborn as sn
     import matplotlib.pyplot as plt
     import numpy as np
     from utils.simplex import draw_pdf_contours, Dirichlet
-    alphas = [pn_alphas,ensemble_alphas,endd_alphas]
+    alphas = [pn_alphas, ensemble_alphas, endd_alphas]
     font = {
         'family': 'serif',
         'color': 'black',
@@ -110,19 +111,19 @@ def compare_simplex(pn_alphas,ensemble_alphas,endd_alphas):
     }
     plt.style.use('seaborn-white')
     plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
-    models = ["data_uncertainty","knowledge uncertainty","certain"]
+    models = ["data_uncertainty", "knowledge uncertainty", "certain"]
 
     for i in range(0, 3):
         plt.subplot(1, 3, i + 1)
-        plt.title(models[i],
-                    fontsize=18,
-                    ha='center')
+        plt.title(models[i], fontsize=18, ha='center')
         plot_alphas = alphas[i]
 
         plot_points(plot_alphas)
 
     plt.show()
     plt.savefig('compare_plot.png')
+
+
 def plot_simplex(logits):
     import seaborn as sn
     import matplotlib.pyplot as plt

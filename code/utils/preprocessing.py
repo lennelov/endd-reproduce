@@ -130,7 +130,7 @@ def preprocess_cifar_for_priornet(train_images,
                                   test_images,
                                   test_labels,
                                   normalization,
-                                  OOD_images = None,
+                                  OOD_images=None,
                                   ID_classes=10):
     '''
         preprocesses train and test data from cifar10 for a prior net by taking the first ID_classes classes as ID and remaining as OOD.
@@ -154,8 +154,11 @@ def preprocess_cifar_for_priornet(train_images,
     train_logits = tf.one_hot(train_labels, ID_classes) * 100 + 1
     test_logits = tf.one_hot(test_labels, ID_classes) * 100 + 1
     if OOD_images is not None:
-        train_images = np.concatenate((train_images,OOD_images),axis = 0)
-        train_logits = tf.concat([tf.squeeze(train_logits),tf.ones([OOD_images.shape[0],train_logits.shape[2]])],axis = 0)
+        train_images = np.concatenate((train_images, OOD_images), axis=0)
+        train_logits = tf.concat(
+            [tf.squeeze(train_logits),
+             tf.ones([OOD_images.shape[0], train_logits.shape[2]])],
+            axis=0)
 
     if normalization == "-1to1":
         train_images, min, max = normalize_minus_one_to_one(train_images)
@@ -163,11 +166,11 @@ def preprocess_cifar_for_priornet(train_images,
     elif normalization == 'gaussian':
         train_images, mean, std = normalize_gaussian(train_images)
         test_images = normalize_gaussian(test_images, mean, std)
-    if OOD_images is not None: #shuffle the images
+    if OOD_images is not None:  #shuffle the images
         tf.random.set_seed(1234)
-        train_images =tf.random.shuffle(train_images,seed = 2) 
+        train_images = tf.random.shuffle(train_images, seed=2)
         tf.random.set_seed(1234)
-        train_logits =tf.random.shuffle(train_logits,seed = 2)
+        train_logits = tf.random.shuffle(train_logits, seed=2)
     train_logits = tf.squeeze(train_logits)
     test_images = tf.squeeze(test_images)
     return train_images, train_logits, test_images, test_logits
@@ -212,12 +215,13 @@ def preprocess_toy_dataset(X, Y, training_ratio=0.8, norm=None):
     logits_test = logits_test + 1
     return X_train, logits_train, X_test, logits_test
 
+
 def preprocess_cifar_for_priornet(train_images,
                                   train_labels,
                                   test_images,
                                   test_labels,
                                   normalization,
-                                  OOD_images = None,
+                                  OOD_images=None,
                                   ID_classes=10):
     '''
         preprocesses train and test data from cifar10 for a prior net by taking the first ID_classes classes as ID and remaining as OOD.
@@ -241,8 +245,11 @@ def preprocess_cifar_for_priornet(train_images,
     train_logits = tf.one_hot(train_labels, ID_classes) * 100 + 1
     test_logits = tf.one_hot(test_labels, ID_classes) * 100 + 1
     if OOD_images is not None:
-        train_images = np.concatenate((train_images,OOD_images),axis = 0)
-        train_logits = tf.concat([tf.squeeze(train_logits),tf.ones([OOD_images.shape[0],train_logits.shape[2]])],axis = 0)
+        train_images = np.concatenate((train_images, OOD_images), axis=0)
+        train_logits = tf.concat(
+            [tf.squeeze(train_logits),
+             tf.ones([OOD_images.shape[0], train_logits.shape[2]])],
+            axis=0)
 
     if normalization == "-1to1":
         train_images, min, max = normalize_minus_one_to_one(train_images)
@@ -250,13 +257,11 @@ def preprocess_cifar_for_priornet(train_images,
     elif normalization == 'gaussian':
         train_images, mean, std = normalize_gaussian(train_images)
         test_images = normalize_gaussian(test_images, mean, std)
-    if OOD_images is not None: #shuffle the images
+    if OOD_images is not None:  #shuffle the images
         tf.random.set_seed(1234)
-        train_images =tf.random.shuffle(train_images,seed = 2) 
+        train_images = tf.random.shuffle(train_images, seed=2)
         tf.random.set_seed(1234)
-        train_logits =tf.random.shuffle(train_logits,seed = 2)
+        train_logits = tf.random.shuffle(train_logits, seed=2)
     train_logits = tf.squeeze(train_logits)
     test_images = tf.squeeze(test_images)
     return train_images, train_logits, test_images, test_logits
-
-

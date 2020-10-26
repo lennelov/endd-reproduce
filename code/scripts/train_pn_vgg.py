@@ -19,12 +19,17 @@ DATASET = 'cifar10'
 SAVE_WEIGHTS = True
 NORMALIZATION = "-1to1"
 (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
-(OOD_images, _), (_,_) = datasets.cifar100.load_data()
+(OOD_images, _), (_, _) = datasets.cifar100.load_data()
 
 train_images, train_alphas, test_images, test_alphas = preprocessing.preprocess_cifar_for_priornet(
-    train_images, train_labels, test_images, test_labels,normalization = NORMALIZATION,OOD_images = OOD_images)
+    train_images,
+    train_labels,
+    test_images,
+    test_labels,
+    normalization=NORMALIZATION,
+    OOD_images=OOD_images)
 
-model = training.train_pn(train_images,train_alphas,DATASET,MODEL)
+model = training.train_pn(train_images, train_alphas, DATASET, MODEL)
 
 if SAVE_WEIGHTS:
     saveload.save_tf_model(model, "PN_vgg_cifar10_aux")
@@ -34,4 +39,3 @@ predictions = tf.math.argmax(tf.squeeze(alphas), axis=1)
 real = tf.math.argmax(tf.squeeze(test_alphas), axis=1)
 
 score = tf.math.reduce_sum(tf.cast(predictions == real, tf.float32)) / len(real)
-

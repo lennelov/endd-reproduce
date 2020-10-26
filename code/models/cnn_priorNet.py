@@ -8,8 +8,8 @@ def get_model(base_model,
               compile=True,
               weights=None,
               dropout_rate=0.3,
-              epsilon = 1e-8,
-              softmax = False):
+              epsilon=1e-8,
+              softmax=False):
     """Take an uncompiled model and return model compiled for PN.
     Warning: This function works in place. Model is returned only for
     conveniance.
@@ -20,7 +20,10 @@ def get_model(base_model,
         if base_model == 'cnn':
             base_model = cnn.get_model(dataset_name, compile=False, softmax=False)
         elif base_model == 'vgg':
-            base_model = vgg.get_model(dataset_name, compile=False, softmax=False,dropout_rate=dropout_rate)
+            base_model = vgg.get_model(dataset_name,
+                                       compile=False,
+                                       softmax=False,
+                                       dropout_rate=dropout_rate)
         else:
             raise ValueError("""Base model {} not recognized, make sure it has been added
                               to endd.py, or pass a Keras model object as base model instead.""")
