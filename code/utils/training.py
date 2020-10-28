@@ -156,9 +156,10 @@ def train_pn(train_images,
                                       dropout_rate=dropout_rate,
                                       softmax=False)
 
+    data_generator = preprocessing.make_augmented_generator(train_images, train_alphas, 128)
+
     # Train model
-    pn_model.fit(train_images,
-                 train_alphas,
+    pn_model.fit(data_generator,
                  batch_size=batch_size,
                  epochs=n_epochs,
                  callbacks=pn_callbacks)

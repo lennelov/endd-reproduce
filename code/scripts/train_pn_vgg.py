@@ -7,6 +7,8 @@ import os
 parent_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parent_dir_path)
 import tensorflow as tf
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(physical_devices[0], True)
 import numpy as np
 from tensorflow.keras import datasets
 
@@ -32,7 +34,7 @@ train_images, train_alphas, test_images, test_alphas = preprocessing.preprocess_
 model = training.train_pn(train_images, train_alphas, DATASET, MODEL)
 
 if SAVE_WEIGHTS:
-    saveload.save_tf_model(model, "PN_vgg_cifar10_aux")
+    saveload.save_tf_model(model, "pn_vgg_cifar10_aux_1")
 alphas = tf.math.exp(model.predict(test_images))
 
 predictions = tf.math.argmax(tf.squeeze(alphas), axis=1)
