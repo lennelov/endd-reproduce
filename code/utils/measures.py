@@ -64,10 +64,11 @@ def expected_entropy_pn(logits):
     Outputs:
         A (N_data_points, N_classes) - vector
     """
+    logits = logits.astype(np.float64)
+
     alpha = np.exp(logits)
     alpha_0 = np.sum(alpha, axis=1, keepdims=True)
     probs = alpha / alpha_0
-
 
     return np.sum(-probs * (scipy.special.digamma(alpha + 1) - scipy.special.digamma(alpha_0 + 1)),
                   axis=1)
@@ -131,8 +132,8 @@ def calc_pn_know_unc_auc_roc(in_preds, out_preds, plot=False):
     out_labels = np.ones(out_preds.shape[0])
     all_labels = np.concatenate([in_labels, out_labels], axis=0)
 
-    in_t_unc = entropy_of_expected(in_preds, logits=False)
-    out_t_unc = entropy_of_expected(out_preds, logits=False)
+    in_t_unc = entropy_of_expected(in_preds, logits=True)
+    out_t_unc = entropy_of_expected(out_preds, logits=True)
 
     in_d_unc = expected_entropy_pn(in_preds)
     out_d_unc = expected_entropy_pn(out_preds)
