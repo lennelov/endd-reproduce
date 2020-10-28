@@ -39,7 +39,6 @@ class EnsembleClassifierOOD:
         return self.model.predict(x)
 
 
-
 class IndividualClassifier:
     """Wraps a model predicting logits."""
 
