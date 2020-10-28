@@ -10,6 +10,8 @@ import numpy as np
 from tensorflow.keras import datasets
 from utils.create_toy_data import create_mixed_data
 import settings
+import os
+from PIL import Image
 
 
 def _get_cifar10():
@@ -69,12 +71,26 @@ def _get_spiral_aux():
     return (x_train, y_train), (x_test, y_test)
 
 
+def _get_lsun(img_size=(32, 32)):
+    dirpath = 'code/data/lsun_images'
+    imgpaths = os.listdir(dirpath)
+
+    img_arrays = []
+    for path in imgpaths:
+        img = Image.open(dirpath + '/' + path)
+        img = img.resize(img_size)
+        img_arrays.append(np.array(img))
+
+    return None, np.stack(img_arrays)
+
+
 DATASET_GETTERS = {
     'cifar10': _get_cifar10,
     'cifar100': _get_cifar100,
     'mnist': _get_mnist,
     "spiral": _get_spiral,
-    "spiral_aux": _get_spiral_aux
+    "spiral_aux": _get_spiral_aux,
+    'lsun': _get_lsun
 }
 
 
@@ -85,6 +101,9 @@ def get_dataset(dataset_name):
         'cifar10'
         'cifar100'
         'mnist'
+        'spiral'
+        'spiral_aux'
+        'lsun'
 
     Args:
         dataset_name (str): Name of dataset.

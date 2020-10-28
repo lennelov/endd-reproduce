@@ -11,8 +11,36 @@ from utils import classifiers
 
 CLASSIFIER_WRAPPERS = {
     'ensemble': classifiers.EnsembleClassifier,
-    'individual': classifiers.IndividualClassifier
+    'ensemble_ood': classifiers.EnsembleClassifierOOD,
+    'individual': classifiers.IndividualClassifier,
+    'priornet': classifiers.PriorNetClassifier
 }
+
+
+def calc_ood_measures(model, in_images, out_images, tot_wrapper_type, know_wrapper_type):
+    # if wrapper_type is not None and wrapper_type not in CLASSIFIER_WRAPPERS:
+    #     raise ValueError("""wrapper_type {} not recognized, make sure it has been added to
+    #                         CLASSIFIER_WRAPPERS in evaluation.py and that a corresponding
+    #                         wrapper exists.""")
+
+    tot_clf = CLASSIFIER_WRAPPERS[tot_wrapper_type](model)
+    in_preds = tot_clf.predict(in_images)
+    out_preds = tot_clf.predict(out_images)
+    tot_unc_roc_auc = measures.calc_tot_unc_auc_roc(in_preds, out_preds)
+
+    if know_wrapper_type:
+        know_clf = CLASSIFIER_WRAPPERS[know_wrapper_type](model)
+        in_preds = know_clf.predict(in_images)
+        out_preds = know_clf.predict(out_images)
+        if know_wrapper_type == 'priornet':
+            know_unc_roc_auc = measures.calc_pn_know_unc_auc_roc(in_preds, out_preds)
+        elif know_wrapper_type == 'ensemble_ood':
+            know_unc_roc_auc = measures.calc_ensemble_know_unc_auc_roc(in_preds, out_preds)
+    else:
+        know_unc_roc_auc = 0
+
+    output = {'tot_unc_roc_auc': tot_unc_roc_auc, 'know_unc_roc_auc': know_unc_roc_auc}
+    return output
 
 
 def calc_classification_measures(model, images, labels, wrapper_type=None):
@@ -82,5 +110,21 @@ def format_results(model_names, model_measures, dataset_name=None):
     s += "NLL (negative log-likelihood)\n"
     for name, measures in zip(model_names, model_measures):
         s += "    {}: {:.3f}\n".format(name, measures['nll'])
+
+    return s
+
+
+def format_ood_results(model_names, model_measures, in_dataset_name=None, out_dataset_name=None):
+    s = "== EVALUATION RESULTS ==\n"
+    if in_dataset_name:
+        s += "In dataset: {}\n".format(in_dataset_name)
+    if out_dataset_name:
+        s += "Out dataset: {}\n".format(out_dataset_name)
+    s += "Total uncertainty AUC-ROC\n"
+    for name, measures in zip(model_names, model_measures):
+        s += "    {}: {:.1f}%\n".format(name, 100 * measures['tot_unc_roc_auc'])
+    s += "Knowledge uncertainty AUC-ROC\n"
+    for name, measures in zip(model_names, model_measures):
+        s += "    {}: {:.1f}%\n".format(name, 100 * measures['know_unc_roc_auc'])
 
     return s

@@ -2,6 +2,9 @@
 code/models/saved_models/*/
 code/models/saved_weights/*/
 
+# Webp images
+*.webp
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
