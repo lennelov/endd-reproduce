@@ -67,31 +67,40 @@ out_images = preprocessing.normalize_minus_one_to_one(out_images, min=0, max=255
 
 # Calculate measures
 print("Evaluating IND...")
-ind_measures = evaluation.calc_ood_measures(ind_model, in_images, out_images,
+ind_measures = evaluation.calc_ood_measures(ind_model,
+                                            in_images,
+                                            out_images,
                                             tot_wrapper_type=ind_tot_wrapper_type,
                                             know_wrapper_type=ind_know_wrapper_type)
 
 print("Evaluating ENSM...")
-ensm_measures = evaluation.calc_ood_measures(ensm_model, in_images, out_images,
+ensm_measures = evaluation.calc_ood_measures(ensm_model,
+                                             in_images,
+                                             out_images,
                                              tot_wrapper_type=ensm_tot_wrapper_type,
                                              know_wrapper_type=ensm_know_wrapper_type)
 
 print("Evaluating ENDD...")
-endd_measures = evaluation.calc_ood_measures(endd_model, in_images, out_images,
+endd_measures = evaluation.calc_ood_measures(endd_model,
+                                             in_images,
+                                             out_images,
                                              tot_wrapper_type=endd_tot_wrapper_type,
                                              know_wrapper_type=endd_know_wrapper_type)
 
 print("Evaluating ENDD+AUX...")
-endd_aux_measures = evaluation.calc_ood_measures(endd_aux_model, in_images, out_images,
+endd_aux_measures = evaluation.calc_ood_measures(endd_aux_model,
+                                                 in_images,
+                                                 out_images,
                                                  tot_wrapper_type=endd_aux_tot_wrapper_type,
                                                  know_wrapper_type=endd_aux_know_wrapper_type)
 
 print("Evaluations complete.")
 
 # Format and print results
-summary = evaluation.format_ood_results(['IND', 'ENSM', 'ENDD', 'ENDD+AUX'],
-                                        [ind_measures, ensm_measures, endd_measures, endd_aux_measures],
-                                        in_dataset_name=DATASET_NAME,
-                                        out_dataset_name=OUT_DATASET_NAME)
+summary = evaluation.format_ood_results(
+    ['IND', 'ENSM', 'ENDD', 'ENDD+AUX'],
+    [ind_measures, ensm_measures, endd_measures, endd_aux_measures],
+    in_dataset_name=DATASET_NAME,
+    out_dataset_name=OUT_DATASET_NAME)
 
 print(summary)
