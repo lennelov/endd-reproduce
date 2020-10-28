@@ -4,11 +4,13 @@ import numpy as np
 import sklearn.metrics
 from uncertainty_metrics.numpy.general_calibration_error import ece
 import scipy.special
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 
 def entropy_of_expected(raw, logits):
     '''Calcs entropy of expected <-> total uncertainty
-    
+
     args:
     raw - A (N_models, N_data_points, N_classes) vector or (N_data_points, N_classes)
     logits - Boolean, if true, we take softmax, otherwise, treat as probabilities.
@@ -35,11 +37,11 @@ def entropy_of_expected(raw, logits):
 
 def expected_entropy(raw, logits):
     '''Calcs expected entropy <-> data uncertainty
-    
+
     args:
     raw - A (N_models, N_data_points, N_classes) vector
     logits - Boolean, if true, we take softmax, otherwise, treat as probabilities.
-    
+
     return:
     A N_data_points vector'''
 
@@ -54,7 +56,7 @@ def expected_entropy(raw, logits):
 
 def expected_entropy_pn(logits):
     """ Calculated expected entropy (data uncertainty) for a prior network.
-    Assumes dirichlet distribution. 
+    Assumes dirichlet distribution.
 
     Args:
         logits - A (N_data_points, N_classes) - vector
@@ -66,8 +68,92 @@ def expected_entropy_pn(logits):
     alpha_0 = np.sum(alpha, axis=1, keepdims=True)
     probs = alpha / alpha_0
 
+
     return np.sum(-probs * (scipy.special.digamma(alpha + 1) - scipy.special.digamma(alpha_0 + 1)),
                   axis=1)
+
+
+def calc_tot_unc_auc_roc(in_probs, out_probs, plot=False):
+    in_labels = np.zeros(in_probs.shape[0])
+    out_labels = np.ones(out_probs.shape[0])
+    all_labels = np.concatenate([in_labels, out_labels], axis=0)
+
+    in_t_unc = entropy_of_expected(in_probs, logits=False)
+    out_t_unc = entropy_of_expected(out_probs, logits=False)
+    all_t_unc = np.concatenate([in_t_unc, out_t_unc], axis=0)
+
+    precision, recall, thresholds = sklearn.metrics.precision_recall_curve(all_labels, all_t_unc)
+    auc_roc = sklearn.metrics.auc(recall, precision)
+
+    if plot:
+        plt.plot(recall, precision, label='Total uncertainty')
+        plt.title('Total uncertainty OOD detection ROC curve')
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.legend()
+        plt.show()
+
+    return auc_roc
+
+
+def calc_ensemble_know_unc_auc_roc(in_probs, out_probs, plot=False):
+    in_labels = np.zeros(in_probs.shape[1])
+    out_labels = np.ones(out_probs.shape[1])
+    all_labels = np.concatenate([in_labels, out_labels], axis=0)
+
+    in_t_unc = entropy_of_expected(in_probs, logits=False)
+    out_t_unc = entropy_of_expected(out_probs, logits=False)
+
+    in_d_unc = expected_entropy(in_probs, logits=False)
+    out_d_unc = expected_entropy(out_probs, logits=False)
+
+    in_k_unc = in_t_unc - in_d_unc
+    out_k_unc = out_t_unc - out_d_unc
+    all_k_unc = np.concatenate([in_k_unc, out_k_unc], axis=0)
+
+    precision, recall, thresholds = sklearn.metrics.precision_recall_curve(all_labels, all_k_unc)
+    auc_roc = sklearn.metrics.auc(recall, precision)
+
+    if plot:
+        plt.plot(recall, precision, label='Knowledge uncertainty')
+        plt.title('Knowledge uncertainty OOD detection ROC curve')
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.legend()
+        plt.show()
+        auc_roc = sklearn.metrics.auc(recall, precision)
+
+    return auc_roc
+
+
+def calc_pn_know_unc_auc_roc(in_preds, out_preds, plot=False):
+    in_labels = np.zeros(in_preds.shape[0])
+    out_labels = np.ones(out_preds.shape[0])
+    all_labels = np.concatenate([in_labels, out_labels], axis=0)
+
+    in_t_unc = entropy_of_expected(in_preds, logits=False)
+    out_t_unc = entropy_of_expected(out_preds, logits=False)
+
+    in_d_unc = expected_entropy_pn(in_preds)
+    out_d_unc = expected_entropy_pn(out_preds)
+
+    in_k_unc = in_t_unc - in_d_unc
+    out_k_unc = out_t_unc - out_d_unc
+    all_k_unc = np.concatenate([in_k_unc, out_k_unc], axis=0)
+
+    precision, recall, thresholds = sklearn.metrics.precision_recall_curve(all_labels, all_k_unc)
+    auc_roc = sklearn.metrics.auc(recall, precision)
+
+    if plot:
+        plt.plot(recall, precision, label='Knowledge uncertainty')
+        plt.title('Knowledge uncertainty OOD detection ROC curve')
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.legend()
+        plt.show()
+        auc_roc = sklearn.metrics.auc(recall, precision)
+
+    return auc_roc
 
 
 def _probs_to_classes(probs):
