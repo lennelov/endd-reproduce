@@ -11,13 +11,14 @@ physical_devices = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 from utils import evaluation, datasets, saveload, preprocessing
-from models import ensemble, endd
+from models import ensemble, endd, cnn_priorNet
 
 # Choose models
 IND_MODEL_NAME = 'vgg_cifar10_cifar10_0'
 ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg', 2
 ENDD_MODEL_NAME, ENDD_BASE_MODEL = 'endd_vgg_cifar10_extended', 'vgg'
 ENDD_AUX_MODEL_NAME, ENDD_AUX_BASE_MODEL = 'endd_vgg_cifar10_aux', 'vgg'
+PN_AUX_MODEL_NAME = 'pn_vgg_cifar10_aux'
 
 # Choose dataset
 DATASET_NAME = 'cifar10'
@@ -57,6 +58,18 @@ endd_aux_model = endd.get_model(ENDD_AUX_BASE_MODEL,
 endd_aux_tot_wrapper_type = 'individual'
 endd_aux_know_wrapper_type = 'priornet'
 
+# Prepare PN+AUX model
+pn_aux_base = saveload.load_tf_model(PN_AUX_MODEL_NAME, compile=False)
+pn_aux_model = cnn_priorNet.get_model(pn_aux_base,
+                                      dataset_name=DATASET_NAME,
+                                      compile=True)
+pn_aux_tot_wrapper_type = 'individual'
+pn_aux_know_wrapper_type = 'priornet'
+
+endd_aux_model.summary()
+pn_aux_model.summary()
+
+
 # Load data
 _, (in_images, _) = datasets.get_dataset(DATASET_NAME)
 _, out_images = datasets.get_dataset(OUT_DATASET_NAME)
@@ -94,12 +107,21 @@ endd_aux_measures = evaluation.calc_ood_measures(endd_aux_model,
                                                  tot_wrapper_type=endd_aux_tot_wrapper_type,
                                                  know_wrapper_type=endd_aux_know_wrapper_type)
 
+print("Evaluating PN+AUX...")
+pn_aux_measures = evaluation.calc_ood_measures(pn_aux_model,
+                                               in_images,
+                                               out_images,
+                                               tot_wrapper_type=pn_aux_tot_wrapper_type,
+                                               know_wrapper_type=pn_aux_know_wrapper_type)
+
+
+
 print("Evaluations complete.")
 
 # Format and print results
 summary = evaluation.format_ood_results(
-    ['IND', 'ENSM', 'ENDD', 'ENDD+AUX'],
-    [ind_measures, ensm_measures, endd_measures, endd_aux_measures],
+    ['IND', 'ENSM', 'ENDD', 'ENDD+AUX', 'PN+AUX'],
+    [ind_measures, ensm_measures, endd_measures, endd_aux_measures, pn_aux_measures],
     in_dataset_name=DATASET_NAME,
     out_dataset_name=OUT_DATASET_NAME)
 
