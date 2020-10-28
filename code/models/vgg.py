@@ -246,17 +246,14 @@ def get_vgg_malinin_model(input_shape, classes, dropout_rate=0.5, alpha=0.2, bat
 
 def get_model(dataset_name, compile=True, weights=None, dropout_rate=0.5, softmax=True):
     """Take dataset name and return corresponding untrained VGG16 model.
-
     Args:
         dataset_name (str): Name of the dataset that the model will be used on,
                             must be listed in settings.py.
         compile (bool): If False, an uncompiled model is returned. Default is True.
         weights (str): Name of saved weights. If provided, returned model will
                        be loaded with saved weights. Default is None.
-
     Returns:
         keras Model object
-
     If compile=True, model will be compiled with adam optimizer, categorical cross
     entropy loss, and accuracy metric.
     """
