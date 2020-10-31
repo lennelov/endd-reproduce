@@ -25,9 +25,7 @@ class TemperatureAnnealing(tf.keras.callbacks.Callback):
         self.schedule = schedule
 
     def on_epoch_begin(self, epoch, logs=None):
-        print(self.model.loss.temp)
-        self.model.loss.temp = self.schedule[epoch]
-        # tf.keras.backend.set_value(self.model.loss.temp, self.schedule[epoch])
+        tf.keras.backend.set_value(self.model.loss.temp, self.schedule[epoch])
 
     def plot(self):
         plt.plot(self.schedule, '.-')
