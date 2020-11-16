@@ -4,20 +4,20 @@ SAVED_MODELS_PATH = "code/models/saved_models"
 DATA_PATH = "data"
 
 # Dataset metadata
-DATASET_NAMES = ["cifar10", "cifar100", "mnist", "spiral", "cifar10_3_classes"]
+DATASET_NAMES = ["cifar10", "cifar100", "mnist", "spiral", "cifar10_3_class"]
 DATASET_INPUT_SHAPES = {
     "cifar10": (32, 32, 3),
     "cifar100": (32, 32, 3),
     "mnist": (28, 28, 1),
     "spiral": (2),
-    "cifar10_3_classes": (32, 32, 3)
+    "cifar10_3_class": (32, 32, 3)
 }
 DATASET_N_CLASSES = {
     "cifar10": 10,
     "cifar100": 100,
     "mnist": 10,
     "spiral": 3,
-    "cifar10_3_classes": 3
+    "cifar10_3_class": 3
 }
 
 # Model metadata

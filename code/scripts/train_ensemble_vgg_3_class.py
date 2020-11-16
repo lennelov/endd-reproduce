@@ -24,8 +24,8 @@ MODEL_TYPE = 'vgg'  # Name of model module {cnn, vgg}  Note: probably won't work
 ENSEMBLE_SAVE_NAME = 'vgg_3_class'  # Name that the ensemble models will be saved with
 NAME_START_NUMBER = 0  # Start number for model naming (set to 0 unless continuing previous training)
 DATASET_NAME = 'cifar10_3_class'  # Name of dataset {cifar10, cifar100, mnist}
-N_MODELS = 10  # Number of models to train
-N_EPOCHS = 3  # Number of epochs to train for
+N_MODELS = 100  # Number of models to train
+N_EPOCHS = 45  # Number of epochs to train for
 
 # Add parent dir to path to allow for parallel imports
 import sys
@@ -43,13 +43,12 @@ from utils.OneCycleLRPolicy import OneCycleLRPolicy
 import datetime
 
 # Need these settings for GPU to work on my computer /Einar
-#physical_devices = tf.config.experimental.list_physical_devices('GPU')
-#tf.config.experimental.set_memory_growth(physical_devices[0], True)
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 # Load data
 
 (train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
-
 # Preprocess
 train_labels = tf.one_hot(train_labels.reshape((-1,)), settings.DATASET_N_CLASSES[DATASET_NAME])
 test_labels = tf.one_hot(test_labels.reshape((-1,)), settings.DATASET_N_CLASSES[DATASET_NAME])
@@ -74,7 +73,7 @@ init_lr = 0.001
 olp_callback = OneCycleLRPolicy(init_lr=init_lr,
                                 max_lr=init_lr * 10,
                                 min_lr=init_lr / 1000,
-                                cycle_length=2,
+                                cycle_length=30,
                                 epochs=N_EPOCHS)
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
