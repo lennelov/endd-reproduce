@@ -18,10 +18,10 @@ def _get_cifar10():
 
 def _get_cifar10_3_class():
     (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
-    index = np.where(train_labels < 3)
+    index = np.where((train_labels ==4) | (train_labels == 5) | (train_labels == 7)) #dog horse or deer
     train_images = train_images[index[0], :, :, :]
     train_labels = train_labels[index[0]]
-    index = np.where(test_labels < 3)
+    index = np.where((test_labels ==4) | (test_labels == 5) | (test_labels == 7))
     test_images = test_images[index[0], :, :, :]
     test_labels = test_labels[index[0]]
     return (train_images, train_labels), (test_images, test_labels)
