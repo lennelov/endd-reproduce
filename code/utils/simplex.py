@@ -88,7 +88,7 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
     '''
     if barycentric is True:
         X = X.dot(_corners)
-    plt.plot(X[:, 0], X[:, 1], 'r.', ms=3, **kwargs)
+    plt.plot(X[:, 0], X[:, 1], 'r.', ms=15, **kwargs)
     plt.axis('equal')
     plt.xlim(0, 1)
     plt.ylim(0, 0.75**0.5)
