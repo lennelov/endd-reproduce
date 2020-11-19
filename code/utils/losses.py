@@ -47,16 +47,13 @@ class DirichletEnDDLoss(tf.keras.losses.Loss):
         self.smooth_val = epsilon
         self.tp_scaling = 1 - teacher_epsilon
         self.init_temp = init_temp
-        self.temp = None
+        self.temp = tf.Variable(init_temp, dtype=tf.float64)
 
     def call(self, ensemble_logits, logits):
         '''
         teacher_logits are the outputs from our ensemble (batch x ensembles x classes)
         logits are the predicted outputs from our model (batch x classes)
         '''
-        if self.temp is None:
-            self.temp = self.init_temp
-
         logits = tf.cast(logits, dtype=tf.float64)
         ensemble_logits = tf.cast(ensemble_logits, dtype=tf.float64)
         alphas = exp(logits / self.temp)
@@ -79,7 +76,7 @@ class DirichletEnDDLoss(tf.keras.losses.Loss):
             (alphas - 1.) * log_ensemble_probs_geo_mean, axis=1)  # -sum over classes
 
         cost = target_dependent_term + target_independent_term
-
+        # tf.print(self.temp)
         return reduce_mean(cost) * (self.temp**2)  #mean of all batches
 
 
