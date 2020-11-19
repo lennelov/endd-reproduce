@@ -17,7 +17,6 @@ from math import gamma
 import pickle
 import matplotlib.pyplot as plt
 
-
 # ======== SETUP =========
 
 # Load test images
@@ -44,8 +43,8 @@ with open("ensemble_out.pkl", 'wb') as file:
     pickle.dump((ensm_out), file)
 
 # Load endd
-endd_model = saveload.load_tf_model("endd_vgg_cifar10_3class_aux", compile = False)
-endd_model = endd.get_model(endd_model, init_temp = 1, teacher_epsilon = 1e-4)
+endd_model = saveload.load_tf_model("endd_vgg_cifar10_3class_aux", compile=False)
+endd_model = endd.get_model(endd_model, init_temp=1, teacher_epsilon=1e-4)
 
 # Predict endd
 endd_out = endd_model.predict(test_images)
@@ -54,7 +53,6 @@ endd_out = endd_model.predict(test_images)
 import pickle
 with open("endd_out.pkl", 'wb') as file:
     pickle.dump((endd_out), file)
-
 
 # ======== MAIN SCRIPT =========
 
@@ -81,13 +79,13 @@ def prepare_prediction(x):
     return x / x_2
 
 
-def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, filename = None):
-    alphas = [prepare_prediction(data_logits),
-              prepare_prediction(know_logits),
-              prepare_prediction(certain_logits)]
-    exped = [np.float64(d),
-            np.float64(e),
-            np.float64(f)]
+def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, filename=None):
+    alphas = [
+        prepare_prediction(data_logits),
+        prepare_prediction(know_logits),
+        prepare_prediction(certain_logits)
+    ]
+    exped = [np.float64(d), np.float64(e), np.float64(f)]
 
     font = {
         'family': 'serif',
