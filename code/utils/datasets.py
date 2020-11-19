@@ -121,7 +121,7 @@ def get_dataset(dataset_name):
         'cifar10'
         'cifar100'
         'mnist'
-        'cifar10_3_classes'
+        'cifar10_3_class'
         'spiral'
         'spiral_aux'
         'lsun'

@@ -21,13 +21,13 @@ from models import endd, ensemble
 from utils import saveload, training, evaluation, datasets, preprocessing
 
 # Set names for loading and saving
-ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
-DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
+ENSEMBLE_LOAD_NAME = 'vgg_3_class'  # Name of ensemble to use for training
+DATASET_NAME = 'cifar10_3_class'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
-MODEL_SAVE_NAME = 'endd_vgg_cifar10_aux'  # Name to use when saving model (None if no saving)
+MODEL_SAVE_NAME = 'endd_vgg_cifar10_3class_aux'  # Name to use when saving model (None if no saving)
 
 # Set training parameters
-N_MODELS = 30  # Number of models to include in ensemble, set to None if all should be included
+N_MODELS = 100  # Number of models to include in ensemble, set to None if all should be included
 N_EPOCHS = 90  # Number of epochs to train for (90)
 BATCH_SIZE = 128  # Batch size (128)
 NORMALIZATION = "-1to1"  # Normalization scheme to use {'-1to1', 'gaussian', None} ('-1to1')
