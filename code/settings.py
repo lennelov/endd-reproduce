@@ -12,13 +12,7 @@ DATASET_INPUT_SHAPES = {
     "spiral": (2),
     "cifar10_3_class": (32, 32, 3)
 }
-DATASET_N_CLASSES = {
-    "cifar10": 10,
-    "cifar100": 100,
-    "mnist": 10,
-    "spiral": 3,
-    "cifar10_3_class": 3
-}
+DATASET_N_CLASSES = {"cifar10": 10, "cifar100": 100, "mnist": 10, "spiral": 3, "cifar10_3_class": 3}
 
 # Model metadata
 from models import cnn, vgg, cnn_priorNet, dense_priornet, small_net
