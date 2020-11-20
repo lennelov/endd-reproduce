@@ -20,18 +20,19 @@ import matplotlib.pyplot as plt
 DATASET_NAME = 'cifar10'
 
 # # ======== SETUP =========
+
+# Load test images
+(train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
+raw_test_images = test_images
+test_images = preprocessing.normalize_minus_one_to_one(test_images, min=0, max=255)
 #
-# # Load test images
-# (train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
-# test_images = preprocessing.normalize_minus_one_to_one(test_images, min=0, max=255)
-#
-# # Load ensemble
-# ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg_3_class', 100
-# DATASET_NAME = 'cifar10_3_class'
-# ensemble_model_names = saveload.get_ensemble_model_names()
-# model_names = ensemble_model_names[ENSM_MODEL_NAME][DATASET_NAME][:ENSM_N_MODELS]
-# models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_names]
-# ensm_model = ensemble.Ensemble(models)
+# Load ensemble
+ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg_3_class', 100
+DATASET_NAME = 'cifar10_3_class'
+ensemble_model_names = saveload.get_ensemble_model_names()
+model_names = ensemble_model_names[ENSM_MODEL_NAME][DATASET_NAME][:ENSM_N_MODELS]
+models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_names]
+ensm_model = ensemble.Ensemble(models)
 #
 # # Predict with ensemble
 # # out = ensm_model.predict(test_images)
@@ -43,9 +44,9 @@ DATASET_NAME = 'cifar10'
 # with open("ensemble_out.pkl", 'wb') as file:
 #     pickle.dump((ensm_out), file)
 #
-# # Load endd
-# endd_model = saveload.load_tf_model("endd_vgg_cifar10_3class_aux", compile = False)
-# endd_model = endd.get_model(endd_model, teacher_epsilon = 1e-4)
+# Load endd
+endd_model = saveload.load_tf_model("endd_vgg_cifar10_3class_aux", compile = False)
+endd_model = endd.get_model(endd_model, teacher_epsilon = 1e-4)
 #
 # # Predict endd
 # endd_out = endd_model.predict(test_images)
@@ -54,6 +55,9 @@ DATASET_NAME = 'cifar10'
 # with open("endd_out.pkl", 'wb') as file:
 #     pickle.dump((endd_out), file)
 
+noise_img = np.random.randn(1, 32, 32, 3)
+noise_ens = ensm_model.predict(noise_img)
+noise_endd = endd_model.predict(noise_img)
 
 # ======== MAIN SCRIPT =========
 
@@ -70,13 +74,15 @@ def prepare_prediction(x):
     return x / x_2
 
 
-def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, filename = None):
+def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, ens_noise, endd_noise, imgs_in, filename = None):
     alphas = [prepare_prediction(data_logits),
               prepare_prediction(know_logits),
-              prepare_prediction(certain_logits)]
+              prepare_prediction(certain_logits),
+              prepare_prediction(ens_noise)]
     exped = [np.float64(d),
             np.float64(e),
-            np.float64(f)]
+            np.float64(f),
+            np.float64(endd_noise)]
 
     font = {
         'family': 'serif',
@@ -86,24 +92,32 @@ def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, filename 
     }
     plt.style.use('seaborn-white')
     plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
-    models = ["data_uncertainty", "knowledge uncertainty", "certain"]
+    models = ["data uncertain deer", "knowledge uncertain plane", "certain deer", "random noise"]
 
-    for i in range(0, 3):
-        plt.subplot(2, 3, i + 1)
+    plt.axis('off')
+    for i in range(0, 4):
+        plt.subplot(3, 4, i+1)
         plt.title(models[i], fontsize=18, ha='center')
+        im = plt.imshow(imgs_in[i])
+        im.axes.get_xaxis().set_visible(False)
+        im.axes.get_yaxis().set_visible(False)
+
+        plt.subplot(3, 4, i + 5)
         plot_alphas = alphas[i]
         plot_logits = np.array(exped[i])
         # print(plot_logits)
 
-        simplex.plot_points(plot_alphas)
+        simplex.plot_points(plot_alphas, alpha=0.3)
 
-        plt.subplot(2, 3, i + 4)
+        plt.subplot(3, 4, i + 9)
 
         # print(plot_logits.shape)
         # print(np.sum(plot_logits))
         # print(np.multiply.reduce([gamma(a) for a in plot_logits]))
-        print(simplex.Dirichlet(np.float64(plot_logits))._alpha)
-        simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)), nlevels=200, subdiv=5)
+        try:
+            simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)), nlevels=200, subdiv=3)
+        except:
+            pass
 
     if filename is not None:
         plt.savefig(filename)
@@ -112,40 +126,67 @@ def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, filename 
     plt.show()
 
 
-# unct_tot = measures.entropy_of_expected(ens_out, True)
-# unct_data = measures.expected_entropy(ens_out, True)
-# unct_know = unct_tot - unct_data
+
+
+
+# img_1 = 112
+# img_2 = 113  # 2
+# img_3 = 114  # 3
 #
-# print(np.argsort(unct_tot))
-# print(np.flip(np.argsort(unct_data)[-100:]))
-# print(np.argsort(unct_know))
+# # Pick out selected images
+# a = ens_out[:, img_1, :]
+# b = ens_out[:, img_2, :]
+# c = ens_out[:, img_3, :]
+# d = endd_out[img_1, :]
+# e = endd_out[img_2, :]
+# f = endd_out[img_3, :]
 
-img_1 = 112
-img_2 = 113  # 2
-img_3 = 114  # 3
-
-# Pick out selected images
-a = ens_out[:, img_1, :]
-b = ens_out[:, img_2, :]
-c = ens_out[:, img_3, :]
-d = endd_out[img_1, :]
-e = endd_out[img_2, :]
-f = endd_out[img_3, :]
+# Clip ENDD alphas to avoid crashes when plotting
+endd_out[endd_out > 200] = 100
 
 # Pick out specific class
-indx = test_labels == 1
+indx = test_labels == 0
 indx = indx.flatten()
-ens_class = ens_out[:, indx, :]
-endd_class = endd_out[indx, :]
+imgs_plane = raw_test_images[indx]
+ens_plane = ens_out[:, indx, :]
+endd_plane = endd_out[indx, :]
 
-ens_class_1 = ens_class[:, 1, :]
-ens_class_2 = ens_class[:, 2, :]
-ens_class_3 = ens_class[:, 3, :]
-endd_class_1 = endd_class[1, :]
-endd_class_2 = endd_class[2, :]
-endd_class_3 = endd_class[3, :]
+indx = test_labels == 4
+indx = indx.flatten()
+imgs_deer = raw_test_images[indx]
+ens_deer = ens_out[:, indx, :]
+endd_deer = endd_out[indx, :]
 
-np.min(np.exp(a))
-compare_simplex(ens_class_1, ens_class_2, ens_class_3, endd_class_1, endd_class_2, endd_class_3)
+deer_unct_tot = measures.entropy_of_expected(ens_deer, True)
+deer_unct_data = measures.expected_entropy(ens_deer, True)
+deer_unct_know = deer_unct_tot - deer_unct_data
+print("Five most certain deer: {}".format(np.argsort(deer_unct_tot)[:5]))  # Five most certain
+print("Five most data uncertain deer: {}".format(np.argsort(deer_unct_data)[-5:]))  # Five most data uncertain
+print("Five most knowledge uncertain deer: {}".format(np.argsort(deer_unct_know)[-5:]))  # Five most knowledge uncertain
+
+plane_unct_tot = measures.entropy_of_expected(ens_plane, True)
+plane_unct_data = measures.expected_entropy(ens_plane, True)
+plane_unct_know = plane_unct_tot - plane_unct_data
+print("Five most certain plain: {}".format(np.argsort(plane_unct_tot)[:5]))  # Five most certain
+print("Five most data uncertain plane: {}".format(np.argsort(plane_unct_data)[-5:]))  # Five most data uncertain
+print("Five most knowledge uncertain plane: {}".format(np.argsort(plane_unct_know)[-5:]))  # Five most knowledge uncertain
+
+data_uncertain_deer = 799
+knowledge_uncertain_plane = 653
+certain_deer = 682  # 3
+
+ens_class_1 = ens_deer[:, data_uncertain_deer, :]
+ens_class_2 = ens_plane[:, knowledge_uncertain_plane, :]
+ens_class_3 = ens_deer[:, certain_deer, :]
+ens_noise = noise_ens[:, 0, :]
+endd_class_1 = endd_deer[data_uncertain_deer, :]
+endd_class_2 = endd_plane[knowledge_uncertain_plane, :]
+endd_class_3 = endd_deer[certain_deer, :]
+endd_noise = noise_endd[0, :]
+
+imgs_in = [imgs_deer[data_uncertain_deer], imgs_plane[knowledge_uncertain_plane], imgs_deer[certain_deer], noise_img[0]]
+# ens_outs
+# endd_outs =
+compare_simplex(ens_class_1, ens_class_2, ens_class_3, endd_class_1, endd_class_2, endd_class_3, ens_noise, endd_noise, imgs_in)
 
 #simplex.plot_points(a, barycentric = True, border = True)
