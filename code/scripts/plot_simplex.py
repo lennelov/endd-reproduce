@@ -65,7 +65,7 @@ with open("ensemble_out.pkl", 'rb') as file:
     ens_out = pickle.load(file)
 
 with open("endd_out.pkl", 'rb') as file:
-    endd_out = np.exp(pickle.load(file))
+    endd_out = pickle.load(file)
 
 
 def prepare_prediction(x):
@@ -104,7 +104,8 @@ def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, ens_noise
 
         plt.subplot(3, 4, i + 5)
         plot_alphas = alphas[i]
-        plot_logits = np.array(exped[i])
+        plot_logits = np.exp(np.array(exped[i]))
+        plot_logits[plot_logits > 100] = 100
         # print(plot_logits)
 
         simplex.plot_points(plot_alphas, alpha=0.3)
@@ -140,9 +141,6 @@ def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, ens_noise
 # d = endd_out[img_1, :]
 # e = endd_out[img_2, :]
 # f = endd_out[img_3, :]
-
-# Clip ENDD alphas to avoid crashes when plotting
-endd_out[endd_out > 200] = 100
 
 # Pick out specific class
 indx = test_labels == 0
