@@ -33,27 +33,24 @@ ensemble_model_names = saveload.get_ensemble_model_names()
 model_names = ensemble_model_names[ENSM_MODEL_NAME][DATASET_NAME][:ENSM_N_MODELS]
 models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_names]
 ensm_model = ensemble.Ensemble(models)
-#
-# # Predict with ensemble
-# # out = ensm_model.predict(test_images)
-#
-# # Predict ensemble
-# ensm_out = ensm_model.predict(test_images)
-#
-# # Save ensemble
-# with open("ensemble_out.pkl", 'wb') as file:
-#     pickle.dump((ensm_out), file)
-#
+
+# Predict ensemble
+ensm_out = ensm_model.predict(test_images)
+
+# Save ensemble
+with open("ensemble_out.pkl", 'wb') as file:
+    pickle.dump((ensm_out), file)
+
 # Load endd
-endd_model = saveload.load_tf_model("endd_vgg_cifar10_3class_aux", compile = False)
+endd_model = saveload.load_tf_model("endd_vgg_cifar10_3class_aux_lowtemp", compile = False)
 endd_model = endd.get_model(endd_model, teacher_epsilon = 1e-4)
-#
-# # Predict endd
-# endd_out = endd_model.predict(test_images)
-#
-# # Save endd
-# with open("endd_out.pkl", 'wb') as file:
-#     pickle.dump((endd_out), file)
+
+# Predict endd
+endd_out = endd_model.predict(test_images)
+
+# Save endd
+with open("endd_out.pkl", 'wb') as file:
+    pickle.dump((endd_out), file)
 
 noise_img = np.random.randn(1, 32, 32, 3)
 noise_ens = ensm_model.predict(noise_img)
@@ -91,7 +88,7 @@ def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, ens_noise
         'size': 16,
     }
     plt.style.use('seaborn-white')
-    plt.figure(num=None, figsize=(16, 12), dpi=80, facecolor='w', edgecolor='k')
+    plt.figure(num=None, figsize=(18, 12), dpi=80, facecolor='w', edgecolor='k')
     models = ["data uncertain deer", "knowledge uncertain plane", "certain deer", "random noise"]
 
     plt.axis('off')

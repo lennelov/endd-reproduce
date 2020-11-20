@@ -24,7 +24,7 @@ from utils import saveload, training, evaluation, datasets, preprocessing
 ENSEMBLE_LOAD_NAME = 'vgg_3_class'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10_3_class'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
-MODEL_SAVE_NAME = 'endd_vgg_cifar10_3class_aux'  # Name to use when saving model (None if no saving)
+MODEL_SAVE_NAME = 'endd_vgg_cifar10_3class_aux_lowtemp'  # Name to use when saving model (None if no saving)
 
 # Set training parameters
 N_MODELS = 100  # Number of models to include in ensemble, set to None if all should be included
@@ -39,7 +39,7 @@ ONE_CYCLE_LR_POLICY = True
 CYCLE_LENGTH = 60  # (60)
 INIT_LR = 0.001  # (0.001)
 DROPOUT_RATE = 0.3  # (0.3)
-INIT_TEMP = 10  # (10)
+INIT_TEMP = 4  # (10)
 
 # Load ensemble models
 ensemble_model_names = saveload.get_ensemble_model_names()
