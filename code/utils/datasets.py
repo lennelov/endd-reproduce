@@ -18,6 +18,26 @@ def _get_cifar10():
     return datasets.cifar10.load_data()
 
 
+def _get_cifar10_3_class():
+    (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
+    index = np.where(
+        (train_labels == 4) | (train_labels == 5) | (train_labels == 7))  #dog horse or deer
+    train_images = train_images[index[0], :, :, :]
+    train_labels = train_labels[index[0]]
+    index = np.where((test_labels == 4) | (test_labels == 5) | (test_labels == 7))
+    test_images = test_images[index[0], :, :, :]
+    test_labels = test_labels[index[0]]
+    #change the names of labels to 0,1,2
+    train_labels = np.where(train_labels == 4, 0, train_labels)
+    train_labels = np.where(train_labels == 5, 1, train_labels)
+    train_labels = np.where(train_labels == 7, 2, train_labels)
+
+    test_labels = np.where(test_labels == 4, 0, test_labels)
+    test_labels = np.where(test_labels == 5, 1, test_labels)
+    test_labels = np.where(test_labels == 7, 2, test_labels)
+    return (train_images, train_labels), (test_images, test_labels)
+
+
 def _get_cifar100():
     return datasets.cifar10.load_data()
 
@@ -90,6 +110,7 @@ DATASET_GETTERS = {
     'mnist': _get_mnist,
     "spiral": _get_spiral,
     "spiral_aux": _get_spiral_aux,
+    'cifar10_3_class': _get_cifar10_3_class,
     'lsun': _get_lsun
 }
 
@@ -101,6 +122,7 @@ def get_dataset(dataset_name):
         'cifar10'
         'cifar100'
         'mnist'
+        'cifar10_3_class'
         'spiral'
         'spiral_aux'
         'lsun'

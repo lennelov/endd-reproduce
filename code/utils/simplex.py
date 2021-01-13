@@ -88,13 +88,13 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
     '''
     if barycentric is True:
         X = X.dot(_corners)
-    plt.plot(X[:, 0], X[:, 1], 'r.', ms=3, **kwargs)
+    plt.plot(X[:, 0], X[:, 1], '.', color='black', ms=15, **kwargs)
     plt.axis('equal')
     plt.xlim(0, 1)
     plt.ylim(0, 0.75**0.5)
     plt.axis('off')
     if border is True:
-        plt.triplot(_triangle, linewidth=1)
+        plt.triplot(_triangle, color='black', linewidth=1)
 
 
 def compare_simplex(pn_alphas, ensemble_alphas, endd_alphas):
