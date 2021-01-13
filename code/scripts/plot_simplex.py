@@ -75,7 +75,7 @@ def compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm
         plt.subplot(3, 4, i + 9)
 
         try:
-            simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)), nlevels=200, subdiv=5)
+            simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)), nlevels=200, subdiv=40)
         except:
             pass
 
