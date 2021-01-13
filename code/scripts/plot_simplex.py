@@ -71,15 +71,23 @@ def prepare_prediction(x):
     return x / x_2
 
 
-def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, ens_noise, endd_noise, imgs_in, filename = None):
-    alphas = [prepare_prediction(data_logits),
-              prepare_prediction(know_logits),
-              prepare_prediction(certain_logits),
-              prepare_prediction(ens_noise)]
-    exped = [np.float64(d),
-            np.float64(e),
-            np.float64(f),
-            np.float64(endd_noise)]
+def compare_simplex(data_logits,
+                    know_logits,
+                    certain_logits,
+                    d,
+                    e,
+                    f,
+                    ens_noise,
+                    endd_noise,
+                    imgs_in,
+                    filename=None):
+    alphas = [
+        prepare_prediction(data_logits),
+        prepare_prediction(know_logits),
+        prepare_prediction(certain_logits),
+        prepare_prediction(ens_noise)
+    ]
+    exped = [np.float64(d), np.float64(e), np.float64(f), np.float64(endd_noise)]
 
     font = {
         'family': 'serif',
@@ -93,7 +101,7 @@ def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, ens_noise
 
     plt.axis('off')
     for i in range(0, 4):
-        plt.subplot(3, 4, i+1)
+        plt.subplot(3, 4, i + 1)
         plt.title(models[i], fontsize=18, ha='center')
         im = plt.imshow(imgs_in[i])
         im.axes.get_xaxis().set_visible(False)
@@ -113,7 +121,9 @@ def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, ens_noise
         # print(np.sum(plot_logits))
         # print(np.multiply.reduce([gamma(a) for a in plot_logits]))
         try:
-            simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)), nlevels=200, subdiv=3)
+            simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)),
+                                      nlevels=200,
+                                      subdiv=3)
         except:
             pass
 
@@ -122,9 +132,6 @@ def compare_simplex(data_logits, know_logits, certain_logits, d, e, f, ens_noise
     else:
         plt.savefig('compare_plot.png')
     plt.show()
-
-
-
 
 
 # img_1 = 112
@@ -156,15 +163,19 @@ deer_unct_tot = measures.entropy_of_expected(ens_deer, True)
 deer_unct_data = measures.expected_entropy(ens_deer, True)
 deer_unct_know = deer_unct_tot - deer_unct_data
 print("Five most certain deer: {}".format(np.argsort(deer_unct_tot)[:5]))  # Five most certain
-print("Five most data uncertain deer: {}".format(np.argsort(deer_unct_data)[-5:]))  # Five most data uncertain
-print("Five most knowledge uncertain deer: {}".format(np.argsort(deer_unct_know)[-5:]))  # Five most knowledge uncertain
+print("Five most data uncertain deer: {}".format(
+    np.argsort(deer_unct_data)[-5:]))  # Five most data uncertain
+print("Five most knowledge uncertain deer: {}".format(
+    np.argsort(deer_unct_know)[-5:]))  # Five most knowledge uncertain
 
 plane_unct_tot = measures.entropy_of_expected(ens_plane, True)
 plane_unct_data = measures.expected_entropy(ens_plane, True)
 plane_unct_know = plane_unct_tot - plane_unct_data
 print("Five most certain plain: {}".format(np.argsort(plane_unct_tot)[:5]))  # Five most certain
-print("Five most data uncertain plane: {}".format(np.argsort(plane_unct_data)[-5:]))  # Five most data uncertain
-print("Five most knowledge uncertain plane: {}".format(np.argsort(plane_unct_know)[-5:]))  # Five most knowledge uncertain
+print("Five most data uncertain plane: {}".format(
+    np.argsort(plane_unct_data)[-5:]))  # Five most data uncertain
+print("Five most knowledge uncertain plane: {}".format(
+    np.argsort(plane_unct_know)[-5:]))  # Five most knowledge uncertain
 
 data_uncertain_deer = 799
 knowledge_uncertain_plane = 653
@@ -179,9 +190,13 @@ endd_class_2 = endd_plane[knowledge_uncertain_plane, :]
 endd_class_3 = endd_deer[certain_deer, :]
 endd_noise = noise_endd[0, :]
 
-imgs_in = [imgs_deer[data_uncertain_deer], imgs_plane[knowledge_uncertain_plane], imgs_deer[certain_deer], noise_img[0]]
+imgs_in = [
+    imgs_deer[data_uncertain_deer], imgs_plane[knowledge_uncertain_plane], imgs_deer[certain_deer],
+    noise_img[0]
+]
 # ens_outs
 # endd_outs =
-compare_simplex(ens_class_1, ens_class_2, ens_class_3, endd_class_1, endd_class_2, endd_class_3, ens_noise, endd_noise, imgs_in)
+compare_simplex(ens_class_1, ens_class_2, ens_class_3, endd_class_1, endd_class_2, endd_class_3,
+                ens_noise, endd_noise, imgs_in)
 
 #simplex.plot_points(a, barycentric = True, border = True)

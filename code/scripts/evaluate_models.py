@@ -51,11 +51,8 @@ DATASET_NAME = 'cifar10'
 # endd_aux_wrapper_type = 'individual'
 
 pn_base_model = saveload.load_tf_model(PN_AUX_MODEL_NAME, compile=False)
-pn_aux_model = cnn_priorNet.get_model(pn_base_model,
-                                      dataset_name=DATASET_NAME,
-                                      compile=True)
+pn_aux_model = cnn_priorNet.get_model(pn_base_model, dataset_name=DATASET_NAME, compile=True)
 pn_aux_wrapper_type = 'individual'
-
 
 # Load data
 _, (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
@@ -98,9 +95,6 @@ print("Evaluations complete.")
 #     dataset_name=DATASET_NAME)
 
 # Format and print results
-summary = evaluation.format_results(
-    ['PN_AUX'],
-    [pn_aux_measures],
-    dataset_name=DATASET_NAME)
+summary = evaluation.format_results(['PN_AUX'], [pn_aux_measures], dataset_name=DATASET_NAME)
 
 print(summary)
