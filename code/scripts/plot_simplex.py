@@ -23,8 +23,8 @@ DATASET_NAME = 'cifar10'
 THREE_CLASS_DATASET_NAME = 'cifar10_3_class'
 ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg_3_class', 20
 ENDD_MODEL_NAME  = "endd_vgg_cifar10_3class_aux"
-LOAD_PREVIOUS_ENSM_PREDS = False
-LOAD_PREVIOUS_ENDD_PREDS = False
+LOAD_PREVIOUS_ENSM_PREDS = True
+LOAD_PREVIOUS_ENDD_PREDS = True
 
 
 # ======== FUNCTIONS =========
@@ -75,7 +75,7 @@ def compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm
         plt.subplot(3, 4, i + 9)
 
         try:
-            simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)), nlevels=200, subdiv=3)
+            simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)), nlevels=200, subdiv=5)
         except:
             pass
 
@@ -144,12 +144,8 @@ ensm_preds_plane = ensm_preds[:, indx_plane, :]
 endd_preds_plane = endd_preds[indx_plane, :]
 
 # Pick out deer images and preds
-for label in test_labels:
-    print(label)
-print(test_labels)
 indx_deer = test_labels == 4
 indx_deer = indx_deer.flatten()
-print(indx_deer)
 imgs_deer = raw_test_images[indx_deer]
 ensm_preds_deer = ensm_preds[:, indx_deer, :]
 endd_preds_deer = endd_preds[indx_deer, :]
