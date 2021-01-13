@@ -42,8 +42,8 @@ with open("ensemble_out.pkl", 'wb') as file:
     pickle.dump((ensm_out), file)
 
 # Load endd
-endd_model = saveload.load_tf_model("endd_vgg_cifar10_3class_aux_lowtemp", compile = False)
-endd_model = endd.get_model(endd_model, teacher_epsilon = 1e-4)
+endd_model = saveload.load_tf_model("endd_vgg_cifar10_3class_aux", compile=False)
+endd_model = endd.get_model(endd_model, init_temp=1, teacher_epsilon=1e-4)
 
 # Predict endd
 endd_out = endd_model.predict(test_images)
