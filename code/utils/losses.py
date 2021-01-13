@@ -64,7 +64,7 @@ class DirichletEnDDLoss(tf.keras.losses.Loss):
         # Smooth for num. stability:
         probs_mean = 1 / (tf.shape(ensemble_probs)[2])  #divide by nr of classes
         # Subtract mean, scale down, add mean back)
-        teacher_probs = self.tp_scaling * (ensemble_probs - probs_mean) + probs_mean
+        ensemble_probs = self.tp_scaling * (ensemble_probs - probs_mean) + probs_mean
 
         log_ensemble_probs_geo_mean = reduce_mean(log(ensemble_probs + self.smooth_val),
                                                   axis=1)  #mean over ensembles

@@ -1,6 +1,9 @@
 # Project folders
 code/models/saved_models/*/
 code/models/saved_weights/*/
+logs/*
+*.png
+*.pkl
 
 # Webp images
 *.webp
