@@ -97,12 +97,16 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
         plt.triplot(_triangle, color='black', linewidth=1)
 
 
-def compare_simplex(pn_alphas, ensemble_alphas, endd_alphas):
+def compare_simplex(data_uncertain_ensemble_alphas, OOD_ensemble_alphas, ID_ensemble_alphas):
+    '''
+    Plots simplexs of ensemble predictions for data_uncertain prediction,
+    knowledge uncertain prediction and a certain prediction.
+    '''
     import seaborn as sn
     import matplotlib.pyplot as plt
     import numpy as np
     from utils.simplex import draw_pdf_contours, Dirichlet
-    alphas = [pn_alphas, ensemble_alphas, endd_alphas]
+    alphas = [data_uncertain_ensemble_alphas, OOD_ensemble_alphas, ID_ensemble_alphas]
     font = {
         'family': 'serif',
         'color': 'black',
