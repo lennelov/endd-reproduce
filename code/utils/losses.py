@@ -27,13 +27,13 @@ class ENDLoss(tf.keras.losses.Loss):
 
         # Calculate probabilities by softmax over classes, adjusted for temperature
         ensemble_probs = softmax(ensemble_logits / self.temp, axis=2)
-        student_probs = softmax(logits / self.temp, axis=1)
+        PN_probs = softmax(logits / self.temp, axis=1)
 
         # Calculate mean teacher prediction
         ensemble_probs_mean = reduce_sum(ensemble_probs, axis=1)
 
         # Calculate cost (entropy)
-        cost = reduce_mean(-ensemble_probs_mean * log(student_probs)**(self.temp**2))
+        cost = reduce_mean(-ensemble_probs_mean * log(PN_probs)**(self.temp**2))
 
         return cost
 
@@ -42,10 +42,10 @@ class DirichletEnDDLoss(tf.keras.losses.Loss):
     """
     Negative Log-likelihood of the model on the transfer dataset"""
 
-    def __init__(self, epsilon=1e-8, teacher_epsilon=1e-3, init_temp=2.5):
+    def __init__(self, epsilon=1e-8, ensemble_epsilon=1e-3, init_temp=2.5):
         super().__init__()
         self.smooth_val = epsilon
-        self.tp_scaling = 1 - teacher_epsilon
+        self.tp_scaling = 1 - ensemble_epsilon
         self.init_temp = init_temp
         self.temp = tf.Variable(init_temp, dtype=tf.float64)
 
