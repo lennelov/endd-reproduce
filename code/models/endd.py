@@ -32,5 +32,5 @@ def get_model(base_model,
         base_model.compile(optimizer='adam',
                            loss=losses.DirichletEnDDLoss(init_temp=init_temp,
                                                          epsilon=epsilon,
-                                                         teacher_epsilon=teacher_epsilon))
+                                                         ensemble_epsilon=teacher_epsilon))
     return base_model
