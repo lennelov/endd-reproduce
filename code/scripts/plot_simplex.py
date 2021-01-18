@@ -29,24 +29,52 @@ LOAD_PREVIOUS_ENDD_PREDS = True
 
 # ======== FUNCTIONS =========
 
+def prepare_ensemble_prediction(x):
+    x = np.exp(np.float64(x))
+    x_2 = np.expand_dims(np.sum(x, axis=1), axis=1)
+    return x / x_2
+
+
 def prepare_prediction(x):
     x = np.exp(np.float64(x))
     x_2 = np.expand_dims(np.sum(x, axis=1), axis=1)
     return x / x_2
 
 
+def plot_img(img):
+    im = plt.imshow(img)
+    im.axes.get_xaxis().set_visible(False)
+    im.axes.get_yaxis().set_visible(False)
+
+
+def plot_points(ensm_output):
+    alphas = prepare_ensemble_prediction(ensm_output)
+    simplex.plot_points(alphas, alpha=0.3)
+
+
+def plot_pdf(endd_output):
+    logits = np.float64(endd_output)
+    exped = np.exp(np.array(logits))
+    exped[exped > 100] = 100
+    exped = exped.reshape(3,)
+    simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(exped)), nlevels=200, subdiv=6)
+
+
 def compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm_noise,
                     endd_data_uncertain, endd_know_uncertain, endd_certain, endd_noise,
                     imgs_in, filename = None):
-    alphas = [prepare_prediction(ensm_data_uncertain),
-              prepare_prediction(ensm_know_uncertain),
-              prepare_prediction(ensm_certain),
-              prepare_prediction(ensm_noise)]
-    exped = [np.float64(endd_data_uncertain),
-            np.float64(endd_know_uncertain),
-            np.float64(endd_certain),
-            np.float64(endd_noise)]
-
+    ensm_output = [
+        ensm_data_uncertain,
+        ensm_know_uncertain,
+        ensm_certain,
+        ensm_noise
+    ]
+    endd_output = [
+        endd_data_uncertain,
+        endd_know_uncertain,
+        endd_certain,
+        endd_noise
+    ]
     font = {
         'family': 'serif',
         'color': 'black',
@@ -61,23 +89,13 @@ def compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm
     for i in range(0, 4):
         plt.subplot(3, 4, i+1)
         plt.title(models[i], fontsize=18, ha='center')
-        im = plt.imshow(imgs_in[i])
-        im.axes.get_xaxis().set_visible(False)
-        im.axes.get_yaxis().set_visible(False)
+        plot_img(imgs_in[i])
 
         plt.subplot(3, 4, i + 5)
-        plot_alphas = alphas[i]
-        plot_logits = np.exp(np.array(exped[i]))
-        plot_logits[plot_logits > 100] = 100
-
-        simplex.plot_points(plot_alphas, alpha=0.3)
+        plot_points(ensm_output[i])
 
         plt.subplot(3, 4, i + 9)
-
-        try:
-            simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(plot_logits)), nlevels=200, subdiv=6)
-        except:
-            pass
+        plot_pdf(endd_output[i])
 
     if filename is not None:
         plt.savefig(filename)
@@ -176,7 +194,8 @@ ensm_noise = ensm_preds_noise[:, 0, :]
 endd_data_uncertain = endd_preds_deer[data_uncertain_deer, :]
 endd_know_uncertain = endd_preds_plane[knowledge_uncertain_plane, :]
 endd_certain = endd_preds_deer[certain_deer, :]
-endd_noise = endd_preds_noise[0, :]
+endd_noise = endd_preds_noise[0, :].flatten()
+
 
 imgs_in = [imgs_deer[data_uncertain_deer], imgs_plane[knowledge_uncertain_plane], imgs_deer[certain_deer], noise_img[0]]
 compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm_noise,
