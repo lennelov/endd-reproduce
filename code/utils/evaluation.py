@@ -6,6 +6,7 @@ See scripts/evaluation_example_usage.py for an example of how the module can be 
 import tensorflow as tf
 import numpy as np
 import settings
+import pickle
 from utils import measures
 from utils import classifiers
 
@@ -17,7 +18,8 @@ CLASSIFIER_WRAPPERS = {
 }
 
 
-def calc_ood_measures(model, in_images, out_images, tot_wrapper_type, know_wrapper_type):
+def calc_ood_measures(model, in_images, out_images, tot_wrapper_type, know_wrapper_type,
+                      preds_save_name=None):
     # if wrapper_type is not None and wrapper_type not in CLASSIFIER_WRAPPERS:
     #     raise ValueError("""wrapper_type {} not recognized, make sure it has been added to
     #                         CLASSIFIER_WRAPPERS in evaluation.py and that a corresponding
@@ -26,6 +28,13 @@ def calc_ood_measures(model, in_images, out_images, tot_wrapper_type, know_wrapp
     tot_clf = CLASSIFIER_WRAPPERS[tot_wrapper_type](model)
     in_preds = tot_clf.predict(in_images)
     out_preds = tot_clf.predict(out_images)
+    if preds_save_name:
+        with open("{}_preds_in.pkl".format(preds_save_name), 'wb') as file:
+            pickle.dump((in_preds), file)
+        with open("{}_preds_out.pkl".format(preds_save_name), 'wb') as file:
+            pickle.dump((out_preds), file)
+
+
     tot_unc_roc_auc = measures.calc_tot_unc_auc_roc(in_preds, out_preds)
 
     if know_wrapper_type:
