@@ -25,6 +25,7 @@ ENSEMBLE_LOAD_NAME = 'vgg_3_class'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10_3_class'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
 MODEL_SAVE_NAME = 'endd_vgg_cifar10_3class_aux_lowtemp'  # Name to use when saving model (None if no saving)
+LOAD_PREVIOUS_ENDD_DATASET = False  # Skipsre-predicting with ensemble and just uses previous prediction
 
 # Set training parameters
 N_MODELS = 100  # Number of models to include in ensemble, set to None if all should be included
@@ -78,7 +79,7 @@ endd_model = training.train_vgg_endd(train_images=train_images,
                                      init_temp=INIT_TEMP,
                                      dropout_rate=DROPOUT_RATE,
                                      save_endd_dataset=True,
-                                     load_previous_endd_dataset=False)
+                                     load_previous_endd_dataset=LOAD_PREVIOUS_ENDD_DATASET)
 
 measures = evaluation.calc_classification_measures(endd_model,
                                                    test_images,
