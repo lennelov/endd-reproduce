@@ -88,24 +88,21 @@ ensm_measures = evaluation.calc_ood_measures(ensm_model,
                                              in_images,
                                              out_images,
                                              tot_wrapper_type=ensm_tot_wrapper_type,
-                                             know_wrapper_type=ensm_know_wrapper_type,
-                                             preds_save_name="ensm_ood")
+                                             know_wrapper_type=ensm_know_wrapper_type)
 
 print("Evaluating ENDD...")
 endd_measures = evaluation.calc_ood_measures(endd_model,
                                              in_images,
                                              out_images,
                                              tot_wrapper_type=endd_tot_wrapper_type,
-                                             know_wrapper_type=endd_know_wrapper_type,
-                                             preds_save_name="endd_ood")
+                                             know_wrapper_type=endd_know_wrapper_type)
 
 print("Evaluating ENDD+AUX...")
 endd_aux_measures = evaluation.calc_ood_measures(endd_aux_model,
                                                  in_images,
                                                  out_images,
                                                  tot_wrapper_type=endd_aux_tot_wrapper_type,
-                                                 know_wrapper_type=endd_aux_know_wrapper_type,
-                                                 preds_save_name="endd_aux_ood")
+                                                 know_wrapper_type=endd_aux_know_wrapper_type)
 
 # print("Evaluating PN+AUX...")
 # pn_aux_measures = evaluation.calc_ood_measures(pn_aux_model,
