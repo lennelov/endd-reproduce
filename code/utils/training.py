@@ -60,6 +60,7 @@ def train_vgg_endd(train_images,
             print("loaded")
     else:
         # Get ensemble preds
+        print("Evaluating models")
         train_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, train_images)
 
     # Save / Load pickled data. Generating ensemble preds takes a long time, so saving and

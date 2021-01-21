@@ -39,6 +39,7 @@ CYCLE_LENGTH = 60  # (90)
 INIT_LR = 0.001  # (0.001)
 DROPOUT_RATE = 0.3  # (0.3)
 
+load_previous_dataset = False
 for nr_repetition in range(0, repetitions):
 
     # Load dataset
@@ -59,10 +60,12 @@ for nr_repetition in range(0, repetitions):
     # Load ensemble models
     ensemble_model_names = saveload.get_ensemble_model_names()
     model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
+    #print(model_names)
     model_name_subset = model_names[:N_MODELS]
+    print(model_name_subset)
     wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset]
 
-    load_previous_dataset = True
+
     measures = defaultdict(list)
     for init_temp in INIT_TEMP_LIST:
         # Build ensemble
