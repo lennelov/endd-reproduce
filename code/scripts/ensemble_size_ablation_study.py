@@ -22,16 +22,9 @@ ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
 MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux'  # Name to use when saving model (None if no saving)
+N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 20, 60, 75, 100]
 #N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30, 45, 60, 75, 100]
-N_MODELS_LIST = [1]#, 45, 60, 75, 100]
-# Done 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30, 45, 60, 75, 100
-# Doing: 1
-# Next: 
-# 2: 
-# 1:
-# 0:
-#N_MODELS_LIST = [100]
-repetitions = 3
+repetitions = 4
 
 # Set training parameters
 N_EPOCHS = 90  # Number of epochs to train for (90)
@@ -45,11 +38,11 @@ CYCLE_LENGTH = 60  # (90)
 INIT_LR = 0.001  # (0.001)
 DROPOUT_RATE = 0.3  # (0.3)
 INIT_TEMP = 10  # (10)
-SAMPLE_ENSEMBLE_MODELS = True
+SAMPLE_ENSEMBLE_MODELS = False
 if SAMPLE_ENSEMBLE_MODELS:
     MODEL_BASE_SAVE_NAME += "_sampled"
 
-for nr_repetition in range(2, repetitions):
+for nr_repetition in range(3, repetitions):
 
     # Load dataset
     (train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
@@ -69,6 +62,7 @@ for nr_repetition in range(2, repetitions):
     # Load ensemble models
     ensemble_model_names = saveload.get_ensemble_model_names()
     model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
+    print(model_names)
 
 
     measures = {'endd': defaultdict(list), 'ensm': defaultdict(list)}
@@ -86,15 +80,15 @@ for nr_repetition in range(2, repetitions):
         # Build ensemble
         ensm_model = ensemble.Ensemble(wrapped_models)
         #import pdb; pdb.set_trace();
-        ensm_measures = evaluation.calc_classification_measures(ensm_model,
-                                                                test_images,
-                                                                test_labels,
-                                                                wrapper_type='ensemble')
-        print("############# Ensemble Measures")
-        for measure, value in ensm_measures.items():
-            print("{}={}".format(measure, value))
-            measures['ensm'][measure].append(value)
-        print()
+        #ensm_measures = evaluation.calc_classification_measures(ensm_model,
+        #                                                        test_images,
+        #                                                        test_labels,
+        #                                                        wrapper_type='ensemble')
+        #print("############# Ensemble Measures")
+        #for measure, value in ensm_measures.items():
+        #    print("{}={}".format(measure, value))
+        #    measures['ensm'][measure].append(value)
+        #print()
 
         # Train ENDD
         if SAMPLE_ENSEMBLE_MODELS:
@@ -103,7 +97,7 @@ for nr_repetition in range(2, repetitions):
             rep = nr_repetition
         else:
             save = False
-            load = False
+            load = True
             rep = None
         endd_model = training.train_vgg_endd(train_images=train_images,
                                              ensemble_model=ensm_model,
