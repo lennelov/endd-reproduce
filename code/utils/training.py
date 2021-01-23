@@ -55,13 +55,16 @@ def train_vgg_endd(train_images,
       save_str = 'train_endd_dataset_rep={}_{}'.format(reptition, nr_models)
 
     if load_previous_endd_dataset:
-        with open(save_str, 'rb') as file:
+        with open('train_endd_dataset_100.pkl', 'rb') as file:
             train_images, train_ensemble_preds = pickle.load(file)
+            # Load the particular ammount only
+            train_ensemble_preds = train_ensemble_preds[:, :nr_models, :]
             print("loaded")
     else:
         # Get ensemble preds
-        print("Evaluating models")
+        print("Evaluating")
         train_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, train_images)
+        print("Evaluated")
 
     # Save / Load pickled data. Generating ensemble preds takes a long time, so saving and
     # loading can make testing much more efficient.
@@ -98,7 +101,7 @@ def train_vgg_endd(train_images,
                                compile=False,
                                dropout_rate=dropout_rate,
                                softmax=False)
-    endd_model = endd.get_model(base_model, init_temp=init_temp, teacher_epsilon=1e-3)
+    endd_model = endd.get_model(base_model, init_temp=init_temp, teacher_epsilon=1e-4)
 
     # Train model
     endd_model.fit(data_generator, epochs=n_epochs, callbacks=endd_callbacks)
