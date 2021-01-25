@@ -17,7 +17,7 @@ from models import ensemble, endd, cnn_priorNet
 # Choose models
 ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg_a', 100
 ENDD_MODEL_NAME, ENDD_BASE_MODEL = 'endd_vgg_cifar10_a', 'vgg'
-ENDD_AUX_MODEL_NAME, ENDD_AUX_BASE_MODEL = 'endd_vgg_cifar10_aux_final', 'vgg'
+ENDD_AUX_MODEL_NAME, ENDD_AUX_BASE_MODEL = 'new_cifar10_vgg_endd_aux_0_TEMP=10', 'vgg'
 
 # Choose dataset
 DATASET_NAME = 'cifar10'

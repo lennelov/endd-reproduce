@@ -17,7 +17,9 @@ from models import ensemble, endd, cnn_priorNet
 IND_MODEL_NAME = 'vgg_cifar10_cifar10_0'
 ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg', 30
 ENDD_MODEL_NAME, ENDD_BASE_MODEL = 'endd_vgg_cifar10_extended', 'vgg'
-ENDD_AUX_MODEL_NAME, ENDD_AUX_BASE_MODEL = 'endd_vgg_cifar10_aux', 'vgg'
+N = 100
+ENDD_AUX_MODEL_NAME, ENDD_AUX_BASE_MODEL = 'new_cifar10_vgg_endd_aux_0_N_MODELS={}'.format(N), 'vgg'
+
 PN_AUX_MODEL_NAME, PN_AUX_BASE_MODEL = 'PN_vgg_cifar10_aux_c', 'vgg'
 # Choose dataset
 DATASET_NAME = 'cifar10'
@@ -43,18 +45,18 @@ DATASET_NAME = 'cifar10'
 #                             weights=ENDD_MODEL_NAME)
 # endd_wrapper_type = 'individual'
 #
-# # Prepare ENDD+AUX model
-# endd_aux_model = endd.get_model(ENDD_AUX_BASE_MODEL,
-#                                 dataset_name=DATASET_NAME,
-#                                 compile=True,
-#                                 weights=ENDD_AUX_MODEL_NAME)
-# endd_aux_wrapper_type = 'individual'
+# Prepare ENDD+AUX model
+endd_aux_model = endd.get_model(ENDD_AUX_BASE_MODEL,
+                                dataset_name=DATASET_NAME,
+                                compile=True,
+                                weights=ENDD_AUX_MODEL_NAME)
+endd_aux_wrapper_type = 'individual'
 
-pn_base_model = saveload.load_tf_model(PN_AUX_MODEL_NAME, compile=False)
-pn_aux_model = cnn_priorNet.get_model(pn_base_model,
-                                      dataset_name=DATASET_NAME,
-                                      compile=True)
-pn_aux_wrapper_type = 'individual'
+# pn_base_model = saveload.load_tf_model(PN_AUX_MODEL_NAME, compile=False)
+# pn_aux_model = cnn_priorNet.get_model(pn_base_model,
+#                                       dataset_name=DATASET_NAME,
+#                                       compile=True)
+# pn_aux_wrapper_type = 'individual'
 
 
 # Load data
@@ -79,16 +81,16 @@ test_images = preprocessing.normalize_minus_one_to_one(test_images, min=0, max=2
 #                                                         test_images,
 #                                                         test_labels,
 #                                                         wrapper_type=endd_wrapper_type)
-# print("Evaluating ENDD+AUX...")
-# endd_aux_measures = evaluation.calc_classification_measures(endd_aux_model,
-#                                                             test_images,
-#                                                             test_labels,
-#                                                             wrapper_type=endd_aux_wrapper_type)
-print("Evaluating PN+AUX...")
-pn_aux_measures = evaluation.calc_classification_measures(pn_aux_model,
-                                                          test_images,
-                                                          test_labels,
-                                                          wrapper_type=pn_aux_wrapper_type)
+print("Evaluating ENDD+AUX...")
+endd_aux_measures = evaluation.calc_classification_measures(endd_aux_model,
+                                                            test_images,
+                                                            test_labels,
+                                                            wrapper_type=endd_aux_wrapper_type)
+# print("Evaluating PN+AUX...")
+# pn_aux_measures = evaluation.calc_classification_measures(pn_aux_model,
+#                                                           test_images,
+#                                                           test_labels,
+#                                                           wrapper_type=pn_aux_wrapper_type)
 print("Evaluations complete.")
 
 # # Format and print results
@@ -98,9 +100,10 @@ print("Evaluations complete.")
 #     dataset_name=DATASET_NAME)
 
 # Format and print results
+print("N = " + str(N))
 summary = evaluation.format_results(
-    ['PN_AUX'],
-    [pn_aux_measures],
+    ['ENDD+AUX'],
+    [endd_aux_measures],
     dataset_name=DATASET_NAME)
 
 print(summary)
