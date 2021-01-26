@@ -18,13 +18,13 @@ from utils import saveload, training, evaluation, datasets, preprocessing
 plt.style.use('ggplot')
 
 # Set names for loading and saving
-ENSEMBLE_LOAD_NAME = 'vgg'  # Name of ensemble to use for training
+ENSEMBLE_LOAD_NAME = 'vgg_a'  # Name of ensemble to use for training
 DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
 AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
-MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux'  # Name to use when saving model (None if no saving)
-N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 20, 60, 75, 100]
+MODEL_BASE_SAVE_NAME = 'new_cifar10_vgg_endd_aux'  # Name to use when saving model (None if no saving)
+N_MODELS_LIST = [16, 25, 30, 45]
 #N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30, 45, 60, 75, 100]
-repetitions = 4
+repetitions = 1
 
 # Set training parameters
 N_EPOCHS = 90  # Number of epochs to train for (90)
@@ -42,7 +42,7 @@ SAMPLE_ENSEMBLE_MODELS = False
 if SAMPLE_ENSEMBLE_MODELS:
     MODEL_BASE_SAVE_NAME += "_sampled"
 
-for nr_repetition in range(3, repetitions):
+for nr_repetition in range(0, repetitions):
 
     # Load dataset
     (train_images, train_labels), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)

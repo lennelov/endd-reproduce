@@ -6,8 +6,8 @@ sys.path.append(parent_dir_path)
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-#physical_devices = tf.config.experimental.list_physical_devices('GPU')
-#tf.config.experimental.set_memory_growth(physical_devices[0], True)
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 from collections import defaultdict
 from utils import evaluation, datasets, saveload, preprocessing
@@ -15,11 +15,11 @@ from models import ensemble, endd
 import pickle
 
 # Model loading parameters
-N_MODELS_BASE_NAMES = ['cifar10_vgg_endd_aux_0', 'cifar10_vgg_endd_aux_1', 'cifar10_vgg_endd_aux_2']
+N_MODELS_BASE_NAMES = ['new_cifar10_vgg_endd_aux_0']
 N_MODELS_BASE_NAMES_SAMPLED = ['cifar10_vgg_endd_aux_sampled_0', 'cifar10_vgg_endd_aux_sampled_1', 'cifar10_vgg_endd_aux_sampled_2']
 # Should be set to the same configuration as when running ensemble_size_ablation_study.py
 ENDD_AUX_BASE_MODEL = 'vgg'
-ENSEMBLE_LOAD_NAME = 'vgg'
+ENSEMBLE_LOAD_NAME = 'vgg_a'
 N_MODELS_LIST = [1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30, 45, 60, 75, 100]
 N_MODELS_LIST_ORIG = [5, 20, 50, 100]
 
@@ -111,7 +111,7 @@ def plot_with_error_fields(n_models_list, ensm_measures, endd_measures_list, mea
     plt.legend()
 
 def plot_with_error_fields_sampling(n_models_list, ensm_measures_list, endd_measures_list, measure, ylabel, endd_measures_list_repeat = None):
-    
+
     stack = np.stack([ensm_measures[measure] for ensm_measures in ensm_measures_list])
     means = stack.mean(axis=0)
     stds = stack.std(axis=0)
@@ -121,7 +121,7 @@ def plot_with_error_fields_sampling(n_models_list, ensm_measures_list, endd_meas
                      means + 2 * stds,
                      color='xkcd:dull blue',
                      alpha=0.4)
-    
+
 
     stack = np.stack([endd_measures[measure] for endd_measures in endd_measures_list])
     means = stack.mean(axis=0)
@@ -161,7 +161,7 @@ def plot_with_error_fields_paper(n_models_list, ensm_measures, endd_measures_lis
              linestyle='dashed',
              marker = 'x')
     plt.plot(n_models_list, means,
-      label=r'END$^2_{+AUX}$ Paper', 
+      label=r'END$^2_{+AUX}$ Paper',
       color='xkcd:dusty orange',
       linestyle = 'dashed',
       marker = 'x')
@@ -513,25 +513,26 @@ def get_ens_sampled_measures():
 _, (test_images, test_labels) = get_dataset(DATASET_NAME, NORMALIZATION)
 
 
-# Load ensemble model names
-#ensemble_model_names = saveload.get_ensemble_model_names()
-#model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
-#model_names = model_names[-100:] # 100 last, the original ones
+# # Load ensemble model names
+# ensemble_model_names = saveload.get_ensemble_model_names()
+# model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
+# model_names = model_names[-100:] # 100 last, the original ones
 
-# Get ENSM measures
-#ensm_measures = get_ensm_measures(model_names, N_MODELS_LIST, test_images, test_labels)
-
-#with open("ensemble_measure.pkl", "wb") as file:
+# # Get ENSM measures
+# ensm_measures = get_ensm_measures(model_names, N_MODELS_LIST, test_images, test_labels)
+# print(ensm_measures)
+#
+# with open("ensemble_measure.pkl", "wb") as file:
 #    pickle.dump((ensm_measures), file)
-#print("saved")
+# print("saved")
 
 # Get ENDD measures
-#endd_measures_list = get_endd_measures(N_MODELS_BASE_NAMES, N_MODELS_LIST, ENDD_AUX_BASE_MODEL,
-#                                       DATASET_NAME, test_images, test_labels)
-#
-#with open("endd_measure.pkl", "wb") as file:
-#    pickle.dump((endd_measures_list), file)
-#print("saved")
+endd_measures_list = get_endd_measures(N_MODELS_BASE_NAMES, N_MODELS_LIST, ENDD_AUX_BASE_MODEL,
+                                      DATASET_NAME, test_images, test_labels)
+
+with open("endd_measure.pkl", "wb") as file:
+   pickle.dump((endd_measures_list), file)
+print("saved")
 
 # Get sampling ENDD measures
 #endd_sampled_measures_list = get_endd_measures(N_MODELS_BASE_NAMES_SAMPLED, N_MODELS_LIST, ENDD_AUX_BASE_MODEL,
@@ -541,68 +542,66 @@ _, (test_images, test_labels) = get_dataset(DATASET_NAME, NORMALIZATION)
 #    pickle.dump((endd_sampled_measures_list), file)
 #print("saved")
 
-
-
-## Load data 
-
-with open("ensemble_measure.pkl", "rb") as file:
-    ensm_measures, _ = pickle.load(file)
-
-with open("endd_measure.pkl", "rb") as file:
-    endd_measures_list = pickle.load(file)
-
-with open("endd_measure_sampled.pkl", "rb") as file:
-    endd_sampled_measures_list = pickle.load(file)
-endd_sampled_measures_list.append(endd_measures_list[2])
-#import pdb; pdb.set_trace()
-
-
-ensm_sampled_measures_list = get_ens_sampled_measures()
-ensm_sampled_measures_list.append(ensm_measures)
-
-paper_ensm_measures, paper_endd_measures_list = get_paper_measures()
-
-
-print(ensm_measures)
-print(endd_measures_list)
-print()
-print(ensm_sampled_measures_list)
-print(endd_sampled_measures_list)
-print()
-print(paper_ensm_measures)
-print(paper_endd_measures_list)
-
-
-
-## Plot results
-plt.style.use('ggplot')
-
-plt.subplot(2, 2, 1)
-#plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'err', 'Prediction Error')
-plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'err', 'Prediction Error', endd_measures_list)
-plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'err', 'Prediction Error')
-
-
-
-plt.subplot(2, 2, 2)
-#plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'nll', 'Negative Log-Likelihood')
-plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'nll', 'Negative Log-Likelihood', endd_measures_list)
-plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'nll', 'Negative Log-Likelihood')
-
-
-
-plt.subplot(2, 2, 3)
-#plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'ece', 'Expected Calibration Error')
-plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'ece', 'Expected Calibration Error', endd_measures_list)
-plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'ece', 'Expected Calibration Error')
-
-
-
-plt.subplot(2, 2, 4)
-#plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'prr', 'Prediction Rejection Rate')
-plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'prr', 'Prediction Rejection Rate', endd_measures_list)
-plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'prr', 'Prediction Rejection Rate')
-
-
-
-plt.show()
+## Load data
+#
+# with open("ensemble_measure.pkl", "rb") as file:
+#     ensm_measures, _ = pickle.load(file)
+#
+# with open("endd_measure.pkl", "rb") as file:
+#     endd_measures_list = pickle.load(file)
+#
+# with open("endd_measure_sampled.pkl", "rb") as file:
+#     endd_sampled_measures_list = pickle.load(file)
+# endd_sampled_measures_list.append(endd_measures_list[2])
+# #import pdb; pdb.set_trace()
+#
+#
+# ensm_sampled_measures_list = get_ens_sampled_measures()
+# ensm_sampled_measures_list.append(ensm_measures)
+#
+# paper_ensm_measures, paper_endd_measures_list = get_paper_measures()
+#
+#
+# print(ensm_measures)
+# print(endd_measures_list)
+# print()
+# print(ensm_sampled_measures_list)
+# print(endd_sampled_measures_list)
+# print()
+# print(paper_ensm_measures)
+# print(paper_endd_measures_list)
+#
+#
+#
+# ## Plot results
+# plt.style.use('ggplot')
+#
+# plt.subplot(2, 2, 1)
+# #plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'err', 'Prediction Error')
+# plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'err', 'Prediction Error', endd_measures_list)
+# plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'err', 'Prediction Error')
+#
+#
+#
+# plt.subplot(2, 2, 2)
+# #plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'nll', 'Negative Log-Likelihood')
+# plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'nll', 'Negative Log-Likelihood', endd_measures_list)
+# plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'nll', 'Negative Log-Likelihood')
+#
+#
+#
+# plt.subplot(2, 2, 3)
+# #plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'ece', 'Expected Calibration Error')
+# plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'ece', 'Expected Calibration Error', endd_measures_list)
+# plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'ece', 'Expected Calibration Error')
+#
+#
+#
+# plt.subplot(2, 2, 4)
+# #plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'prr', 'Prediction Rejection Rate')
+# plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'prr', 'Prediction Rejection Rate', endd_measures_list)
+# plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'prr', 'Prediction Rejection Rate')
+#
+#
+#
+# plt.show()

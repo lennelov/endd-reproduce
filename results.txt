@@ -1,0 +1,144 @@
+N = 1
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.8%
+PRR (prediction rejection rate)
+    ENDD+AUX: 75.0%
+ECE (expected calibration error)
+    ENDD+AUX: 2.405%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.353
+
+N = 2
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.8%
+PRR (prediction rejection rate)
+    ENDD+AUX: 75.9%
+ECE (expected calibration error)
+    ENDD+AUX: 2.711%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.357
+
+N = 3
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.7%
+PRR (prediction rejection rate)
+    ENDD+AUX: 77.1%
+ECE (expected calibration error)
+    ENDD+AUX: 2.726%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.351
+
+N = 4
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.4%
+PRR (prediction rejection rate)
+    ENDD+AUX: 77.2%
+ECE (expected calibration error)
+    ENDD+AUX: 2.755%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.344
+
+
+N = 6
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.3%
+PRR (prediction rejection rate)
+    ENDD+AUX: 76.9%
+ECE (expected calibration error)
+    ENDD+AUX: 2.890%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.344
+
+N = 8
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.4%
+PRR (prediction rejection rate)
+    ENDD+AUX: 76.8%
+ECE (expected calibration error)
+    ENDD+AUX: 2.977%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.343
+
+N = 10
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.6%
+PRR (prediction rejection rate)
+    ENDD+AUX: 77.7%
+ECE (expected calibration error)
+    ENDD+AUX: 2.820%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.343
+
+N = 13
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.2%
+PRR (prediction rejection rate)
+    ENDD+AUX: 77.8%
+ECE (expected calibration error)
+    ENDD+AUX: 2.814%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.338
+
+N = 20
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.3%
+PRR (prediction rejection rate)
+    ENDD+AUX: 78.6%
+ECE (expected calibration error)
+    ENDD+AUX: 2.853%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.336
+
+N = 60
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.2%
+PRR (prediction rejection rate)
+    ENDD+AUX: 77.7%
+ECE (expected calibration error)
+    ENDD+AUX: 3.044%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.338
+
+N = 75
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 10.1%
+PRR (prediction rejection rate)
+    ENDD+AUX: 76.7%
+ECE (expected calibration error)
+    ENDD+AUX: 3.070%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.338
+
+N = 100
+== EVALUATION RESULTS ==
+Dataset: cifar10
+ERR (classification error)
+    ENDD+AUX: 9.9%
+PRR (prediction rejection rate)
+    ENDD+AUX: 77.3%
+ECE (expected calibration error)
+    ENDD+AUX: 3.256%
+NLL (negative log-likelihood)
+    ENDD+AUX: 0.335
