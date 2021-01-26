@@ -19,7 +19,8 @@ def train_vgg_endd(train_images,
                    init_temp=10,
                    dropout_rate=0.3,
                    save_endd_dataset=False,
-                   load_previous_endd_dataset=False):
+                   load_previous_endd_dataset=False,
+                   repetition = None):
     """Return a trained VGG ENDD model.
 
     The save_endd_dataset and load_previous_endd_dataset arguments are useful to avoid having to
@@ -46,18 +47,31 @@ def train_vgg_endd(train_images,
     Returns:
         (keras.Model): Trained VGG ENDD model.
     """
+
+    nr_models = len(ensemble_model.models)
+    if repetition is None:
+      save_str = 'train_endd_dataset_{}.pkl'.format(nr_models)
+    else:
+      save_str = 'train_endd_dataset_rep={}_{}'.format(reptition, nr_models)
+
     if load_previous_endd_dataset:
-        with open('train_endd_dataset.pkl', 'rb') as file:
+        with open('train_endd_dataset_100.pkl', 'rb') as file:
             train_images, train_ensemble_preds = pickle.load(file)
+            # Load the particular ammount only
+            train_ensemble_preds = train_ensemble_preds[:, :nr_models, :]
+            print("loaded")
     else:
         # Get ensemble preds
+        print("Evaluating")
         train_ensemble_preds = datasets.get_ensemble_preds(ensemble_model, train_images)
+        print("Evaluated")
 
     # Save / Load pickled data. Generating ensemble preds takes a long time, so saving and
     # loading can make testing much more efficient.
     if save_endd_dataset:
         with open('train_endd_dataset.pkl', 'wb') as file:
             pickle.dump((train_images, train_ensemble_preds), file)
+        print("saved")
 
     # Image augmentation
     data_generator = preprocessing.make_augmented_generator(train_images, train_ensemble_preds,

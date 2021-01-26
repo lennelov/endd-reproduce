@@ -39,7 +39,7 @@ def _get_cifar10_3_class():
 
 
 def _get_cifar100():
-    return datasets.cifar10.load_data()
+    return datasets.cifar100.load_data()
 
 
 def _get_mnist():
