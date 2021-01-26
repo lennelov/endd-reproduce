@@ -23,8 +23,8 @@ DATASET_NAME = 'cifar10'
 THREE_CLASS_DATASET_NAME = 'cifar10_3_class'
 ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg_3_class', 100
 ENDD_MODEL_NAME  = "endd_vgg_cifar10_3_class"
-LOAD_PREVIOUS_ENSM_PREDS = False
-LOAD_PREVIOUS_ENDD_PREDS = False
+LOAD_PREVIOUS_ENSM_PREDS = True
+LOAD_PREVIOUS_ENDD_PREDS = True
 
 
 # ======== FUNCTIONS =========
@@ -155,14 +155,14 @@ else:
 # ===== SELECT EXAMPLES =====
 
 # Pick out plane images and preds
-indx_plane = test_labels == 4
+indx_plane = test_labels == 0
 indx_plane = indx_plane.flatten()
 imgs_plane = raw_test_images[indx_plane]
 ensm_preds_plane = ensm_preds[:, indx_plane, :]
 endd_preds_plane = endd_preds[indx_plane, :]
 
 # Pick out deer images and preds
-indx_deer = test_labels == 1
+indx_deer = test_labels == 4
 indx_deer = indx_deer.flatten()
 imgs_deer = raw_test_images[indx_deer]
 ensm_preds_deer = ensm_preds[:, indx_deer, :]
