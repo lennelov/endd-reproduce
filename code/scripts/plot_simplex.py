@@ -21,10 +21,10 @@ import matplotlib.pyplot as plt
 
 DATASET_NAME = 'cifar10'
 THREE_CLASS_DATASET_NAME = 'cifar10_3_class'
-ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg_3_class', 20
-ENDD_MODEL_NAME  = "endd_vgg_cifar10_3class_aux"
-LOAD_PREVIOUS_ENSM_PREDS = True
-LOAD_PREVIOUS_ENDD_PREDS = True
+ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg_3_class', 100
+ENDD_MODEL_NAME  = "endd_vgg_cifar10_3_class"
+LOAD_PREVIOUS_ENSM_PREDS = False
+LOAD_PREVIOUS_ENDD_PREDS = False
 
 
 # ======== FUNCTIONS =========
@@ -130,7 +130,7 @@ else:
     ensm_preds = ensm_model.predict(test_images)
     with open("ensm_preds.pkl", 'wb') as file:
         pickle.dump((ensm_preds), file)
-    ensm_preds_noise = ensm_model.predict(test_images)
+    ensm_preds_noise = ensm_model.predict(noise_img)
     with open("ensm_preds_noise.pkl", 'wb') as file:
         pickle.dump((ensm_preds_noise), file)
 
@@ -148,21 +148,21 @@ else:
     endd_preds = endd_model.predict(test_images)
     with open("endd_preds.pkl", 'wb') as file:
         pickle.dump((endd_preds), file)
-    endd_preds_noise = ensm_model.predict(noise_img)
+    endd_preds_noise = endd_model.predict(noise_img)
     with open("endd_preds_noise.pkl", 'wb') as file:
         pickle.dump((endd_preds_noise), file)
 
 # ===== SELECT EXAMPLES =====
 
 # Pick out plane images and preds
-indx_plane = test_labels == 0
+indx_plane = test_labels == 4
 indx_plane = indx_plane.flatten()
 imgs_plane = raw_test_images[indx_plane]
 ensm_preds_plane = ensm_preds[:, indx_plane, :]
 endd_preds_plane = endd_preds[indx_plane, :]
 
 # Pick out deer images and preds
-indx_deer = test_labels == 4
+indx_deer = test_labels == 1
 indx_deer = indx_deer.flatten()
 imgs_deer = raw_test_images[indx_deer]
 ensm_preds_deer = ensm_preds[:, indx_deer, :]
