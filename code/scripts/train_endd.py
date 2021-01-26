@@ -21,10 +21,10 @@ from models import endd, ensemble
 from utils import saveload, training, evaluation, datasets, preprocessing
 
 # Set names for loading and saving
-ENSEMBLE_LOAD_NAME = 'vgg_a'  # Name of ensemble to use for training
-DATASET_NAME = 'cifar10'  # Name of dataset to use (ensemble must be trained on this dataset)
-AUX_DATASET_NAME = None  # Name of auxiliary dataset to use (None if no AUX data)
-MODEL_SAVE_NAME = 'endd_vgg_cifar10_a'  # Name to use when saving model (None if no saving)
+ENSEMBLE_LOAD_NAME = 'vgg_3_class'  # Name of ensemble to use for training
+DATASET_NAME = 'cifar10_3_class'  # Name of dataset to use (ensemble must be trained on this dataset)
+AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AUX data)
+MODEL_SAVE_NAME = 'endd_vgg_cifar10_3_class'  # Name to use when saving model (None if no saving)
 LOAD_PREVIOUS_ENDD_DATASET = False  # Use the previous ensemble predictions instead of re-predicting
 
 # Set training parameters
