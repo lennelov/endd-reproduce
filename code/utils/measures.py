@@ -83,14 +83,26 @@ def calc_tot_unc_auc_roc(in_probs, out_probs, plot=False):
     out_t_unc = entropy_of_expected(out_probs, logits=False)
     all_t_unc = np.concatenate([in_t_unc, out_t_unc], axis=0)
 
-    precision, recall, thresholds = sklearn.metrics.precision_recall_curve(all_labels, all_t_unc)
-    auc_roc = sklearn.metrics.auc(recall, precision)
+    fpr, tpr, thresholds = sklearn.metrics.roc_curve(all_labels, all_t_unc)
+    auc_roc = sklearn.metrics.auc(fpr, tpr)
 
     if plot:
-        plt.plot(recall, precision, label='Total uncertainty')
+        plt.plot(fpr, tpr, label='Total uncertainty')
         plt.title('Total uncertainty OOD detection ROC curve')
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
+        plt.xlabel('False positive rate')
+        plt.ylabel('True positive rate')
+        plt.legend()
+        plt.show()
+
+        plt.plot(thresholds, fpr, label='Total uncertainty')
+        plt.xlabel('T')
+        plt.ylabel('FPR')
+        plt.legend()
+        plt.show()
+
+        plt.plot(thresholds, tpr, label='Total uncertainty')
+        plt.xlabel('T')
+        plt.ylabel('TPR')
         plt.legend()
         plt.show()
 
