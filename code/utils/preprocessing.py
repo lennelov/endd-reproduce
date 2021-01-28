@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import settings
+import random
 
 
 def make_batch_generator(images, targets, batch_size):
@@ -200,6 +201,9 @@ def preprocess_cifar_for_priornet(train_images,
              tf.ones([OOD_images.shape[0], train_logits.shape[2]])],
             axis=0)
 
+    train_images = np.array(train_images)
+    train_logits = np.array(train_logits)
+
     if normalization == "-1to1":
         train_images, min, max = normalize_minus_one_to_one(train_images)
         test_images = normalize_minus_one_to_one(test_images, min, max)
@@ -207,10 +211,10 @@ def preprocess_cifar_for_priornet(train_images,
         train_images, mean, std = normalize_gaussian(train_images)
         test_images = normalize_gaussian(test_images, mean, std)
     if OOD_images is not None:  #shuffle the images
-        tf.random.set_seed(1234)
-        train_images = tf.random.shuffle(train_images, seed=2)
-        tf.random.set_seed(1234)
-        train_logits = tf.random.shuffle(train_logits, seed=2)
-    train_logits = tf.squeeze(train_logits)
-    test_images = tf.squeeze(test_images)
+        indices = list(range(len(train_images)))
+        random.shuffle(indices)
+        train_images = train_images[indices, :, :, :]
+        train_logits = train_logits[indices, :]
+    train_logits = np.squeeze(train_logits)
+    test_images = np.squeeze(test_images)
     return train_images, train_logits, test_images, test_logits
