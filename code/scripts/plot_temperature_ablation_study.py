@@ -77,20 +77,18 @@ def plot_with_error_fields(init_temp_list, endd_measures_list, measure, ylabel):
     plt.ylabel(ylabel)
     plt.legend()
 
+
 def plot_with_error_fields_paper(init_temp_list, endd_measures_list, measure, ylabel):
     stack = np.stack([endd_measures[measure] for endd_measures in endd_measures_list])
     means = stack.mean(axis=0)
     minimum = stack.min(axis=0)
     maximum = stack.max(axis=0)
     plt.plot(init_temp_list, means, '.-', label=r'END$^2_{+AUX}$ Paper', color='xkcd:dull blue')
-    plt.fill_between(init_temp_list,
-                     minimum,
-                     maximum,
-                     color='xkcd:dull blue',
-                     alpha=0.4)
+    plt.fill_between(init_temp_list, minimum, maximum, color='xkcd:dull blue', alpha=0.4)
     plt.xlabel("Initial temperature")
     plt.ylabel(ylabel)
     plt.legend()
+
 
 '''
 # Get dataset
@@ -115,11 +113,11 @@ print(endd_measures_list)
 # The paper's values
 paper_measures_list = []
 paper_measures = defaultdict(list)
-paper_measures["err"].append(22.96/100)
-paper_measures["err"].append(8.67/100)
-paper_measures["err"].append(6.93/100)
-paper_measures["err"].append(6.875/100)
-paper_measures["err"].append(6.875/100)
+paper_measures["err"].append(22.96 / 100)
+paper_measures["err"].append(8.67 / 100)
+paper_measures["err"].append(6.93 / 100)
+paper_measures["err"].append(6.875 / 100)
+paper_measures["err"].append(6.875 / 100)
 
 paper_measures["nll"].append(0.7796)
 paper_measures["nll"].append(0.2858)
@@ -127,25 +125,25 @@ paper_measures["nll"].append(0.2415)
 paper_measures["nll"].append(0.2403)
 paper_measures["nll"].append(0.23795)
 
-paper_measures["ece"].append(12.21/100)
-paper_measures["ece"].append(1.53/100)
-paper_measures["ece"].append(2.23/100)
-paper_measures["ece"].append(2.28/100)
-paper_measures["ece"].append(2.41/100)
+paper_measures["ece"].append(12.21 / 100)
+paper_measures["ece"].append(1.53 / 100)
+paper_measures["ece"].append(2.23 / 100)
+paper_measures["ece"].append(2.28 / 100)
+paper_measures["ece"].append(2.41 / 100)
 
-paper_measures["prr"].append(73.73/100)
-paper_measures["prr"].append(84.12/100)
-paper_measures["prr"].append(86.09/100)
-paper_measures["prr"].append(85.71/100)
-paper_measures["prr"].append(85.93/100)
+paper_measures["prr"].append(73.73 / 100)
+paper_measures["prr"].append(84.12 / 100)
+paper_measures["prr"].append(86.09 / 100)
+paper_measures["prr"].append(85.71 / 100)
+paper_measures["prr"].append(85.93 / 100)
 paper_measures_list.append(paper_measures)
 
 paper_measures = defaultdict(list)
-paper_measures["err"].append(38.44/100)
-paper_measures["err"].append(8.67/100)
-paper_measures["err"].append(6.93/100)
-paper_measures["err"].append(6.875/100)
-paper_measures["err"].append(6.875/100)
+paper_measures["err"].append(38.44 / 100)
+paper_measures["err"].append(8.67 / 100)
+paper_measures["err"].append(6.93 / 100)
+paper_measures["err"].append(6.875 / 100)
+paper_measures["err"].append(6.875 / 100)
 
 paper_measures["nll"].append(1.2799)
 paper_measures["nll"].append(0.2858)
@@ -153,25 +151,25 @@ paper_measures["nll"].append(0.2415)
 paper_measures["nll"].append(0.2403)
 paper_measures["nll"].append(0.23795)
 
-paper_measures["ece"].append(20.27/100)
-paper_measures["ece"].append(1.53/100)
-paper_measures["ece"].append(2.23/100)
-paper_measures["ece"].append(2.28/100)
-paper_measures["ece"].append(2.41/100)
+paper_measures["ece"].append(20.27 / 100)
+paper_measures["ece"].append(1.53 / 100)
+paper_measures["ece"].append(2.23 / 100)
+paper_measures["ece"].append(2.28 / 100)
+paper_measures["ece"].append(2.41 / 100)
 
-paper_measures["prr"].append(86.42/100)
-paper_measures["prr"].append(84.61/100)
-paper_measures["prr"].append(86.09/100)
-paper_measures["prr"].append(85.71/100)
-paper_measures["prr"].append(85.93/100)
+paper_measures["prr"].append(86.42 / 100)
+paper_measures["prr"].append(84.61 / 100)
+paper_measures["prr"].append(86.09 / 100)
+paper_measures["prr"].append(85.71 / 100)
+paper_measures["prr"].append(85.93 / 100)
 paper_measures_list.append(paper_measures)
 
 paper_measures = defaultdict(list)
-paper_measures["err"].append(5.62/100)
-paper_measures["err"].append(8.67/100)
-paper_measures["err"].append(6.93/100)
-paper_measures["err"].append(6.875/100)
-paper_measures["err"].append(6.875/100)
+paper_measures["err"].append(5.62 / 100)
+paper_measures["err"].append(8.67 / 100)
+paper_measures["err"].append(6.93 / 100)
+paper_measures["err"].append(6.875 / 100)
+paper_measures["err"].append(6.875 / 100)
 
 paper_measures["nll"].append(0.2473)
 paper_measures["nll"].append(0.2858)
@@ -179,22 +177,20 @@ paper_measures["nll"].append(0.2415)
 paper_measures["nll"].append(0.2403)
 paper_measures["nll"].append(0.23795)
 
-paper_measures["ece"].append(3.64/100)
-paper_measures["ece"].append(1.53/100)
-paper_measures["ece"].append(2.23/100)
-paper_measures["ece"].append(2.28/100)
-paper_measures["ece"].append(2.41/100)
+paper_measures["ece"].append(3.64 / 100)
+paper_measures["ece"].append(1.53 / 100)
+paper_measures["ece"].append(2.23 / 100)
+paper_measures["ece"].append(2.28 / 100)
+paper_measures["ece"].append(2.41 / 100)
 
-paper_measures["prr"].append(61.31/100)
-paper_measures["prr"].append(83.51/100)
-paper_measures["prr"].append(86.09/100)
-paper_measures["prr"].append(85.71/100)
-paper_measures["prr"].append(85.93/100)
+paper_measures["prr"].append(61.31 / 100)
+paper_measures["prr"].append(83.51 / 100)
+paper_measures["prr"].append(86.09 / 100)
+paper_measures["prr"].append(85.71 / 100)
+paper_measures["prr"].append(85.93 / 100)
 paper_measures_list.append(paper_measures)
 
 print(paper_measures_list)
-
-
 
 # Plot results
 plt.style.use('ggplot')
@@ -209,10 +205,12 @@ plot_with_error_fields_paper(ORIG_TEMP_LIST, paper_measures_list, 'nll', 'Negati
 
 plt.subplot(2, 2, 3)
 plot_with_error_fields(INIT_TEMP_LIST, endd_measures_list, 'ece', 'Expected Calibration Error')
-plot_with_error_fields_paper(ORIG_TEMP_LIST, paper_measures_list, 'ece', 'Expected Calibration Error')
+plot_with_error_fields_paper(ORIG_TEMP_LIST, paper_measures_list, 'ece',
+                             'Expected Calibration Error')
 
 plt.subplot(2, 2, 4)
 plot_with_error_fields(INIT_TEMP_LIST, endd_measures_list, 'prr', 'Prediction Rejection Rate')
-plot_with_error_fields_paper(ORIG_TEMP_LIST, paper_measures_list, 'prr', 'Prediction Rejection Rate')
+plot_with_error_fields_paper(ORIG_TEMP_LIST, paper_measures_list, 'prr',
+                             'Prediction Rejection Rate')
 
 plt.show()

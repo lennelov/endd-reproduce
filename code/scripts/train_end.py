@@ -70,18 +70,18 @@ elif NORMALIZATION == 'gaussian':
     test_images = preprocessing.normalize_gaussian(test_images, mean, std)
 
 end_model = training.train_vgg_end(train_images=train_images,
-                                    ensemble_model=ensemble_model,
-                                    dataset_name=DATASET_NAME,
-                                    batch_size=BATCH_SIZE,
-                                    n_epochs=N_EPOCHS,
-                                    one_cycle_lr_policy=ONE_CYCLE_LR_POLICY,
-                                    init_lr=INIT_LR,
-                                    cycle_length=CYCLE_LENGTH,
-                                    temp_annealing=TEMP_ANNEALING,
-                                    init_temp=INIT_TEMP,
-                                    dropout_rate=DROPOUT_RATE,
-                                    save_end_dataset=False,
-                                    load_previous_end_dataset=True)
+                                   ensemble_model=ensemble_model,
+                                   dataset_name=DATASET_NAME,
+                                   batch_size=BATCH_SIZE,
+                                   n_epochs=N_EPOCHS,
+                                   one_cycle_lr_policy=ONE_CYCLE_LR_POLICY,
+                                   init_lr=INIT_LR,
+                                   cycle_length=CYCLE_LENGTH,
+                                   temp_annealing=TEMP_ANNEALING,
+                                   init_temp=INIT_TEMP,
+                                   dropout_rate=DROPOUT_RATE,
+                                   save_end_dataset=False,
+                                   load_previous_end_dataset=True)
 
 measures = evaluation.calc_classification_measures(end_model,
                                                    test_images,

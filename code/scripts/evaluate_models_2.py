@@ -22,7 +22,8 @@ END_MODEL_NAME, END_BASE_MODEL = 'end_vgg_cifar10_100_{}'.format(nr), 'vgg'
 END_AUX_MODEL_NAME, END_AUX_BASE_MODEL = 'end_vgg_cifar10_100_aux_{}'.format(nr), 'vgg'
 
 ENDD_MODEL_NAME, ENDD_BASE_MODEL = 'endd_vgg_cifar10_100_{}'.format(nr), 'vgg'
-ENDD_AUX_MODEL_NAME, ENDD_AUX_BASE_MODEL = 'cifar10_vgg_endd_aux_{}_N_MODELS=100'.format(nr - 1), 'vgg'
+ENDD_AUX_MODEL_NAME, ENDD_AUX_BASE_MODEL = 'cifar10_vgg_endd_aux_{}_N_MODELS=100'.format(nr -
+                                                                                         1), 'vgg'
 
 # Choose dataset
 DATASET_NAME = 'cifar10'
@@ -40,18 +41,17 @@ ensm_wrapper_type = 'ensemble'
 
 # Prepare END model
 end_model = endd.get_model(END_BASE_MODEL,
-                            dataset_name=DATASET_NAME,
-                            compile=True,
-                            weights=END_MODEL_NAME)
+                           dataset_name=DATASET_NAME,
+                           compile=True,
+                           weights=END_MODEL_NAME)
 end_wrapper_type = 'individual'
 
 # Prepare END+AUX model
 end_aux_model = endd.get_model(END_AUX_BASE_MODEL,
-                                dataset_name=DATASET_NAME,
-                                compile=True,
-                                weights=END_AUX_MODEL_NAME)
+                               dataset_name=DATASET_NAME,
+                               compile=True,
+                               weights=END_AUX_MODEL_NAME)
 end_aux_wrapper_type = 'individual'
-
 
 # Prepare ENDD model
 endd_model = endd.get_model(ENDD_BASE_MODEL,
@@ -88,14 +88,14 @@ ensm_measures = evaluation.calc_classification_measures(ensm_model,
 
 print("Evaluating END...")
 end_measures = evaluation.calc_classification_measures(end_model,
-                                                        test_images,
-                                                        test_labels,
-                                                        wrapper_type=end_wrapper_type)
+                                                       test_images,
+                                                       test_labels,
+                                                       wrapper_type=end_wrapper_type)
 print("Evaluating END+AUX...")
 end_aux_measures = evaluation.calc_classification_measures(end_aux_model,
-                                                            test_images,
-                                                            test_labels,
-                                                            wrapper_type=end_aux_wrapper_type)
+                                                           test_images,
+                                                           test_labels,
+                                                           wrapper_type=end_aux_wrapper_type)
 
 print("Evaluating ENDD...")
 endd_measures = evaluation.calc_classification_measures(endd_model,
@@ -110,11 +110,9 @@ endd_aux_measures = evaluation.calc_classification_measures(endd_aux_model,
 print("Evaluations complete.")
 
 # Format and print results
-summary = evaluation.format_results(['IND', 'ENSM', 'END', 'END+AUX', 'ENDD', 'ENDD+AUX'],
-                                    [ind_measures, ensm_measures, end_measures, end_aux_measures, endd_measures, endd_aux_measures],
-                                    dataset_name=DATASET_NAME)
-
-
+summary = evaluation.format_results(
+    ['IND', 'ENSM', 'END', 'END+AUX', 'ENDD', 'ENDD+AUX'],
+    [ind_measures, ensm_measures, end_measures, end_aux_measures, endd_measures, endd_aux_measures],
+    dataset_name=DATASET_NAME)
 
 print(summary)
-

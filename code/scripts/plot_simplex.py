@@ -23,15 +23,15 @@ import matplotlib.gridspec as gridspec
 DATASET_NAME = 'cifar10'
 THREE_CLASS_DATASET_NAME = 'cifar10_3_class'
 ENSM_MODEL_NAME, ENSM_N_MODELS = 'vgg_3_class', 100
-ENDD_MODEL_NAME  = "endd_vgg_cifar10_3_class"
+ENDD_MODEL_NAME = "endd_vgg_cifar10_3_class"
 LOAD_PREVIOUS_ENSM_PREDS = True
 LOAD_PREVIOUS_ENDD_PREDS = True
 
 PLOT_COLLAGE = True
 PLOT_SELECTED = True
 
-
 # ======== FUNCTIONS =========
+
 
 def prepare_ensemble_prediction(x):
     x = np.exp(np.float64(x))
@@ -61,24 +61,24 @@ def plot_pdf(endd_output):
     exped = np.exp(np.array(logits))
     exped[exped > 100] = 100
     exped = exped.reshape(3,)
-    simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(exped)), nlevels=200, subdiv=3, log_probs=True)
+    simplex.draw_pdf_contours(simplex.Dirichlet(np.float64(exped)),
+                              nlevels=200,
+                              subdiv=3,
+                              log_probs=True)
 
 
-def compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm_noise,
-                    endd_data_uncertain, endd_know_uncertain, endd_certain, endd_noise,
-                    imgs_in, filename = None):
-    ensm_output = [
-        ensm_data_uncertain,
-        ensm_know_uncertain,
-        ensm_certain,
-        ensm_noise
-    ]
-    endd_output = [
-        endd_data_uncertain,
-        endd_know_uncertain,
-        endd_certain,
-        endd_noise
-    ]
+def compare_simplex(ensm_data_uncertain,
+                    ensm_know_uncertain,
+                    ensm_certain,
+                    ensm_noise,
+                    endd_data_uncertain,
+                    endd_know_uncertain,
+                    endd_certain,
+                    endd_noise,
+                    imgs_in,
+                    filename=None):
+    ensm_output = [ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm_noise]
+    endd_output = [endd_data_uncertain, endd_know_uncertain, endd_certain, endd_noise]
     font = {
         'family': 'serif',
         'color': 'black',
@@ -91,7 +91,7 @@ def compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm
 
     plt.axis('off')
     for i in range(0, 4):
-        plt.subplot(3, 4, i+1)
+        plt.subplot(3, 4, i + 1)
         plt.title(models[i], fontsize=18, ha='center')
         plot_img(imgs_in[i])
 
@@ -156,17 +156,15 @@ else:
     with open("endd_preds_noise.pkl", 'wb') as file:
         pickle.dump((endd_preds_noise), file)
 
-
-
 # Plot random images
 if PLOT_COLLAGE:
     n_cols = 10
     n_imgs = len(test_images)
     indices = np.random.randint(0, high=n_imgs, size=(n_cols,))
     subplot_size = 2
-    fig = plt.figure(figsize=(n_cols*subplot_size, 3*subplot_size*0.8))
+    fig = plt.figure(figsize=(n_cols * subplot_size, 3 * subplot_size * 0.8))
     gs1 = gridspec.GridSpec(3, n_cols)
-    gs1.update(wspace=0.1, hspace = 0.025)
+    gs1.update(wspace=0.1, hspace=0.025)
     plt.margins(0.5)
     for i, index in enumerate(indices):
         img = (test_images[index, :, :] + 1) / 2
@@ -178,10 +176,9 @@ if PLOT_COLLAGE:
         plot_points(ensm_pred)
 
         endd_pred = endd_preds[index, :]
-        plt.subplot(gs1[i + 2*n_cols])
+        plt.subplot(gs1[i + 2 * n_cols])
         plot_pdf(endd_pred)
     plt.show()
-
 
 if PLOT_SELECTED:
     # Pick out plane images and preds
@@ -202,15 +199,19 @@ if PLOT_SELECTED:
     unct_data_deer = measures.expected_entropy(ensm_preds_deer, True)
     unct_know_deer = unct_tot_deer - unct_data_deer
     print("Five most certain deer: {}".format(np.argsort(unct_tot_deer)[:5]))  # Five most certain
-    print("Five most data uncertain deer: {}".format(np.argsort(unct_data_deer)[-5:]))  # Five most data uncertain
-    print("Five most knowledge uncertain deer: {}".format(np.argsort(unct_know_deer)[-5:]))  # Five most knowledge uncertain
+    print("Five most data uncertain deer: {}".format(
+        np.argsort(unct_data_deer)[-5:]))  # Five most data uncertain
+    print("Five most knowledge uncertain deer: {}".format(
+        np.argsort(unct_know_deer)[-5:]))  # Five most knowledge uncertain
 
     unct_tot_plane = measures.entropy_of_expected(ensm_preds_plane, True)
     unct_data_plane = measures.expected_entropy(ensm_preds_plane, True)
     unct_know_plane = unct_tot_plane - unct_data_plane
     print("Five most certain plain: {}".format(np.argsort(unct_tot_plane)[:5]))  # Five most certain
-    print("Five most data uncertain plane: {}".format(np.argsort(unct_data_plane)[-5:]))  # Five most data uncertain
-    print("Five most knowledge uncertain plane: {}".format(np.argsort(unct_know_plane)[-5:]))  # Five most knowledge uncertain
+    print("Five most data uncertain plane: {}".format(
+        np.argsort(unct_data_plane)[-5:]))  # Five most data uncertain
+    print("Five most knowledge uncertain plane: {}".format(
+        np.argsort(unct_know_plane)[-5:]))  # Five most knowledge uncertain
 
     # Hard coded image indices chosen based on above printouts
     data_uncertain_deer = 799
@@ -226,8 +227,9 @@ if PLOT_SELECTED:
     endd_certain = endd_preds_deer[certain_deer, :]
     endd_noise = endd_preds_noise[0, :].flatten()
 
-
-    imgs_in = [imgs_deer[data_uncertain_deer], imgs_plane[knowledge_uncertain_plane], imgs_deer[certain_deer], noise_img[0]]
+    imgs_in = [
+        imgs_deer[data_uncertain_deer], imgs_plane[knowledge_uncertain_plane],
+        imgs_deer[certain_deer], noise_img[0]
+    ]
     compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm_noise,
-                    endd_data_uncertain, endd_know_uncertain, endd_certain, endd_noise,
-                    imgs_in)
+                    endd_data_uncertain, endd_know_uncertain, endd_certain, endd_noise, imgs_in)

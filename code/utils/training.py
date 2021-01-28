@@ -20,7 +20,7 @@ def train_vgg_endd(train_images,
                    dropout_rate=0.3,
                    save_endd_dataset=False,
                    load_previous_endd_dataset=False,
-                   repetition = None):
+                   repetition=None):
     """Return a trained VGG ENDD model.
 
     The save_endd_dataset and load_previous_endd_dataset arguments are useful to avoid having to
@@ -50,9 +50,9 @@ def train_vgg_endd(train_images,
 
     nr_models = len(ensemble_model.models)
     if repetition is None:
-      save_str = 'train_endd_dataset_{}.pkl'.format(nr_models)
+        save_str = 'train_endd_dataset_{}.pkl'.format(nr_models)
     else:
-      save_str = 'train_endd_dataset_rep={}_{}'.format(reptition, nr_models)
+        save_str = 'train_endd_dataset_rep={}_{}'.format(reptition, nr_models)
 
     if load_previous_endd_dataset:
         with open('train_endd_dataset_100.pkl', 'rb') as file:
@@ -107,6 +107,7 @@ def train_vgg_endd(train_images,
     endd_model.fit(data_generator, epochs=n_epochs, callbacks=endd_callbacks)
 
     return endd_model
+
 
 def train_vgg_end(train_images,
                   ensemble_model,

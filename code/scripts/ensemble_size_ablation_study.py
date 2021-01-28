@@ -64,7 +64,6 @@ for nr_repetition in range(3, repetitions):
     model_names = ensemble_model_names[ENSEMBLE_LOAD_NAME][DATASET_NAME]
     print(model_names)
 
-
     measures = {'endd': defaultdict(list), 'ensm': defaultdict(list)}
     for n_models in N_MODELS_LIST:
         # Get model names
@@ -74,8 +73,9 @@ for nr_repetition in range(3, repetitions):
             model_name_subset = model_names[:n_models]
             #model_name_subset = ['vgg_cifar10_cifar10_25']
         print("##############", model_name_subset)
-        wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset]
-
+        wrapped_models = [
+            ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset
+        ]
 
         # Build ensemble
         ensm_model = ensemble.Ensemble(wrapped_models)
@@ -112,7 +112,7 @@ for nr_repetition in range(3, repetitions):
                                              dropout_rate=DROPOUT_RATE,
                                              save_endd_dataset=save,
                                              load_previous_endd_dataset=load,
-                                             repetition = rep)
+                                             repetition=rep)
         endd_measures = evaluation.calc_classification_measures(endd_model,
                                                                 test_images,
                                                                 test_labels,
@@ -124,11 +124,14 @@ for nr_repetition in range(3, repetitions):
         print()
 
         if MODEL_BASE_SAVE_NAME:
-            saveload.save_tf_model(endd_model, MODEL_BASE_SAVE_NAME + "_{}".format(nr_repetition) + '_N_MODELS={}'.format(n_models))
-            saveload.save_weights(endd_model, MODEL_BASE_SAVE_NAME + "_{}".format(nr_repetition) + '_N_MODELS={}'.format(n_models))
+            saveload.save_tf_model(
+                endd_model, MODEL_BASE_SAVE_NAME + "_{}".format(nr_repetition) +
+                '_N_MODELS={}'.format(n_models))
+            saveload.save_weights(
+                endd_model, MODEL_BASE_SAVE_NAME + "_{}".format(nr_repetition) +
+                '_N_MODELS={}'.format(n_models))
 
     print(measures)
-
 '''
 # Plot results
 plt.subplot(2, 2, 1)

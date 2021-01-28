@@ -341,10 +341,15 @@ def train_endd():
     #endd_model.fit(x_train, np.transpose(ensemble_logits_train, (1, 0, 2)), epochs=500)
     #endd_model_AUX.fit(x_train_aux, np.transpose(ensemble_logits_train_aux, (1, 0, 2)), epochs=500)
     #endd_model_AUX_20.fit(x_train_aux_20, np.transpose(ensemble_logits_train_aux_20, (1, 0, 2)), epochs=500)
-    endd_model_AUX_ANN.fit(x_train_aux, np.transpose(ensemble_logits_train_aux, (1, 0, 2)), epochs=500, 
-        callbacks = [callbacks.TemperatureAnnealing(init_temp = 2.5, cycle_length = 400, epochs = 500)])
-    endd_model_AUX_T25.fit(x_train_aux, np.transpose(ensemble_logits_train_aux, (1, 0, 2)), epochs=500)
-    
+    endd_model_AUX_ANN.fit(
+        x_train_aux,
+        np.transpose(ensemble_logits_train_aux, (1, 0, 2)),
+        epochs=500,
+        callbacks=[callbacks.TemperatureAnnealing(init_temp=2.5, cycle_length=400, epochs=500)])
+    endd_model_AUX_T25.fit(x_train_aux,
+                           np.transpose(ensemble_logits_train_aux, (1, 0, 2)),
+                           epochs=500)
+
     # Save model
     saveload.save_tf_model(endd_model, MODEL_SAVE_NAME)
     saveload.save_tf_model(endd_model_AUX, MODEL_SAVE_NAME_AUX)
@@ -364,11 +369,10 @@ def predict_endd():
     """Predicts and saves the predictions of the ENDD-models to file"""
 
     # Load model
-    MODEL_SAVE_NAMES = ["endd_small_net_spiral", 
-    "endd_AUX_small_net_spiral", 
-    "endd_AUX_20_small_net_spiral", 
-    "endd_AUX_ANN_small_net_spiral",
-    "endd_AUX_T25_small_net_spiral"]
+    MODEL_SAVE_NAMES = [
+        "endd_small_net_spiral", "endd_AUX_small_net_spiral", "endd_AUX_20_small_net_spiral",
+        "endd_AUX_ANN_small_net_spiral", "endd_AUX_T25_small_net_spiral"
+    ]
     PREDICT_SAVE_NAMES = ["endd", "endd_AUX", "endd_AUX_20", "endd_AUX_ANN", "endd_AUX_T25"]
 
     # Loop for aux or no aux
@@ -430,6 +434,7 @@ def predict_end():
             pickle.dump((x_test, y_test, endd_logits_test), file)
         with open('grid_small_net_spiral_{}.pkl'.format(PREDICT_SAVE_NAME), 'wb') as file:
             pickle.dump((grid, 0, endd_logits_grid), file)
+
 
 def plot_grids(i):
     """Function for recreating Figure 3 in Malinin 2020"""
@@ -532,6 +537,7 @@ def plot_grids(i):
     grid_plot_helper(unct_tot, v=v, filename="plots/" + str(i) + "/3p.png")
     grid_plot_helper(unct_data, v=v, filename="plots/" + str(i) + "/3q.png")
     grid_plot_helper(unct_know, v=v, filename="plots/" + str(i) + "/3r.png")
+
 
 def get_metrics():
     """Calculates some interesting metrics of the ensemble, for recreating table 2 in Malinin 2020."""

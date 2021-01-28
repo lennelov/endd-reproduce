@@ -49,7 +49,6 @@ _, out_images = datasets.get_dataset(OUT_DATASET_NAME)
 in_images = preprocessing.normalize_minus_one_to_one(in_images, min=0, max=255)
 out_images = preprocessing.normalize_minus_one_to_one(out_images, min=0, max=255)
 
-
 print("Evaluating ENSM...")
 ensm_preds_in = ensm_model.predict(in_images)
 ensm_preds_out = ensm_model.predict(out_images)

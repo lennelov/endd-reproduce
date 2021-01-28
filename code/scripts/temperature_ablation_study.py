@@ -24,7 +24,7 @@ AUX_DATASET_NAME = 'cifar100'  # Name of auxiliary dataset to use (None if no AU
 MODEL_BASE_SAVE_NAME = 'cifar10_vgg_endd_aux_smoothing_1e-3'  # Name to use when saving model (None if no saving)
 N_MODELS = 100
 #INIT_TEMP_LIST = [1, 2, 3, 4, 5, 7.5, 10, 15, 20]
-INIT_TEMP_LIST = [1]#, 2, 3, 4, 5, 7.5, 10, 15, 20]
+INIT_TEMP_LIST = [1]  #, 2, 3, 4, 5, 7.5, 10, 15, 20]
 repetitions = 3
 
 # Set training parameters
@@ -65,7 +65,6 @@ for nr_repetition in range(0, repetitions):
     print(model_name_subset)
     wrapped_models = [ensemble.KerasLoadsWhole(name, pop_last=True) for name in model_name_subset]
 
-
     measures = defaultdict(list)
     for init_temp in INIT_TEMP_LIST:
         # Build ensemble
@@ -94,11 +93,14 @@ for nr_repetition in range(0, repetitions):
             measures[measure].append(value)
 
         if MODEL_BASE_SAVE_NAME:
-            saveload.save_tf_model(endd_model, MODEL_BASE_SAVE_NAME + "_{}".format(nr_repetition) + '_TEMP={}'.format(init_temp))
-            saveload.save_weights(endd_model, MODEL_BASE_SAVE_NAME + "_{}".format(nr_repetition) + '_TEMP={}'.format(init_temp))
+            saveload.save_tf_model(
+                endd_model,
+                MODEL_BASE_SAVE_NAME + "_{}".format(nr_repetition) + '_TEMP={}'.format(init_temp))
+            saveload.save_weights(
+                endd_model,
+                MODEL_BASE_SAVE_NAME + "_{}".format(nr_repetition) + '_TEMP={}'.format(init_temp))
 
     print(measures)
-
 '''
 
 # Plot results
