@@ -12,7 +12,7 @@ import seaborn as sns
 sns.set_style("darkgrid")
 #other functions
 import settings
-from utils import preprocessing, datasets, measures, pn_utils
+from utils import preprocessing, datasets, measures, pn_utils, callbacks
 from models.small_net import get_model
 import models.ensemble
 from models import end, endd
@@ -124,8 +124,8 @@ def generate_figure_2():
     x_train_aux = np.concatenate((x_train, x_aux), axis=0)
     y_train_aux = np.concatenate((y_train, y_aux), axis=0)
 
-    plot_dataset(x_train, y_train, aux=False, filename="plots/2a.png")
-    plot_dataset(x_train_aux, y_train_aux, aux=True, filename="plots/2b.png")
+    plot_dataset(x_train, y_train, aux=False, filename="plots/" + str(i) + "/2a.png")
+    plot_dataset(x_train_aux, y_train_aux, aux=True, filename="plots/" + str(i) + "/2b.png")
 
 
 def train_models():
@@ -192,10 +192,13 @@ def predict_ensemble():
     (x_aux, y_aux), (_, _) = datasets.get_dataset(AUX_DATASET_NAME)
     x_train_aux = np.concatenate((x_train, x_aux), axis=0)
     y_train_aux = np.concatenate((y_train, y_aux), axis=0)
+    x_train_aux_20 = np.concatenate((x_train, x_aux[:20]), axis=0)
+    y_train_aux_20 = np.concatenate((y_train, y_aux[:20]), axis=0)
     grid = get_grid(size=2000, steps=1000)
 
     # Predict with ensemble
     ensemble_logits_train_aux = ensemble.predict(x_train_aux)
+    ensemble_logits_train_aux_20 = ensemble.predict(x_train_aux_20)
     ensemble_logits_train = ensemble.predict(x_train)
     ensemble_logits_test = ensemble.predict(x_test)
     ensemble_logits_grid = ensemble.predict(grid)
@@ -203,6 +206,8 @@ def predict_ensemble():
     # Save to file
     with open('train_aux_small_net_spiral.pkl', 'wb') as file:
         pickle.dump((x_train_aux, y_train_aux, ensemble_logits_train_aux), file)
+    with open('train_aux_20_small_net_spiral.pkl', 'wb') as file:
+        pickle.dump((x_train_aux_20, y_train_aux_20, ensemble_logits_train_aux_20), file)
     with open('train_small_net_spiral.pkl', 'wb') as file:
         pickle.dump((x_train, y_train, ensemble_logits_train), file)
     with open('test_small_net_spiral.pkl', 'wb') as file:
@@ -306,27 +311,46 @@ def train_endd():
     DATASET_NAME = 'spiral'  # Name of dataset models were trained with
     MODEL_SAVE_NAME = "endd_small_net_spiral"
     MODEL_SAVE_NAME_AUX = "endd_AUX_small_net_spiral"
+    MODEL_SAVE_NAME_AUX_20 = "endd_AUX_20_small_net_spiral"
+    MODEL_SAVE_NAME_AUX_ANN = "endd_AUX_ANN_small_net_spiral"
+    MODEL_SAVE_NAME_AUX_T25 = "endd_AUX_T25_small_net_spiral"
 
     # Load data
     with open('train_small_net_spiral.pkl', 'rb') as file:
         x_train, y_train, ensemble_logits_train = pickle.load(file)
     with open('train_aux_small_net_spiral.pkl', 'rb') as file:
         x_train_aux, y_train_aux, ensemble_logits_train_aux = pickle.load(file)
+    with open('train_aux_20_small_net_spiral.pkl', 'rb') as file:
+        x_train_aux_20, y_train_aux_20, ensemble_logits_train_aux_20 = pickle.load(file)
 
     # Build ENDD model
     base_model = get_model(DATASET_NAME, compile=False)
     endd_model = endd.get_model(base_model, init_temp=1, teacher_epsilon=1e-4)
 
     base_model_AUX = get_model(DATASET_NAME, compile=False)
+    base_model_AUX_20 = get_model(DATASET_NAME, compile=False)
+    base_model_AUX_ANN = get_model(DATASET_NAME, compile=False)
+    base_model_AUX_T25 = get_model(DATASET_NAME, compile=False)
+
     endd_model_AUX = endd.get_model(base_model_AUX, init_temp=1, teacher_epsilon=1e-4)
+    endd_model_AUX_20 = endd.get_model(base_model_AUX_20, init_temp=1, teacher_epsilon=1e-4)
+    endd_model_AUX_ANN = endd.get_model(base_model_AUX_ANN, init_temp=2.5, teacher_epsilon=1e-4)
+    endd_model_AUX_T25 = endd.get_model(base_model_AUX_T25, init_temp=2.5, teacher_epsilon=1e-4)
 
     # Train model
-    endd_model.fit(x_train, np.transpose(ensemble_logits_train, (1, 0, 2)), epochs=500)
-    endd_model_AUX.fit(x_train_aux, np.transpose(ensemble_logits_train_aux, (1, 0, 2)), epochs=500)
-
+    #endd_model.fit(x_train, np.transpose(ensemble_logits_train, (1, 0, 2)), epochs=500)
+    #endd_model_AUX.fit(x_train_aux, np.transpose(ensemble_logits_train_aux, (1, 0, 2)), epochs=500)
+    #endd_model_AUX_20.fit(x_train_aux_20, np.transpose(ensemble_logits_train_aux_20, (1, 0, 2)), epochs=500)
+    endd_model_AUX_ANN.fit(x_train_aux, np.transpose(ensemble_logits_train_aux, (1, 0, 2)), epochs=500, 
+        callbacks = [callbacks.TemperatureAnnealing(init_temp = 2.5, cycle_length = 400, epochs = 500)])
+    endd_model_AUX_T25.fit(x_train_aux, np.transpose(ensemble_logits_train_aux, (1, 0, 2)), epochs=500)
+    
     # Save model
     saveload.save_tf_model(endd_model, MODEL_SAVE_NAME)
     saveload.save_tf_model(endd_model_AUX, MODEL_SAVE_NAME_AUX)
+    saveload.save_tf_model(endd_model_AUX_20, MODEL_SAVE_NAME_AUX_20)
+    saveload.save_tf_model(endd_model_AUX_ANN, MODEL_SAVE_NAME_AUX_ANN)
+    saveload.save_tf_model(endd_model_AUX_T25, MODEL_SAVE_NAME_AUX_T25)
 
     # Evaluate model
     _, (x_test, y_test) = datasets.get_dataset("spiral")
@@ -340,11 +364,15 @@ def predict_endd():
     """Predicts and saves the predictions of the ENDD-models to file"""
 
     # Load model
-    MODEL_SAVE_NAMES = ["endd_small_net_spiral", "endd_AUX_small_net_spiral"]
-    PREDICT_SAVE_NAMES = ["endd", "endd_AUX"]
+    MODEL_SAVE_NAMES = ["endd_small_net_spiral", 
+    "endd_AUX_small_net_spiral", 
+    "endd_AUX_20_small_net_spiral", 
+    "endd_AUX_ANN_small_net_spiral",
+    "endd_AUX_T25_small_net_spiral"]
+    PREDICT_SAVE_NAMES = ["endd", "endd_AUX", "endd_AUX_20", "endd_AUX_ANN", "endd_AUX_T25"]
 
     # Loop for aux or no aux
-    for i in range(2):
+    for i in range(len(MODEL_SAVE_NAMES)):
         print(i)
 
         MODEL_SAVE_NAME = MODEL_SAVE_NAMES[i]
@@ -403,8 +431,7 @@ def predict_end():
         with open('grid_small_net_spiral_{}.pkl'.format(PREDICT_SAVE_NAME), 'wb') as file:
             pickle.dump((grid, 0, endd_logits_grid), file)
 
-
-def plot_grids():
+def plot_grids(i):
     """Function for recreating Figure 3 in Malinin 2020"""
 
     # Plotting settings
@@ -422,9 +449,9 @@ def plot_grids():
                            (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v=v, filename="plots/3a.png")
-    grid_plot_helper(unct_data, v=v, filename="plots/3b.png")
-    grid_plot_helper(unct_know, v=v, filename="plots/3c.png")
+    grid_plot_helper(unct_tot, v=v, filename="plots/" + str(i) + "/3a.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/" + str(i) + "/3b.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/" + str(i) + "/3c.png")
 
     # Then plot ENDD
 
@@ -438,9 +465,9 @@ def plot_grids():
     unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v=v, filename="plots/3d.png")
-    grid_plot_helper(unct_data, v=v, filename="plots/3e.png")
-    grid_plot_helper(unct_know, v=v, filename="plots/3f.png")
+    grid_plot_helper(unct_tot, v=v, filename="plots/" + str(i) + "/3d.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/" + str(i) + "/3e.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/" + str(i) + "/3f.png")
 
     # Then plot ENDD_AUX
 
@@ -454,10 +481,57 @@ def plot_grids():
     unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
     unct_know = unct_tot - unct_data
 
-    grid_plot_helper(unct_tot, v=v, filename="plots/3g.png")
-    grid_plot_helper(unct_data, v=v, filename="plots/3h.png")
-    grid_plot_helper(unct_know, v=v, filename="plots/3i.png")
+    grid_plot_helper(unct_tot, v=v, filename="plots/" + str(i) + "/3g.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/" + str(i) + "/3h.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/" + str(i) + "/3i.png")
 
+    # Then plot ENDD_AUX_ANN
+
+    with open('grid_small_net_spiral_endd_AUX_ANN.pkl', 'rb') as file:
+        x_grid, _, endd_logits_grid = pickle.load(file)
+    grid_size = int(np.sqrt(x_grid.shape[0]))
+
+    endd_probs_grid = pn_utils.pn_logits_to_probs(endd_logits_grid)
+    unct_tot = np.reshape(measures.entropy_of_expected(endd_probs_grid, logits=False),
+                          (grid_size, grid_size))
+    unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
+    unct_know = unct_tot - unct_data
+
+    grid_plot_helper(unct_tot, v=v, filename="plots/" + str(i) + "/3j.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/" + str(i) + "/3k.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/" + str(i) + "/3l.png")
+
+    # Then plot ENDD_AUX_T25
+
+    with open('grid_small_net_spiral_endd_AUX_T25.pkl', 'rb') as file:
+        x_grid, _, endd_logits_grid = pickle.load(file)
+    grid_size = int(np.sqrt(x_grid.shape[0]))
+
+    endd_probs_grid = pn_utils.pn_logits_to_probs(endd_logits_grid)
+    unct_tot = np.reshape(measures.entropy_of_expected(endd_probs_grid, logits=False),
+                          (grid_size, grid_size))
+    unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
+    unct_know = unct_tot - unct_data
+
+    grid_plot_helper(unct_tot, v=v, filename="plots/" + str(i) + "/3m.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/" + str(i) + "/3n.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/" + str(i) + "/3o.png")
+
+    # Then plot ENDD_AUX_20
+
+    with open('grid_small_net_spiral_endd_AUX_20.pkl', 'rb') as file:
+        x_grid, _, endd_logits_grid = pickle.load(file)
+    grid_size = int(np.sqrt(x_grid.shape[0]))
+
+    endd_probs_grid = pn_utils.pn_logits_to_probs(endd_logits_grid)
+    unct_tot = np.reshape(measures.entropy_of_expected(endd_probs_grid, logits=False),
+                          (grid_size, grid_size))
+    unct_data = np.reshape(measures.expected_entropy_pn(endd_logits_grid), (grid_size, grid_size))
+    unct_know = unct_tot - unct_data
+
+    grid_plot_helper(unct_tot, v=v, filename="plots/" + str(i) + "/3p.png")
+    grid_plot_helper(unct_data, v=v, filename="plots/" + str(i) + "/3q.png")
+    grid_plot_helper(unct_know, v=v, filename="plots/" + str(i) + "/3r.png")
 
 def get_metrics():
     """Calculates some interesting metrics of the ensemble, for recreating table 2 in Malinin 2020."""
@@ -606,6 +680,72 @@ def get_metrics():
 
     print()
 
+    # ENDD_AUX metrics
+    print("# ENDD_AUX_ANN metrics")
+
+    with open('train_small_net_spiral_endd_AUX_ANN.pkl', 'rb') as file:
+        x_train, y_train, endd_AUX_logits_train = pickle.load(file)
+
+    with open('test_small_net_spiral_endd_AUX_ANN.pkl', 'rb') as file:
+        x_test, y_test, endd_AUX_logits_test = pickle.load(file)
+
+    print("Train: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_train, np.argmax(endd_AUX_logits_train, axis=1)),
+            4)))
+    print("Test: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_test, np.argmax(endd_AUX_logits_test, axis=1)),
+            4)))
+
+    print()
+
+    # ENDD_AUX metrics
+    print("# ENDD_AUX_T25 metrics")
+
+    with open('train_small_net_spiral_endd_AUX_T25.pkl', 'rb') as file:
+        x_train, y_train, endd_AUX_logits_train = pickle.load(file)
+
+    with open('test_small_net_spiral_endd_AUX_T25.pkl', 'rb') as file:
+        x_test, y_test, endd_AUX_logits_test = pickle.load(file)
+
+    print("Train: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_train, np.argmax(endd_AUX_logits_train, axis=1)),
+            4)))
+    print("Test: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_test, np.argmax(endd_AUX_logits_test, axis=1)),
+            4)))
+
+    print()
+
+    # ENDD_AUX metrics
+    print("# ENDD_AUX_20 metrics")
+
+    with open('train_small_net_spiral_endd_AUX_20.pkl', 'rb') as file:
+        x_train, y_train, endd_AUX_logits_train = pickle.load(file)
+
+    with open('test_small_net_spiral_endd_AUX_20.pkl', 'rb') as file:
+        x_test, y_test, endd_AUX_logits_test = pickle.load(file)
+
+    print("Train: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_train, np.argmax(endd_AUX_logits_train, axis=1)),
+            4)))
+    print("Test: {}".format(
+        round(
+            100 -
+            100 * sklearn.metrics.accuracy_score(y_test, np.argmax(endd_AUX_logits_test, axis=1)),
+            4)))
+
+    print()
+
 
 #####################################################
 ####             Main                           ####
@@ -618,12 +758,13 @@ if __name__ == '__main__':
     #train_models()
     #predict_ensemble()
     #plot_decision_boundary()
-    #train_end()
-    #train_endd()
-    #predict_endd()
-    #predict_end()
-    #plot_grids()
-    get_metrics()
+    for i in range(20):
+        #train_end()
+        train_endd()
+        predict_endd()
+        predict_end()
+        plot_grids(i)
+        get_metrics()
 
     end = time.time()
     print("Time elapsed: ", end - start)
