@@ -60,12 +60,9 @@ endd_aux_know_wrapper_type = 'priornet'
 
 # Prepare PN+AUX model
 pn_base_model = saveload.load_tf_model(PN_AUX_MODEL_NAME, compile=False)
-pn_aux_model = cnn_priorNet.get_model(pn_base_model,
-                                      dataset_name=DATASET_NAME,
-                                      compile=True)
+pn_aux_model = cnn_priorNet.get_model(pn_base_model, dataset_name=DATASET_NAME, compile=True)
 pn_aux_tot_wrapper_type = 'individual'
 pn_aux_know_wrapper_type = 'priornet'
-
 
 # Load data
 _, (in_images, _) = datasets.get_dataset(DATASET_NAME)

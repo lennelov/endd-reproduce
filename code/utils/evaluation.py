@@ -18,7 +18,11 @@ CLASSIFIER_WRAPPERS = {
 }
 
 
-def calc_ood_measures(model, in_images, out_images, tot_wrapper_type, know_wrapper_type,
+def calc_ood_measures(model,
+                      in_images,
+                      out_images,
+                      tot_wrapper_type,
+                      know_wrapper_type,
                       preds_save_name=None):
     # if wrapper_type is not None and wrapper_type not in CLASSIFIER_WRAPPERS:
     #     raise ValueError("""wrapper_type {} not recognized, make sure it has been added to
@@ -33,7 +37,6 @@ def calc_ood_measures(model, in_images, out_images, tot_wrapper_type, know_wrapp
             pickle.dump((in_preds), file)
         with open("{}_preds_out.pkl".format(preds_save_name), 'wb') as file:
             pickle.dump((out_preds), file)
-
 
     tot_unc_roc_auc = measures.calc_tot_unc_auc_roc(in_preds, out_preds)
 

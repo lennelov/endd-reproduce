@@ -58,7 +58,6 @@ endd_aux_wrapper_type = 'individual'
 #                                       compile=True)
 # pn_aux_wrapper_type = 'individual'
 
-
 # Load data
 _, (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
 
@@ -101,9 +100,6 @@ print("Evaluations complete.")
 
 # Format and print results
 print("N = " + str(N))
-summary = evaluation.format_results(
-    ['ENDD+AUX'],
-    [endd_aux_measures],
-    dataset_name=DATASET_NAME)
+summary = evaluation.format_results(['ENDD+AUX'], [endd_aux_measures], dataset_name=DATASET_NAME)
 
 print(summary)

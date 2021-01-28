@@ -16,7 +16,10 @@ import pickle
 
 # Model loading parameters
 N_MODELS_BASE_NAMES = ['cifar10_vgg_endd_aux_0', 'cifar10_vgg_endd_aux_1', 'cifar10_vgg_endd_aux_2']
-N_MODELS_BASE_NAMES_SAMPLED = ['cifar10_vgg_endd_aux_sampled_0', 'cifar10_vgg_endd_aux_sampled_1', 'cifar10_vgg_endd_aux_sampled_2']
+N_MODELS_BASE_NAMES_SAMPLED = [
+    'cifar10_vgg_endd_aux_sampled_0', 'cifar10_vgg_endd_aux_sampled_1',
+    'cifar10_vgg_endd_aux_sampled_2'
+]
 # Should be set to the same configuration as when running ensemble_size_ablation_study.py
 ENDD_AUX_BASE_MODEL = 'vgg'
 ENSEMBLE_LOAD_NAME = 'vgg'
@@ -110,8 +113,14 @@ def plot_with_error_fields(n_models_list, ensm_measures, endd_measures_list, mea
     plt.ylabel(ylabel)
     plt.legend()
 
-def plot_with_error_fields_sampling(n_models_list, ensm_measures_list, endd_measures_list, measure, ylabel, endd_measures_list_repeat = None):
-    
+
+def plot_with_error_fields_sampling(n_models_list,
+                                    ensm_measures_list,
+                                    endd_measures_list,
+                                    measure,
+                                    ylabel,
+                                    endd_measures_list_repeat=None):
+
     stack = np.stack([ensm_measures[measure] for ensm_measures in ensm_measures_list])
     means = stack.mean(axis=0)
     stds = stack.std(axis=0)
@@ -121,7 +130,6 @@ def plot_with_error_fields_sampling(n_models_list, ensm_measures_list, endd_meas
                      means + 2 * stds,
                      color='xkcd:dull blue',
                      alpha=0.4)
-    
 
     stack = np.stack([endd_measures[measure] for endd_measures in endd_measures_list])
     means = stack.mean(axis=0)
@@ -139,10 +147,9 @@ def plot_with_error_fields_sampling(n_models_list, ensm_measures_list, endd_meas
         plt.fill_between(n_models_list,
                          means - 2 * stds,
                          means + 2 * stds,
-                         label = 'no ensm. var.',
+                         label='no ensm. var.',
                          color='xkcd:maroon',
                          alpha=0.4)
-
 
     plt.xlabel("Number of models")
     plt.ylabel(ylabel)
@@ -159,69 +166,67 @@ def plot_with_error_fields_paper(n_models_list, ensm_measures, endd_measures_lis
              label='ENSM Paper',
              color='xkcd:dull blue',
              linestyle='dashed',
-             marker = 'x')
-    plt.plot(n_models_list, means,
-      label=r'END$^2_{+AUX}$ Paper', 
-      color='xkcd:dusty orange',
-      linestyle = 'dashed',
-      marker = 'x')
+             marker='x')
+    plt.plot(n_models_list,
+             means,
+             label=r'END$^2_{+AUX}$ Paper',
+             color='xkcd:dusty orange',
+             linestyle='dashed',
+             marker='x')
     plt.fill_between(n_models_list,
                      minimum,
                      maximum,
                      color='xkcd:dusty orange',
-                     linestyle = 'dashed',
+                     linestyle='dashed',
                      alpha=0.4)
     plt.xlabel("Number of models")
     plt.ylabel(ylabel)
     plt.legend()
 
+
 def get_paper_measures():
 
     paper_ensm_measures = defaultdict(list)
 
-    paper_ensm_measures["err"].append(6.703/100)
-    paper_ensm_measures["err"].append(6.400/100)
-    paper_ensm_measures["err"].append(6.204/100)
-    paper_ensm_measures["err"].append(6.203/100)
+    paper_ensm_measures["err"].append(6.703 / 100)
+    paper_ensm_measures["err"].append(6.400 / 100)
+    paper_ensm_measures["err"].append(6.204 / 100)
+    paper_ensm_measures["err"].append(6.203 / 100)
 
     paper_ensm_measures["nll"].append(0.2)
     paper_ensm_measures["nll"].append(0.19)
     paper_ensm_measures["nll"].append(0.19)
     paper_ensm_measures["nll"].append(0.19)
 
-    paper_ensm_measures["ece"].append(0.85/100)
-    paper_ensm_measures["ece"].append(1.086/100)
-    paper_ensm_measures["ece"].append(1.337/100)
-    paper_ensm_measures["ece"].append(1.31/100)
+    paper_ensm_measures["ece"].append(0.85 / 100)
+    paper_ensm_measures["ece"].append(1.086 / 100)
+    paper_ensm_measures["ece"].append(1.337 / 100)
+    paper_ensm_measures["ece"].append(1.31 / 100)
 
     paper_ensm_measures["prr"].append(0.865)
     paper_ensm_measures["prr"].append(0.873)
     paper_ensm_measures["prr"].append(0.8670)
     paper_ensm_measures["prr"].append(0.8680)
 
-
-
     paper_endd_measures_list = []
-
-
 
     # Mid
     paper_endd_measures = defaultdict(list)
 
-    paper_endd_measures['err'].append(7.1/100)
-    paper_endd_measures['err'].append(6.96/100)
-    paper_endd_measures['err'].append(7.07/100)
-    paper_endd_measures['err'].append(6.93/100)
+    paper_endd_measures['err'].append(7.1 / 100)
+    paper_endd_measures['err'].append(6.96 / 100)
+    paper_endd_measures['err'].append(7.07 / 100)
+    paper_endd_measures['err'].append(6.93 / 100)
 
     paper_endd_measures['nll'].append(0.243)
     paper_endd_measures['nll'].append(0.24)
     paper_endd_measures['nll'].append(0.24)
     paper_endd_measures['nll'].append(0.24)
 
-    paper_endd_measures['ece'].append(2.086/100)
-    paper_endd_measures['ece'].append(2.127/100)
-    paper_endd_measures['ece'].append(1.9862/100)
-    paper_endd_measures['ece'].append(2.2/100)
+    paper_endd_measures['ece'].append(2.086 / 100)
+    paper_endd_measures['ece'].append(2.127 / 100)
+    paper_endd_measures['ece'].append(1.9862 / 100)
+    paper_endd_measures['ece'].append(2.2 / 100)
 
     paper_endd_measures['prr'].append(0.8583)
     paper_endd_measures['prr'].append(0.8583)
@@ -233,20 +238,20 @@ def get_paper_measures():
     # High
     paper_endd_measures = defaultdict(list)
 
-    paper_endd_measures['err'].append(7.23/100)
-    paper_endd_measures['err'].append(7.01/100)
-    paper_endd_measures['err'].append(7.19/100)
-    paper_endd_measures['err'].append(7.02/100)
+    paper_endd_measures['err'].append(7.23 / 100)
+    paper_endd_measures['err'].append(7.01 / 100)
+    paper_endd_measures['err'].append(7.19 / 100)
+    paper_endd_measures['err'].append(7.02 / 100)
 
     paper_endd_measures['nll'].append(0.2474)
     paper_endd_measures['nll'].append(0.24)
     paper_endd_measures['nll'].append(0.24)
     paper_endd_measures['nll'].append(0.24)
 
-    paper_endd_measures['ece'].append(2.25/100)
-    paper_endd_measures['ece'].append(2.19/100)
-    paper_endd_measures['ece'].append(2.16/100)
-    paper_endd_measures['ece'].append(2.37/100)
+    paper_endd_measures['ece'].append(2.25 / 100)
+    paper_endd_measures['ece'].append(2.19 / 100)
+    paper_endd_measures['ece'].append(2.16 / 100)
+    paper_endd_measures['ece'].append(2.37 / 100)
 
     paper_endd_measures['prr'].append(0.86094)
     paper_endd_measures['prr'].append(0.861991)
@@ -258,20 +263,20 @@ def get_paper_measures():
     # Low
     paper_endd_measures = defaultdict(list)
 
-    paper_endd_measures['err'].append(6.96/100)
-    paper_endd_measures['err'].append(6.92/100)
-    paper_endd_measures['err'].append(6.94/100)
-    paper_endd_measures['err'].append(6.84/100)
+    paper_endd_measures['err'].append(6.96 / 100)
+    paper_endd_measures['err'].append(6.92 / 100)
+    paper_endd_measures['err'].append(6.94 / 100)
+    paper_endd_measures['err'].append(6.84 / 100)
 
     paper_endd_measures['nll'].append(0.238)
     paper_endd_measures['nll'].append(0.24)
     paper_endd_measures['nll'].append(0.24)
     paper_endd_measures['nll'].append(0.24)
 
-    paper_endd_measures['ece'].append(1.91/100)
-    paper_endd_measures['ece'].append(2.05/100)
-    paper_endd_measures['ece'].append(1.806/100)
-    paper_endd_measures['ece'].append(2.013/100)
+    paper_endd_measures['ece'].append(1.91 / 100)
+    paper_endd_measures['ece'].append(2.05 / 100)
+    paper_endd_measures['ece'].append(1.806 / 100)
+    paper_endd_measures['ece'].append(2.013 / 100)
 
     paper_endd_measures['prr'].append(0.85582)
     paper_endd_measures['prr'].append(0.854609)
@@ -281,6 +286,7 @@ def get_paper_measures():
     paper_endd_measures_list.append(paper_endd_measures)
 
     return paper_ensm_measures, paper_endd_measures_list
+
 
 def get_ens_sampled_measures():
     sampled_ens_measures_list = []
@@ -355,7 +361,6 @@ def get_ens_sampled_measures():
     sampled_ens_measures['nll'].append(0.24902406007829705)
     sampled_ens_measures['nll'].append(0.24736762882971394)
     sampled_ens_measures['nll'].append(0.24771360189519878)
-
 
     sampled_ens_measures_list.append(sampled_ens_measures)
 
@@ -508,10 +513,8 @@ def get_ens_sampled_measures():
     return sampled_ens_measures_list
 
 
-
 # Get dataset
 _, (test_images, test_labels) = get_dataset(DATASET_NAME, NORMALIZATION)
-
 
 # Load ensemble model names
 #ensemble_model_names = saveload.get_ensemble_model_names()
@@ -541,9 +544,7 @@ _, (test_images, test_labels) = get_dataset(DATASET_NAME, NORMALIZATION)
 #    pickle.dump((endd_sampled_measures_list), file)
 #print("saved")
 
-
-
-## Load data 
+## Load data
 
 with open("ensemble_measure.pkl", "rb") as file:
     ensm_measures, _ = pickle.load(file)
@@ -556,12 +557,10 @@ with open("endd_measure_sampled.pkl", "rb") as file:
 endd_sampled_measures_list.append(endd_measures_list[2])
 #import pdb; pdb.set_trace()
 
-
 ensm_sampled_measures_list = get_ens_sampled_measures()
 ensm_sampled_measures_list.append(ensm_measures)
 
 paper_ensm_measures, paper_endd_measures_list = get_paper_measures()
-
 
 print(ensm_measures)
 print(endd_measures_list)
@@ -572,37 +571,39 @@ print()
 print(paper_ensm_measures)
 print(paper_endd_measures_list)
 
-
-
 ## Plot results
 plt.style.use('ggplot')
 
 plt.subplot(2, 2, 1)
 #plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'err', 'Prediction Error')
-plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'err', 'Prediction Error', endd_measures_list)
-plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'err', 'Prediction Error')
-
-
+plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list,
+                                endd_sampled_measures_list, 'err', 'Prediction Error',
+                                endd_measures_list)
+plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list,
+                             'err', 'Prediction Error')
 
 plt.subplot(2, 2, 2)
 #plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'nll', 'Negative Log-Likelihood')
-plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'nll', 'Negative Log-Likelihood', endd_measures_list)
-plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'nll', 'Negative Log-Likelihood')
-
-
+plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list,
+                                endd_sampled_measures_list, 'nll', 'Negative Log-Likelihood',
+                                endd_measures_list)
+plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list,
+                             'nll', 'Negative Log-Likelihood')
 
 plt.subplot(2, 2, 3)
 #plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'ece', 'Expected Calibration Error')
-plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'ece', 'Expected Calibration Error', endd_measures_list)
-plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'ece', 'Expected Calibration Error')
-
-
+plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list,
+                                endd_sampled_measures_list, 'ece', 'Expected Calibration Error',
+                                endd_measures_list)
+plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list,
+                             'ece', 'Expected Calibration Error')
 
 plt.subplot(2, 2, 4)
 #plot_with_error_fields(N_MODELS_LIST, ensm_measures, endd_measures_list, 'prr', 'Prediction Rejection Rate')
-plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list, endd_sampled_measures_list, 'prr', 'Prediction Rejection Rate', endd_measures_list)
-plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list, 'prr', 'Prediction Rejection Rate')
-
-
+plot_with_error_fields_sampling(N_MODELS_LIST, ensm_sampled_measures_list,
+                                endd_sampled_measures_list, 'prr', 'Prediction Rejection Rate',
+                                endd_measures_list)
+plot_with_error_fields_paper(N_MODELS_LIST_ORIG, paper_ensm_measures, paper_endd_measures_list,
+                             'prr', 'Prediction Rejection Rate')
 
 plt.show()

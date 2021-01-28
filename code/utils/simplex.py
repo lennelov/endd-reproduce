@@ -67,7 +67,7 @@ def draw_pdf_contours(dist, border=False, nlevels=200, subdiv=8, log_probs=False
 
     refiner = tri.UniformTriRefiner(_triangle)
     trimesh = refiner.refine_triangulation(subdiv=subdiv)
-    pvals = np.array([dist.pdf(xy2bc(xy))+1 for xy in zip(trimesh.x, trimesh.y)])
+    pvals = np.array([dist.pdf(xy2bc(xy)) + 1 for xy in zip(trimesh.x, trimesh.y)])
 
     if log_probs:
         pvals = np.log(pvals + 1)
