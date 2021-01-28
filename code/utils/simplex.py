@@ -52,13 +52,14 @@ class Dirichlet(object):
         return np.random.dirichlet(self._alpha, N)
 
 
-def draw_pdf_contours(dist, border=False, nlevels=200, subdiv=8, **kwargs):
+def draw_pdf_contours(dist, border=False, nlevels=200, subdiv=8, log_probs=False, **kwargs):
     '''Draws pdf contours over an equilateral triangle (2-simplex).
     Arguments:
         `dist`: A distribution instance with a `pdf` method.
         `border` (bool): If True, the simplex border is drawn.
         `nlevels` (int): Number of contours to draw.
         `subdiv` (int): Number of recursive mesh subdivisions to create.
+        `log_probs` (bool): If true, probabilities are transformed by log(x + 1).
         kwargs: Keyword args passed on to `plt.triplot`.
     '''
     from matplotlib import ticker, cm
@@ -66,7 +67,10 @@ def draw_pdf_contours(dist, border=False, nlevels=200, subdiv=8, **kwargs):
 
     refiner = tri.UniformTriRefiner(_triangle)
     trimesh = refiner.refine_triangulation(subdiv=subdiv)
-    pvals = [dist.pdf(xy2bc(xy)) for xy in zip(trimesh.x, trimesh.y)]
+    pvals = np.array([dist.pdf(xy2bc(xy))+1 for xy in zip(trimesh.x, trimesh.y)])
+
+    if log_probs:
+        pvals = np.log(pvals + 1)
 
     plt.tricontourf(trimesh, pvals, nlevels, cmap='jet', **kwargs)
     plt.axis('equal')
