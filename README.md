@@ -14,7 +14,7 @@ Note: None of the scripts feature command line arguments. Settings are instead s
 4. To train an END on this ensemble, run train_end.py.
 5. To To train a PN on CIFAR-10, run train_pn.py.
 6. To evaluate on classification, run evaluate_models.py.
-7. To evaluate on out-of-distribution-detection, run evaluate_models_ood.py.
+7. To evaluate on out-of-distribution-detection, run evaluate_models_ood.py. NOTE: Before running this you must download the LSUN dataset from https://www.yf.io/p/lsun and place the test images in code/data/lsun_images. 
 8. To perform ensemble size ablation study, run ensemble_size_ablation_study.py.
 9. To perform temperature ablation study, run temperature_ablation_study.py.
 10. To plot the ensemble studies, use plot_ensemble_size_ablation_study.py and plot_temperature_ablation_study.py. NOTE: In order to plot with error bars, step 8 and step 9 must be repeated with different save names, and these names entered in the MODE_BASE_NAMES variables in the plotting scripts.
