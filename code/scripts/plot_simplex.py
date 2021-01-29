@@ -108,12 +108,39 @@ def compare_simplex(ensm_data_uncertain, ensm_know_uncertain, ensm_certain, ensm
     plt.show()
 
 
+def plot_collage(images, ensm_predictions, endd_predictions):
+    n_cols = 10
+    n_imgs = len(images)
+    indices = np.random.randint(0, high=n_imgs, size=(n_cols,))
+    subplot_size = 2
+    fig = plt.figure(figsize=(n_cols*subplot_size, 3*subplot_size*0.8))
+    gs1 = gridspec.GridSpec(3, n_cols)
+    gs1.update(wspace=0.1, hspace = 0.025)
+    plt.margins(0.5)
+    for i, index in enumerate(indices):
+        img = (images[index, :, :] + 1) / 2
+        plt.subplot(gs1[i])
+        plot_img(img)
+
+        ensm_prediction = ensm_predictions[:, index, :]
+        plt.subplot(gs1[i + n_cols])
+        plot_points(ensm_prediction)
+
+        endd_prediction = endd_predictions[index, :]
+        plt.subplot(gs1[i + 2*n_cols])
+        plot_pdf(endd_prediction)
+
+
 # ======== PREPARE IMAGES =========
 
 # Load test images
 (_, _), (test_images, test_labels) = datasets.get_dataset(DATASET_NAME)
 raw_test_images = test_images
 test_images = preprocessing.normalize_minus_one_to_one(test_images, min=0, max=255)
+
+(aux_images, _), (_, _) = datasets.get_dataset('cifar100')
+aux_images = preprocessing.normalize_minus_one_to_one(aux_images, min=0, max=255)
+
 noise_img = np.random.randn(1, 32, 32, 3)
 
 # ======== PREDICTIONS =========
@@ -157,33 +184,18 @@ else:
         pickle.dump((endd_preds_noise), file)
 
 
-def plot_collage(images, esnm_preds, endd_preds):
-    n_cols = 10
-    n_imgs = len(test_images)
-    indices = np.random.randint(0, high=n_imgs, size=(n_cols,))
-    subplot_size = 2
-    fig = plt.figure(figsize=(n_cols*subplot_size, 3*subplot_size*0.8))
-    gs1 = gridspec.GridSpec(3, n_cols)
-    gs1.update(wspace=0.1, hspace = 0.025)
-    plt.margins(0.5)
-    for i, index in enumerate(indices):
-        img = (test_images[index, :, :] + 1) / 2
-        plt.subplot(gs1[i])
-        plot_img(img)
-
-        ensm_pred = ensm_preds[:, index, :]
-        plt.subplot(gs1[i + n_cols])
-        plot_points(ensm_pred)
-
-        endd_pred = endd_preds[index, :]
-        plt.subplot(gs1[i + 2*n_cols])
-        plot_pdf(endd_pred)
-
 # Plot random images
 if PLOT_COLLAGE:
-    plot_collage(test_images, ensm_preds, endd_preds)
+    in_indices = np.where((test_labels == 4) | (test_labels == 5) | (test_labels == 7))[0]
+    out_indices = np.where((test_labels != 4) & (test_labels != 5) & (test_labels != 7))[0]
+    print(in_indices)
+    print(test_images.shape)
+    print(ensm_preds.shape)
+    print(endd_preds.shape)
+    plot_collage(test_images[in_indices, :, :, :], ensm_preds[:, in_indices, :], endd_preds[in_indices, :])
     plt.show()
-
+    plot_collage(test_images[out_indices, :, :, :], ensm_preds[:, out_indices, :], endd_preds[out_indices, :])
+    plt.show()
 
 if PLOT_SELECTED:
     # Pick out plane images and preds
