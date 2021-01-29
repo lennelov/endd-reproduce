@@ -72,7 +72,7 @@ def draw_pdf_contours(dist, border=False, nlevels=200, subdiv=8, log_probs=False
     if log_probs:
         pvals = np.log(pvals + 1)
 
-    plt.tricontourf(trimesh, pvals, nlevels, cmap='jet', **kwargs)
+    plt.tricontourf(trimesh, pvals, nlevels, cmap='RdPu', **kwargs)
     plt.axis('equal')
     plt.xlim(0, 1)
     plt.ylim(0, 0.75**0.5)
@@ -92,7 +92,7 @@ def plot_points(X, barycentric=True, border=True, **kwargs):
     '''
     if barycentric is True:
         X = X.dot(_corners)
-    plt.plot(X[:, 0], X[:, 1], '.', color='black', ms=15, **kwargs)
+    plt.plot(X[:, 0], X[:, 1], '.', color='black', ms=8, **kwargs)
     plt.axis('equal')
     plt.xlim(0, 1)
     plt.ylim(0, 0.75**0.5)

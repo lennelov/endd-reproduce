@@ -28,7 +28,7 @@ LOAD_PREVIOUS_ENSM_PREDS = True
 LOAD_PREVIOUS_ENDD_PREDS = True
 
 PLOT_COLLAGE = True
-PLOT_SELECTED = True
+PLOT_SELECTED = False
 
 
 # ======== FUNCTIONS =========
@@ -157,9 +157,7 @@ else:
         pickle.dump((endd_preds_noise), file)
 
 
-
-# Plot random images
-if PLOT_COLLAGE:
+def plot_collage(images, esnm_preds, endd_preds):
     n_cols = 10
     n_imgs = len(test_images)
     indices = np.random.randint(0, high=n_imgs, size=(n_cols,))
@@ -180,6 +178,10 @@ if PLOT_COLLAGE:
         endd_pred = endd_preds[index, :]
         plt.subplot(gs1[i + 2*n_cols])
         plot_pdf(endd_pred)
+
+# Plot random images
+if PLOT_COLLAGE:
+    plot_collage(test_images, ensm_preds, endd_preds)
     plt.show()
 
 
