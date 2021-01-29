@@ -14,7 +14,7 @@ class ENDLoss(tf.keras.losses.Loss):
 
     def call(self, ensemble_logits, logits):
         '''
-        teacher_logits are the outputs from our ensemble (batch x ensembles x classes)
+        ensemble_logits are the outputs from our ensemble (batch x ensembles x classes)
         logits are the predicted outputs from our model (batch x classes)
         '''
 
@@ -51,7 +51,7 @@ class DirichletEnDDLoss(tf.keras.losses.Loss):
 
     def call(self, ensemble_logits, logits):
         '''
-        teacher_logits are the outputs from our ensemble (batch x ensembles x classes)
+        ensemble_logits are the outputs from our ensemble (batch x ensembles x classes)
         logits are the predicted outputs from our model (batch x classes)
         '''
         logits = tf.cast(logits, dtype=tf.float64)
