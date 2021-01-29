@@ -1,6 +1,6 @@
 # endd-reproduce
 
-This is the official respository for our reproduction of Ensemble Distribution Distillation submitted to the ML Reproducibility Challenge 2020. Follow the instructions below to reproduce our findings. Note that reproduction involves the training of a large ensemble of deep neurla networks, and that this will a few days on a consumer GPU.
+This is the official respository for our reproduction of Ensemble Distribution Distillation submitted to the ML Reproducibility Challenge 2020. Follow the instructions below to reproduce our findings. Note that reproduction involves the training of a large ensemble of deep neural networks, and that this will a few days on a consumer GPU.
 
 ## Instructions
 
