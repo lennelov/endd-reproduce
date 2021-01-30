@@ -23,7 +23,6 @@ jobs:
         yapf -ir -vv .
     - name: Commit files
       run: |
-        git config --local user.email "einarlennelov@gmail.com"
         git config --local user.name "Formatting Bot"
         git diff --quiet && git diff --staged --quiet || git commit -am "yapf formatting"
     - name: Push changes
